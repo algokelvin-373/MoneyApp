@@ -1,60 +1,139 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <TextView
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_input_data_to"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Masuk ke"
-            android:textStyle="bold"/>
+            android:hint="Masuk ke"
+            app:boxBackgroundMode="outline"
+            app:endIconMode="clear_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edt_data_to"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:textSize="14sp"
+                android:text="Kasir Perangkat 1" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_input_data_from"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Kasir Perangkat 1"
-            android:textSize="16sp"/>
-
-        <EditText
-            android:id="@+id/etFrom"
             android:hint="Dari"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            app:boxBackgroundMode="outline"
+            app:endIconMode="clear_text"
+            app:layout_constraintTop_toBottomOf="@+id/text_input_data_to">
 
-        <EditText
-            android:id="@+id/etAmount"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edt_data_from"
+                android:textSize="14sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_input_amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:hint="Jumlah"
-            android:inputType="numberDecimal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            app:boxBackgroundMode="outline"
+            app:endIconMode="clear_text"
+            app:layout_constraintTop_toBottomOf="@+id/text_input_data_from">
 
-        <EditText
-            android:id="@+id/etDescription"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edt_amount"
+                android:textSize="14sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:hint="Keterangan"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            app:boxBackgroundMode="outline"
+            app:endIconMode="clear_text"
+            app:layout_constraintTop_toBottomOf="@+id/text_input_amount">
 
-        <Spinner
-            android:id="@+id/spType"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edt_description"
+                android:textSize="14sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:id="@+id/btnUploadPhoto"
-            android:text="Upload Foto"
+        <TextView
+            android:id="@+id/txt_type"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_text_view"
+            android:padding="12dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:text="Jenis"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
 
-        <Button
-            android:id="@+id/btnSave"
+        <TextView
+            android:id="@+id/title_data_photo"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Foto/ Bukti Transfer/ Nota/ Kwitansi"
+            app:layout_constraintTop_toBottomOf="@+id/txt_type" />
+
+        <ImageView
+            android:id="@+id/img_photo_send"
+            android:layout_marginTop="8dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@android:drawable/ic_menu_camera"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_data_photo" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_change_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ubah"
+            app:cornerRadius="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/img_photo_send"
+            app:layout_constraintStart_toEndOf="@+id/img_photo_send"
+            app:layout_constraintTop_toTopOf="@+id/img_photo_send" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_delete_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hapus"
+            app:cornerRadius="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/img_photo_send"
+            app:layout_constraintStart_toEndOf="@+id/btn_change_photo"
+            app:layout_constraintTop_toTopOf="@+id/img_photo_send" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Simpan"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            app:cornerRadius="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/img_photo_send" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

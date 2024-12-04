@@ -1,6 +1,6 @@
 package com.kelvinht.moneyapp.base.transaction
 
-import AddTransactionFragment
+import InputMoneyInFragment
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,7 +24,7 @@ class TransactionFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.btnAddTransaction.setOnClickListener {
             val fragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.fragment_container, AddTransactionFragment())
+            fragmentTransaction.replace(R.id.fragment_container, InputMoneyInFragment())
             fragmentTransaction.addToBackStack(null)
             fragmentTransaction.commit()
         }
