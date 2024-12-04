@@ -16,7 +16,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.kelvinht.moneyapp.R
+import com.kelvinht.moneyapp.base.input_money_in.InputMoneyInViewModel
+import com.kelvinht.moneyapp.base.input_money_in.InputMoneyInViewModelFactory
+import com.kelvinht.moneyapp.data.Transaction
 import com.kelvinht.moneyapp.databinding.FragmentAddTransactionBinding
 import java.io.File
 import java.text.SimpleDateFormat
@@ -25,7 +29,11 @@ import java.util.Locale
 
 class InputMoneyInFragment : Fragment() {
     private lateinit var binding: FragmentAddTransactionBinding
+    private lateinit var viewModel: InputMoneyInViewModel
+    private lateinit var viewModelFactory: InputMoneyInViewModelFactory
     private lateinit var photoFile: File
+    private lateinit var strNamePhoto: String
+    private lateinit var typeData: String
 
     companion object {
         const val CAMERA_REQUEST_CODE = 1001
@@ -38,6 +46,8 @@ class InputMoneyInFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentAddTransactionBinding.inflate(inflater, container, false)
+        viewModelFactory = InputMoneyInViewModelFactory(requireActivity(), "")
+        viewModel = ViewModelProvider(this, viewModelFactory)[InputMoneyInViewModel::class.java]
         return binding.root
     }
 
@@ -58,6 +68,25 @@ class InputMoneyInFragment : Fragment() {
         binding.imgPhotoSend.setOnClickListener {
             openCamera()
         }
+        binding.btnSave.setOnClickListener {
+            val transaction = Transaction(
+                dataInto = binding.edtDataTo.text.toString(),
+                dataFrom = binding.edtDataFrom.text.toString(),
+                amount = binding.edtAmount.text.toString().toInt(),
+                description = binding.edtDescription.text.toString(),
+                type = "Pendapatan Lain",
+                photoPath = strNamePhoto,
+                time = "13:00",
+                date = "24 Juli 2024"
+            )
+            viewModel.insert(transaction).observe(viewLifecycleOwner) {
+                if (it != null) {
+                    Toast.makeText(requireContext(), "Success Save Transaction", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "Failed Save Transaction", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun openCamera() {
@@ -70,7 +99,8 @@ class InputMoneyInFragment : Fragment() {
             }
 
             val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-            photoFile = File(storageDir, "IMG_${timeStamp}.jpg")
+            strNamePhoto = "IMG_${timeStamp}.jpg"
+            photoFile = File(storageDir, strNamePhoto)
 
             val photoURI: Uri = FileProvider.getUriForFile(requireContext(), "${requireActivity().packageName}.fileprovider", photoFile)
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
@@ -79,14 +109,15 @@ class InputMoneyInFragment : Fragment() {
     }
 
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            // Menampilkan gambar dari file
             binding.imgPhotoSend.setImageURI(Uri.fromFile(photoFile))
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSION_REQUEST_CODE) {

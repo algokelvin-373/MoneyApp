@@ -21,6 +21,6 @@ class TransactionViewModel(application: Application, date: String?) :
     }
 
     fun insert(transaction: Transaction?) {
-        repository.insert(transaction)
+        //repository.insert(transaction)
     }
 }
