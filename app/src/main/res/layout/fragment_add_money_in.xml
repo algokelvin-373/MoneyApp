@@ -120,6 +120,7 @@
             android:id="@+id/btn_delete_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:text="Hapus"
             app:cornerRadius="8dp"
             app:layout_constraintBottom_toBottomOf="@+id/img_photo_send"

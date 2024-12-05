@@ -16,4 +16,9 @@ class InputMoneyInViewModel(
         val statusInsert = repository.insert(moneyIn)
         emit(statusInsert)
     }
+
+    fun update(moneyIn: MoneyIn) = liveData {
+        val statusUpdate = repository.updateMoneyIn(moneyIn)
+        emit(statusUpdate)
+    }
 }

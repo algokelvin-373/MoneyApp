@@ -22,4 +22,10 @@ class AddMoneyInRepository(context: Context, date: String?) {
             transactionDao.insertTransaction(moneyIn)
         }
     }
+
+    suspend fun updateMoneyIn(moneyIn: MoneyIn) {
+        withContext(Dispatchers.IO) {
+            transactionDao.updateMoneyIn(moneyIn)
+        }
+    }
 }

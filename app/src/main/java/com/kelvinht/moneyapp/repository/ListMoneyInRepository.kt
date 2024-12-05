@@ -5,6 +5,8 @@ import androidx.room.Room.databaseBuilder
 import com.kelvinht.moneyapp.data.MoneyIn
 import com.kelvinht.moneyapp.db.AppDatabase
 import com.kelvinht.moneyapp.db.TransactionDao
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class ListMoneyInRepository(context: Context) {
     private val transactionDao: TransactionDao
@@ -16,5 +18,11 @@ class ListMoneyInRepository(context: Context) {
 
     suspend fun getAllMoneyIn(): List<MoneyIn> {
         return transactionDao.getTransactionsByDate()
+    }
+
+    suspend fun deleteMoneyIn(moneyIn: MoneyIn) {
+        withContext(Dispatchers.IO) {
+            transactionDao.deleteMoneyIn(moneyIn)
+        }
     }
 }

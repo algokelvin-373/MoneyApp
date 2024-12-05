@@ -5,16 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.kelvinht.moneyapp.adapter.onclick.OnClickMoneyInItem
 import com.kelvinht.moneyapp.data.MoneyIn
 import com.kelvinht.moneyapp.data.MoneyInTitle
 import com.kelvinht.moneyapp.data.MoneyInTotal
 import com.kelvinht.moneyapp.databinding.ItemMoneyInBinding
 import com.kelvinht.moneyapp.databinding.ItemMoneyInTitleBinding
 import com.kelvinht.moneyapp.databinding.ItemMoneyInTotalBinding
+import com.kelvinht.moneyapp.utils.GlobalFunction
 
 
 class MoneyInLandsAdapter(
     private val bounds: Rect,
+    private val onClickMoneyInItem: OnClickMoneyInItem,
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var listMoneyIn = ArrayList<Any>()
 
@@ -75,7 +78,14 @@ class MoneyInLandsAdapter(
             binding.txtDataTo?.text = moneyIn.dataInto
             binding.txtDataFromTo?.text = dataCombine
             binding.txtDescription.text = moneyIn.description
-            binding.txtAmount.text = moneyIn.amount.toString()
+            binding.txtAmount.text = GlobalFunction.formatRupiah(moneyIn.amount)
+
+            binding.layoutEdit?.setOnClickListener {
+                onClickMoneyInItem.editMoneyIn(moneyIn)
+            }
+            binding.layoutDelete?.setOnClickListener {
+                onClickMoneyInItem.deleteMoneyIn(moneyIn)
+            }
         }
     }
 
@@ -83,7 +93,7 @@ class MoneyInLandsAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(data: MoneyInTotal) {
             binding.txtDescription?.text = "Total"
-            binding.txtAmount.text = data.totalAmount.toString()
+            binding.txtAmount.text = GlobalFunction.formatRupiah(data.totalAmount)
             binding.txtTime.text = data.date
 
             if (bounds.width() > bounds.height()) {

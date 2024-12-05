@@ -53,30 +53,81 @@ class InputMoneyInFragment : Fragment() {
         return binding.root
     }
 
+    @Suppress("DEPRECATION")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.txtType.setOnClickListener {
-            val dialog = Dialog(requireContext())
-            val bindingDialog = DialogListTypeBinding.inflate(LayoutInflater.from(requireContext()))
-            dialog.setContentView(bindingDialog.root)
-            bindingDialog.txtPendapatanLain.setOnClickListener {
-                typeData = "Pendapatan Lain"
-                binding.txtType.text = typeData
-                dialog.dismiss()
-            }
-            bindingDialog.txtNonPendapatan.setOnClickListener {
-                typeData = "Non Pendapatan"
-                binding.txtType.text = typeData
-                dialog.dismiss()
-            }
-            dialog.show()
+        permissionCamera()
+        val moneyIn = arguments?.getParcelable<MoneyIn>("data_money_in")
+        if (moneyIn != null)
+            setDataMoneyInUpdate(moneyIn)
+        else {
+            addDataMoneyIn()
+            binding.btnChangePhoto.visibility = View.GONE
+            binding.btnDeletePhoto.visibility = View.GONE
+        }
+    }
+
+    private fun setDataMoneyInUpdate(moneyIn: MoneyIn) {
+        typeData = moneyIn.type
+        strNamePhoto = moneyIn.photoPath
+        binding.apply {
+            edtDataTo.setText(moneyIn.dataInto)
+            edtDataFrom.setText(moneyIn.dataFrom)
+            edtAmount.setText(moneyIn.amount.toString())
+            edtDescription.setText(moneyIn.description)
+            txtType.text = typeData
+            btnSave.text = "Update"
         }
 
-        permissionCamera()
+        binding.btnChangePhoto.setOnClickListener {
+            openCamera()
+        }
 
+        val storageDir = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "money_app")
+        val filePhoto = File(storageDir, strNamePhoto)
+        binding.imgPhotoSend.setImageURI(Uri.fromFile(filePhoto))
+
+        binding.btnSave.setOnClickListener {
+            val currentDateTime = LocalDateTime.now()
+            val dateFormatted = DateTimeFormatter.ofPattern("dd MMM yyyy")
+            val timeFormatted = DateTimeFormatter.ofPattern("HH:mm:ss")
+
+            val moneyInUpdate = MoneyIn(
+                id = moneyIn.id,
+                dataInto = binding.edtDataTo.text.toString(),
+                dataFrom = binding.edtDataFrom.text.toString(),
+                amount = binding.edtAmount.text.toString().toInt(),
+                description = binding.edtDescription.text.toString(),
+                type = typeData,
+                photoPath = strNamePhoto,
+                time = currentDateTime.format(timeFormatted),
+                date = currentDateTime.format(dateFormatted)
+            )
+
+            viewModel.update(moneyInUpdate).observe(viewLifecycleOwner) {
+                if (it != null) {
+                    Toast.makeText(requireContext(), "Success Update Transaction", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "Failed Update Transaction", Toast.LENGTH_SHORT).show()
+                }
+                parentFragmentManager.popBackStack()
+            }
+        }
+    }
+
+    private fun addDataMoneyIn() {
+        binding.txtType.setOnClickListener {
+            showDialogChooseType()
+        }
         binding.imgPhotoSend.setOnClickListener {
             openCamera()
+        }
+        binding.btnChangePhoto.setOnClickListener {
+            openCamera()
+        }
+        binding.btnDeletePhoto.setOnClickListener {
+            //binding.imgPhotoSend.setImageResource()
         }
         binding.btnSave.setOnClickListener {
             val currentDateTime = LocalDateTime.now()
@@ -123,6 +174,23 @@ class InputMoneyInFragment : Fragment() {
         }
     }
 
+    private fun showDialogChooseType() {
+        val dialog = Dialog(requireContext())
+        val bindingDialog = DialogListTypeBinding.inflate(LayoutInflater.from(requireContext()))
+        dialog.setContentView(bindingDialog.root)
+        bindingDialog.txtPendapatanLain.setOnClickListener {
+            typeData = "Pendapatan Lain"
+            binding.txtType.text = typeData
+            dialog.dismiss()
+        }
+        bindingDialog.txtNonPendapatan.setOnClickListener {
+            typeData = "Non Pendapatan"
+            binding.txtType.text = typeData
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
     private fun openCamera() {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (cameraIntent.resolveActivity(requireActivity().packageManager) != null) {
@@ -147,6 +215,8 @@ class InputMoneyInFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             binding.imgPhotoSend.setImageURI(Uri.fromFile(photoFile))
+            binding.btnChangePhoto.visibility = View.VISIBLE
+            binding.btnDeletePhoto.visibility = View.VISIBLE
         }
     }
 
