@@ -16,6 +16,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey_d8d8d8"
+        app:layout_constraintBottom_toTopOf="@+id/btn_add_transaction"/>
+
     <TextView
         android:id="@+id/btn_add_transaction"
         android:layout_width="match_parent"
@@ -23,8 +29,9 @@
         android:layout_alignParentBottom="true"
         android:gravity="center"
         android:padding="16dp"
-        android:text="Buat Transaksi Uang Masuk Ala Landscape"
+        android:text="@string/add_money_in_data"
         android:textSize="16sp"
+        android:textColor="@color/green_329832"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:layout_editor_absoluteX="16dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

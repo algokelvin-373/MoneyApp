@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:elevation="10dp">
@@ -14,7 +13,7 @@
             android:id="@+id/txt_pendapatan_lain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Pendapatan Lain"
+            android:text="@string/other_income"
             android:textColor="@color/black"
             android:textSize="14sp"
             android:paddingTop="10dp"
@@ -40,7 +39,7 @@
             android:paddingTop="10dp"
             android:paddingEnd="8dp"
             android:paddingBottom="10dp"
-            android:text="Non Pendapatan"
+            android:text="@string/non_income"
             android:textColor="@color/black"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"

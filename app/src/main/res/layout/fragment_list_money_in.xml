@@ -39,8 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/grey_d8d8d8"
-        app:layout_constraintBottom_toTopOf="@+id/btn_add_transaction"
-        tools:layout_editor_absoluteX="-44dp" />
+        app:layout_constraintBottom_toTopOf="@+id/btn_add_transaction" />
 
     <TextView
         android:id="@+id/btn_add_transaction"

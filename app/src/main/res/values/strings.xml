@@ -5,6 +5,9 @@
     <string name="title_header">Uang Masuk</string>
     <string name="title_total">Total</string>
     <string name="title_amount">Jumlah</string>
+    <string name="title_cancel">Cancel</string>
+    <string name="title_delete">Delete</string>
+    <string name="title_edit">Edit</string>
     <string name="empty_string"></string>
     <string name="moneyIn_into_to">Masuk ke</string>
     <string name="moneyIn_data_from">Terima dari</string>
@@ -16,4 +19,11 @@
     <string name="message_save_money_in_failed">Failed Save Transaction</string>
     <string name="message_update_money_in_success">Success Update Transaction</string>
     <string name="message_update_money_in_failed">Failed Update Transaction</string>
+    <string name="confirm_delete_title">Konfirmasi Hapus</string>
+    <string name="confirm_delete_message">Apakah Anda yakin ingin menghapus data ini?</string>
+    <string name="other_income">Pendapatan Lain</string>
+    <string name="non_income">Non Pendapatan</string>
+    <string name="add_money_in_data">Buat Transaksi Uang Masuk</string>
+    <string name="todo">TODO</string>
+    <string name="view_photo">Lihat Foto</string>
 </resources>

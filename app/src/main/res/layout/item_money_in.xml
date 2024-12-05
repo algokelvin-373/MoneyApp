@@ -21,7 +21,7 @@
             app:layout_constraintEnd_toStartOf="@+id/txt_time"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Dari Bos ke Kasir Perangkat 1" />
+            tools:text="Dari Bos ke Casier Perangkat 1" />
 
         <TextView
             android:id="@+id/txt_time"
@@ -66,12 +66,13 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginEnd="8dp"
+                android:contentDescription="@string/todo"
                 android:src="@android:drawable/ic_menu_edit" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Edit"
+                android:text="@string/title_edit"
                 android:textColor="@color/blue_0072c8"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -91,12 +92,13 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginEnd="8dp"
+                android:contentDescription="@string/todo"
                 android:src="@android:drawable/ic_menu_delete" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Delete"
+                android:text="@string/title_delete"
                 android:textColor="@color/red_ff1100"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -105,7 +107,7 @@
             android:id="@+id/txt_view_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Lihat Foto"
+            android:text="@string/view_photo"
             android:textSize="14sp"
             android:textColor="@color/blue_8fcaff"
             app:layout_constraintBottom_toBottomOf="@+id/layout_delete"

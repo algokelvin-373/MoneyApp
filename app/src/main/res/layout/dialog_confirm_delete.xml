@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Konfirmasi Hapus"
+        android:text="@string/confirm_delete_title"
         android:textSize="20sp"
         android:textStyle="bold"
         android:layout_marginBottom="16dp"
@@ -19,12 +19,13 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Apakah Anda yakin ingin menghapus data ini?"
+        android:text="@string/confirm_delete_message"
         android:textSize="16sp"
         android:layout_marginBottom="24dp"
         android:textColor="@color/black"/>
 
     <LinearLayout
+        style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -32,19 +33,20 @@
 
         <Button
             android:id="@+id/btn_cancel"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancel"
-            android:textColor="@color/white"
-            android:background="@color/grey_d8d8d8"
-            android:layout_marginEnd="8dp"/>
+            android:text="@string/title_cancel"
+            android:textColor="@color/green_329832"
+            android:layout_marginEnd="8dp" />
 
         <Button
             android:id="@+id/btn_delete"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Delete"
-            android:textColor="@color/white"
+            android:text="@string/title_delete"
+            android:textColor="@color/red_ff1100"
             android:background="@color/red_ff1100"/>
     </LinearLayout>
 
