@@ -1,11 +1,15 @@
 package com.kelvinht.moneyapp.base.list_money_in
 
 import InputMoneyInFragment
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Rect
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -25,6 +29,7 @@ class ListMoneyInFragment : Fragment() {
     private lateinit var viewModelFactory: ListMoneyInViewModelFactory
     private lateinit var adapter: MoneyInAdapter
     private lateinit var adapterLandscape: MoneyInLandsAdapter
+    private lateinit var bounds: Rect
 
     private fun modifierListMoneyIn(list: ArrayList<MoneyIn>): ArrayList<Any> {
         val result = ArrayList<Any>()
@@ -36,13 +41,21 @@ class ListMoneyInFragment : Fragment() {
             val moneyIn = data.value
             val total = moneyIn.sumOf { it.amount }
 
-            result.add(MoneyInTitle(date = date)) // for data title date money in
-            result.addAll(moneyIn) // for data money in based on date
-            result.add(MoneyInTotal(date = date, totalAmount = total)) // for data total money in based on date
+            if (bounds.width() > bounds.height()) { // Mode Landscape
+                Toast.makeText(requireContext(), "Landscape Mode", Toast.LENGTH_SHORT).show()
+                result.add(MoneyInTitle(date = date)) // for data title date money in
+                result.addAll(moneyIn) // for data money in based on date
+                result.add(MoneyInTotal(date = date, totalAmount = total)) // for data total money in based on date
+            } else { // Mode Portrait
+                Toast.makeText(requireContext(), "Portrait Mode", Toast.LENGTH_SHORT).show()
+                result.add(MoneyInTotal(date = date, totalAmount = total)) // for data total money in based on date
+                result.addAll(moneyIn) // for data money in based on date
+            }
         }
         return result
     }
 
+    @SuppressLint("NewApi")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -53,15 +66,15 @@ class ListMoneyInFragment : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.title = "Uang Masuk"
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setHasOptionsMenu(true)
+        val windowManager = requireActivity().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val metrics = windowManager.currentWindowMetrics
+        bounds = metrics.bounds
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val displayMetrics = DisplayMetrics()
-        requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
-        if (displayMetrics.widthPixels > displayMetrics.heightPixels) {
+        if (bounds.width() > bounds.height()) {
             Toast.makeText(requireContext(), "Landscape Mode", Toast.LENGTH_SHORT).show()
             modeLandscape()
         } else {
@@ -77,12 +90,26 @@ class ListMoneyInFragment : Fragment() {
     }
 
     private fun modePortrait() {
-        viewModel.getAllTransaction().observe(viewLifecycleOwner) { data ->
+        /*viewModel.getAllTransaction().observe(viewLifecycleOwner) { data ->
             adapter = MoneyInAdapter()
             adapter.setList(data as ArrayList<MoneyIn>)
             binding.rvMoneyIn.layoutManager = LinearLayoutManager(requireContext())
             binding.rvMoneyIn.adapter = adapter
-        }
+        }*/
+
+        val list = ArrayList<MoneyIn>()
+        list.add(MoneyIn(0, "Kasir Perangkat 1", "Bos", "Tambahan Modal", "Pendapatan Lain", "/path", "13:00", "25 Maret 2022", 100000))
+        list.add(MoneyIn(0, "Kasir Perangkat 1", "Bos", "Tambahan Modal", "Pendapatan Lain", "/path", "13:00", "25 Maret 2022", 100000))
+        list.add(MoneyIn(0, "Kasir Perangkat 1", "Bos", "Tambahan Modal", "Pendapatan Lain", "/path", "13:00", "24 Maret 2022", 100000))
+        list.add(MoneyIn(0, "Kasir Perangkat 1", "Bos", "Tambahan Modal", "Pendapatan Lain", "/path", "13:00", "24 Maret 2022", 100000))
+        list.add(MoneyIn(0, "Kasir Perangkat 1", "Bos", "Tambahan Modal", "Pendapatan Lain", "/path", "13:00", "24 Maret 2022", 100000))
+        list.add(MoneyIn(0, "Kasir Perangkat 1", "Bos", "Tambahan Modal", "Pendapatan Lain", "/path", "13:00", "24 Maret 2022", 100000))
+
+        val listMoneyIn = modifierListMoneyIn(list)
+        val adapter = MoneyInLandsAdapter(bounds)
+        adapter.setList(listMoneyIn)
+        binding.rvMoneyIn.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvMoneyIn.adapter = adapter
     }
 
     private fun modeLandscape() {
@@ -95,7 +122,7 @@ class ListMoneyInFragment : Fragment() {
         list.add(MoneyIn(0, "Kasir Perangkat 1", "Bos", "Tambahan Modal", "Pendapatan Lain", "/path", "13:00", "24 Maret 2022", 100000))
 
         val listMoneyIn = modifierListMoneyIn(list)
-        val adapter = MoneyInLandsAdapter()
+        val adapter = MoneyInLandsAdapter(bounds)
         adapter.setList(listMoneyIn)
         binding.rvMoneyIn.layoutManager = LinearLayoutManager(requireContext())
         binding.rvMoneyIn.adapter = adapter
