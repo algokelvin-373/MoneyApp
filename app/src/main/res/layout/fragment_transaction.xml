@@ -5,63 +5,11 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <!-- Header Bar -->
-    <LinearLayout
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
-
-        <!--<ImageView
-            android:id="@+id/backButton"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_arrow_back"
-            android:contentDescription="Back"
-            android:layout_marginEnd="16dp" />-->
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Uang Masuk"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/dateRange"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="25 Maret 2022 - 25 Maret 2022"
-            android:textSize="14sp"
-            android:layout_alignParentEnd="true" />
-
-        <!--<ImageView
-            android:id="@+id/calendarIcon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_calendar"
-            android:contentDescription="Calendar" />-->
-    </LinearLayout>
-
-    <!-- Total Amount -->
-    <TextView
-        android:id="@+id/totalAmount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Rp 200.000"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_below="@id/header"
-        android:layout_marginTop="8dp" />
-
     <!-- RecyclerView for transactions -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/transactionList"
+        android:id="@+id/rv_money_in"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/totalAmount"
         android:layout_marginTop="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 

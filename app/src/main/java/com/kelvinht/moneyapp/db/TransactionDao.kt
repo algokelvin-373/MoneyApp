@@ -11,8 +11,8 @@ import com.kelvinht.moneyapp.data.Transaction
 
 @Dao
 interface TransactionDao {
-    @Query("SELECT * FROM transactions_data WHERE date = :date")
-    fun getTransactionsByDate(date: String?): LiveData<List<Transaction>>
+    @Query("SELECT * FROM transactions_data")
+    suspend fun getTransactionsByDate(): List<Transaction>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertTransaction(transaction: Transaction)
