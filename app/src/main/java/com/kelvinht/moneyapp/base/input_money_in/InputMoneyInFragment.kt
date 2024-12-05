@@ -20,7 +20,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.kelvinht.moneyapp.R
 import com.kelvinht.moneyapp.base.input_money_in.InputMoneyInViewModel
 import com.kelvinht.moneyapp.base.input_money_in.InputMoneyInViewModelFactory
-import com.kelvinht.moneyapp.data.Transaction
+import com.kelvinht.moneyapp.data.MoneyIn
 import com.kelvinht.moneyapp.databinding.FragmentAddMoneyInBinding
 import java.io.File
 import java.text.SimpleDateFormat
@@ -66,7 +66,7 @@ class InputMoneyInFragment : Fragment() {
             openCamera()
         }
         binding.btnSave.setOnClickListener {
-            val transaction = Transaction(
+            val moneyIn = MoneyIn(
                 dataInto = binding.edtDataTo.text.toString(),
                 dataFrom = binding.edtDataFrom.text.toString(),
                 amount = binding.edtAmount.text.toString().toInt(),
@@ -76,7 +76,7 @@ class InputMoneyInFragment : Fragment() {
                 time = "13:00",
                 date = "24 Juli 2024"
             )
-            viewModel.insert(transaction).observe(viewLifecycleOwner) {
+            viewModel.insert(moneyIn).observe(viewLifecycleOwner) {
                 if (it != null) {
                     Toast.makeText(requireContext(), "Success Save Transaction", Toast.LENGTH_SHORT).show()
                 } else {

@@ -4,15 +4,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.kelvinht.moneyapp.data.Transaction
+import com.kelvinht.moneyapp.data.MoneyIn
 import com.kelvinht.moneyapp.databinding.ItemMoneyInBinding
 
 
 class MoneyInAdapter() : RecyclerView.Adapter<MoneyInAdapter.TransactionViewHolder>() {
     private lateinit var binding: ItemMoneyInBinding
-    private var listMoneyIn = ArrayList<Transaction>()
+    private var listMoneyIn = ArrayList<MoneyIn>()
 
-    fun setList(list: ArrayList<Transaction>) {
+    fun setList(list: ArrayList<MoneyIn>) {
         listMoneyIn.clear()
         listMoneyIn.addAll(list)
     }
@@ -30,21 +30,16 @@ class MoneyInAdapter() : RecyclerView.Adapter<MoneyInAdapter.TransactionViewHold
         return listMoneyIn.size
     }
 
-    /*fun setTransactions(list: ArrayList<Transaction>) {
-        listMoneyIn = list
-        notifyDataSetChanged()
-    }*/
-
     inner class TransactionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(transaction: Transaction) {
-            val dataFrom = transaction.dataFrom
-            val dataTo = transaction.dataInto
+        fun bind(moneyIn: MoneyIn) {
+            val dataFrom = moneyIn.dataFrom
+            val dataTo = moneyIn.dataInto
             val dataCombine = "Dari $dataFrom ke $dataTo"
 
-            binding.txtDataFromTo.text = dataCombine
-            binding.txtTime.text = transaction.time
-            binding.txtDescription.text = transaction.description
-            binding.txtAmount.text = transaction.amount.toString()
+            binding.txtDataFromTo?.text = dataCombine
+            binding.txtTime.text = moneyIn.time
+            binding.txtDescription.text = moneyIn.description
+            binding.txtAmount.text = moneyIn.amount.toString()
         }
     }
 }
