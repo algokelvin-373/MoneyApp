@@ -30,10 +30,10 @@ class MoneyInAdapter() : RecyclerView.Adapter<MoneyInAdapter.TransactionViewHold
         return listMoneyIn.size
     }
 
-    fun setTransactions(list: ArrayList<Transaction>) {
+    /*fun setTransactions(list: ArrayList<Transaction>) {
         listMoneyIn = list
         notifyDataSetChanged()
-    }
+    }*/
 
     inner class TransactionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(transaction: Transaction) {

@@ -21,14 +21,14 @@ import com.kelvinht.moneyapp.R
 import com.kelvinht.moneyapp.base.input_money_in.InputMoneyInViewModel
 import com.kelvinht.moneyapp.base.input_money_in.InputMoneyInViewModelFactory
 import com.kelvinht.moneyapp.data.Transaction
-import com.kelvinht.moneyapp.databinding.FragmentAddTransactionBinding
+import com.kelvinht.moneyapp.databinding.FragmentAddMoneyInBinding
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 class InputMoneyInFragment : Fragment() {
-    private lateinit var binding: FragmentAddTransactionBinding
+    private lateinit var binding: FragmentAddMoneyInBinding
     private lateinit var viewModel: InputMoneyInViewModel
     private lateinit var viewModelFactory: InputMoneyInViewModelFactory
     private lateinit var photoFile: File
@@ -45,7 +45,7 @@ class InputMoneyInFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentAddTransactionBinding.inflate(inflater, container, false)
+        binding = FragmentAddMoneyInBinding.inflate(inflater, container, false)
         viewModelFactory = InputMoneyInViewModelFactory(requireActivity(), "")
         viewModel = ViewModelProvider(this, viewModelFactory)[InputMoneyInViewModel::class.java]
         return binding.root
@@ -60,10 +60,7 @@ class InputMoneyInFragment : Fragment() {
             dialog.show()
         }
 
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
-        }
+        permissionCamera()
 
         binding.imgPhotoSend.setOnClickListener {
             openCamera()
@@ -86,6 +83,26 @@ class InputMoneyInFragment : Fragment() {
                     Toast.makeText(requireContext(), "Failed Save Transaction", Toast.LENGTH_SHORT).show()
                 }
             }
+        }
+    }
+
+    private fun checkPermissionCamera(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.CAMERA
+        ) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) != PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun permissionCamera() {
+        if (checkPermissionCamera()) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                PERMISSION_REQUEST_CODE
+            )
         }
     }
 

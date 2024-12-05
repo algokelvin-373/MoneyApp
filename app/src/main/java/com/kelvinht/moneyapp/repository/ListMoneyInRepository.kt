@@ -7,16 +7,14 @@ import com.kelvinht.moneyapp.db.AppDatabase
 import com.kelvinht.moneyapp.db.TransactionDao
 
 class ListMoneyInRepository(context: Context) {
-    private val transactionDao: TransactionDao?
-    //private val transactions: List<Transaction>
+    private val transactionDao: TransactionDao
 
     init {
         val db = databaseBuilder(context, AppDatabase::class.java, "transaction_db").build()
         transactionDao = db.transactionDao()
-        //transactions = transactionDao?.getTransactionsByDate()!!
     }
 
     suspend fun getAllMoneyIn(): List<Transaction> {
-        return transactionDao?.getTransactionsByDate()!!
+        return transactionDao.getTransactionsByDate()
     }
 }

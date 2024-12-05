@@ -2,7 +2,7 @@ package com.kelvinht.moneyapp
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.kelvinht.moneyapp.base.transaction.ListMoneyInFragment
+import com.kelvinht.moneyapp.base.list_money_in.ListMoneyInFragment
 import com.kelvinht.moneyapp.databinding.ActivityMainBinding
 
 

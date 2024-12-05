@@ -1,4 +1,4 @@
-package com.kelvinht.moneyapp.base.transaction
+package com.kelvinht.moneyapp.base.list_money_in
 
 import InputMoneyInFragment
 import android.os.Bundle
@@ -12,10 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.kelvinht.moneyapp.R
 import com.kelvinht.moneyapp.adapter.MoneyInAdapter
 import com.kelvinht.moneyapp.data.Transaction
-import com.kelvinht.moneyapp.databinding.FragmentTransactionBinding
+import com.kelvinht.moneyapp.databinding.FragmentListMoneyInBinding
 
 class ListMoneyInFragment : Fragment() {
-    private lateinit var binding: FragmentTransactionBinding
+    private lateinit var binding: FragmentListMoneyInBinding
     private lateinit var viewModel: ListMoneyInViewModel
     private lateinit var viewModelFactory: ListMoneyInViewModelFactory
     private lateinit var adapter: MoneyInAdapter
@@ -24,7 +24,7 @@ class ListMoneyInFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentTransactionBinding.inflate(inflater, container, false)
+        binding = FragmentListMoneyInBinding.inflate(inflater, container, false)
         viewModelFactory = ListMoneyInViewModelFactory(requireContext())
         viewModel = ViewModelProvider(requireActivity(), viewModelFactory)[ListMoneyInViewModel::class.java]
         (activity as AppCompatActivity).supportActionBar?.title = "Uang Masuk"
