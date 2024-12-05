@@ -1,6 +1,6 @@
 package com.kelvinht.moneyapp.base.list_money_in
 
-import InputMoneyInFragment
+import com.kelvinht.moneyapp.base.input_money_in.InputMoneyInFragment
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
@@ -23,6 +23,7 @@ import com.kelvinht.moneyapp.data.MoneyInTitle
 import com.kelvinht.moneyapp.data.MoneyInTotal
 import com.kelvinht.moneyapp.databinding.DialogConfirmDeleteBinding
 import com.kelvinht.moneyapp.databinding.FragmentListMoneyInBinding
+import com.kelvinht.moneyapp.utils.GlobalVariable
 
 class ListMoneyInFragment : Fragment(), OnClickMoneyInItem {
     private lateinit var binding: FragmentListMoneyInBinding
@@ -30,6 +31,7 @@ class ListMoneyInFragment : Fragment(), OnClickMoneyInItem {
     private lateinit var viewModelFactory: ListMoneyInViewModelFactory
     private lateinit var adapterLandscape: MoneyInLandsAdapter
     private lateinit var bounds: Rect
+    private lateinit var context: Context
 
     private fun modifierListMoneyIn(list: ArrayList<MoneyIn>): ArrayList<Any> {
         val result = ArrayList<Any>()
@@ -42,6 +44,19 @@ class ListMoneyInFragment : Fragment(), OnClickMoneyInItem {
             val total = moneyIn.sumOf { it.amount }
 
             if (bounds.width() > bounds.height()) { // Mode Landscape
+                // For Table Header
+                val header = MoneyIn(0,
+                    context.getString(R.string.moneyIn_into_to),
+                    context.getString(R.string.moneyIn_data_from),
+                    context.getString(R.string.moneyIn_description),
+                    context.getString(R.string.empty_string),
+                    context.getString(R.string.empty_string),
+                    context.getString(R.string.moneyIn_time),
+                    context.getString(R.string.empty_string),
+                    -1)
+                result.add(header)
+
+                // For Data Money In
                 result.add(MoneyInTitle(date = date)) // for data title date money in
                 result.addAll(moneyIn) // for data money in based on date
                 result.add(MoneyInTotal(date = date, totalAmount = total)) // for data total money in based on date
@@ -58,48 +73,45 @@ class ListMoneyInFragment : Fragment(), OnClickMoneyInItem {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        context = requireContext()
         binding = FragmentListMoneyInBinding.inflate(inflater, container, false)
         viewModelFactory = ListMoneyInViewModelFactory(requireContext())
         viewModel = ViewModelProvider(requireActivity(), viewModelFactory)[ListMoneyInViewModel::class.java]
-        (activity as AppCompatActivity).supportActionBar?.title = "Uang Masuk"
+
+        (activity as AppCompatActivity).supportActionBar?.title = context.getString(R.string.title_header)
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setHasOptionsMenu(true)
+
         val windowManager = requireActivity().getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val metrics = windowManager.currentWindowMetrics
         bounds = metrics.bounds
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getAllTransaction().observe(viewLifecycleOwner) { data ->
-            val listMoneyIn = modifierListMoneyIn(data as ArrayList<MoneyIn>)
-            adapterLandscape = MoneyInLandsAdapter(bounds, this)
-            adapterLandscape.setList(listMoneyIn)
-            binding.rvMoneyIn.layoutManager = LinearLayoutManager(requireContext())
-            binding.rvMoneyIn.adapter = adapterLandscape
-        }
+        showListMoneyIn()
         binding.btnAddTransaction.setOnClickListener {
-            val fragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.fragment_container, InputMoneyInFragment())
-            fragmentTransaction.addToBackStack(null)
-            fragmentTransaction.commit()
+            goToInputMoneyInFragment(InputMoneyInFragment())
         }
     }
 
     private fun showListMoneyIn() {
-
+        viewModel.getAllTransaction().observe(viewLifecycleOwner) { data ->
+            val listMoneyIn = modifierListMoneyIn(data as ArrayList<MoneyIn>)
+            adapterLandscape = MoneyInLandsAdapter(bounds, listMoneyIn, this)
+            binding.rvMoneyIn.layoutManager = LinearLayoutManager(requireContext())
+            binding.rvMoneyIn.adapter = adapterLandscape
+        }
     }
 
     override fun editMoneyIn(moneyIn: MoneyIn) {
         val fragment = InputMoneyInFragment()
         val bundle = Bundle()
-        bundle.putParcelable("data_money_in", moneyIn)
+        bundle.putParcelable(GlobalVariable.MONEY_IN_BUNDLE, moneyIn)
         fragment.arguments = bundle
-        val fragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.fragment_container, fragment)
-        fragmentTransaction.addToBackStack(null)
-        fragmentTransaction.commit()
+        goToInputMoneyInFragment(fragment)
     }
 
     override fun deleteMoneyIn(moneyIn: MoneyIn) {
@@ -112,20 +124,21 @@ class ListMoneyInFragment : Fragment(), OnClickMoneyInItem {
         bindingDialog.btnDelete.setOnClickListener {
             viewModel.deleteMoneyIn(moneyIn).observe(viewLifecycleOwner) {
                 if (it != null) {
-                    Toast.makeText(requireContext(), "Success Delete Transaction", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.message_delete_money_in_success), Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(requireContext(), "Failed Delete Transaction", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.message_delete_money_in_failed), Toast.LENGTH_SHORT).show()
                 }
             }
             dialog.dismiss()
-            viewModel.getAllTransaction().observe(viewLifecycleOwner) { data ->
-                val listMoneyIn = modifierListMoneyIn(data as ArrayList<MoneyIn>)
-                adapterLandscape = MoneyInLandsAdapter(bounds, this)
-                adapterLandscape.setList(listMoneyIn)
-                binding.rvMoneyIn.layoutManager = LinearLayoutManager(requireContext())
-                binding.rvMoneyIn.adapter = adapterLandscape
-            }
+            showListMoneyIn()
         }
         dialog.show()
+    }
+
+    private fun goToInputMoneyInFragment(fragment: InputMoneyInFragment) {
+        val fragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.fragment_container, fragment)
+        fragmentTransaction.addToBackStack(null)
+        fragmentTransaction.commit()
     }
 }

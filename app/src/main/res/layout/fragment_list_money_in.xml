@@ -51,6 +51,7 @@
         android:padding="16dp"
         android:text="Buat Transaksi Uang Masuk"
         android:textSize="16sp"
+        android:textColor="@color/green_329832"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:layout_editor_absoluteX="16dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

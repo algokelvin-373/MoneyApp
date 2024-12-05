@@ -2,4 +2,18 @@
     <string name="app_name">MoneyApp</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_header">Uang Masuk</string>
+    <string name="title_total">Total</string>
+    <string name="title_amount">Jumlah</string>
+    <string name="empty_string"></string>
+    <string name="moneyIn_into_to">Masuk ke</string>
+    <string name="moneyIn_data_from">Terima dari</string>
+    <string name="moneyIn_time">Jam</string>
+    <string name="moneyIn_description">Keterangan</string>
+    <string name="message_delete_money_in_success">Success Delete Transaction</string>
+    <string name="message_delete_money_in_failed">Failed Delete Transaction</string>
+    <string name="message_save_money_in_success">Success Save Transaction</string>
+    <string name="message_save_money_in_failed">Failed Save Transaction</string>
+    <string name="message_update_money_in_success">Success Update Transaction</string>
+    <string name="message_update_money_in_failed">Failed Update Transaction</string>
 </resources>

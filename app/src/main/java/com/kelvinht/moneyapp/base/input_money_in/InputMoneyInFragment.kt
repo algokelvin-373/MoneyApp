@@ -1,7 +1,9 @@
+package com.kelvinht.moneyapp.base.input_money_in
 
 import android.Manifest
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -17,11 +19,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.kelvinht.moneyapp.base.input_money_in.InputMoneyInViewModel
-import com.kelvinht.moneyapp.base.input_money_in.InputMoneyInViewModelFactory
+import com.kelvinht.moneyapp.R
 import com.kelvinht.moneyapp.data.MoneyIn
 import com.kelvinht.moneyapp.databinding.DialogListTypeBinding
 import com.kelvinht.moneyapp.databinding.FragmentAddMoneyInBinding
+import com.kelvinht.moneyapp.utils.GlobalVariable
 import java.io.File
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -36,6 +38,7 @@ class InputMoneyInFragment : Fragment() {
     private lateinit var photoFile: File
     private lateinit var strNamePhoto: String
     private lateinit var typeData: String
+    private lateinit var context: Context
 
     companion object {
         const val CAMERA_REQUEST_CODE = 1001
@@ -47,6 +50,7 @@ class InputMoneyInFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        context = requireContext()
         binding = FragmentAddMoneyInBinding.inflate(inflater, container, false)
         viewModelFactory = InputMoneyInViewModelFactory(requireActivity(), "")
         viewModel = ViewModelProvider(this, viewModelFactory)[InputMoneyInViewModel::class.java]
@@ -58,13 +62,16 @@ class InputMoneyInFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         permissionCamera()
-        val moneyIn = arguments?.getParcelable<MoneyIn>("data_money_in")
+        val moneyIn = arguments?.getParcelable<MoneyIn>(GlobalVariable.MONEY_IN_BUNDLE)
         if (moneyIn != null)
             setDataMoneyInUpdate(moneyIn)
         else {
             addDataMoneyIn()
             binding.btnChangePhoto.visibility = View.GONE
             binding.btnDeletePhoto.visibility = View.GONE
+        }
+        binding.btnChangePhoto.setOnClickListener {
+            openCamera()
         }
     }
 
@@ -78,10 +85,6 @@ class InputMoneyInFragment : Fragment() {
             edtDescription.setText(moneyIn.description)
             txtType.text = typeData
             btnSave.text = "Update"
-        }
-
-        binding.btnChangePhoto.setOnClickListener {
-            openCamera()
         }
 
         val storageDir = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "money_app")
@@ -107,9 +110,9 @@ class InputMoneyInFragment : Fragment() {
 
             viewModel.update(moneyInUpdate).observe(viewLifecycleOwner) {
                 if (it != null) {
-                    Toast.makeText(requireContext(), "Success Update Transaction", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.message_update_money_in_success), Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(requireContext(), "Failed Update Transaction", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.message_update_money_in_failed), Toast.LENGTH_SHORT).show()
                 }
                 parentFragmentManager.popBackStack()
             }
@@ -121,9 +124,6 @@ class InputMoneyInFragment : Fragment() {
             showDialogChooseType()
         }
         binding.imgPhotoSend.setOnClickListener {
-            openCamera()
-        }
-        binding.btnChangePhoto.setOnClickListener {
             openCamera()
         }
         binding.btnDeletePhoto.setOnClickListener {
@@ -146,10 +146,11 @@ class InputMoneyInFragment : Fragment() {
             )
             viewModel.insert(moneyIn).observe(viewLifecycleOwner) {
                 if (it != null) {
-                    Toast.makeText(requireContext(), "Success Save Transaction", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.message_save_money_in_success), Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(requireContext(), "Failed Save Transaction", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, R.string.message_save_money_in_failed, Toast.LENGTH_SHORT).show()
                 }
+                parentFragmentManager.popBackStack()
             }
         }
     }
@@ -225,9 +226,9 @@ class InputMoneyInFragment : Fragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(requireContext(), "Izin diberikan", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission Granted", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(requireContext(), "Izin ditolak", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission Rejected", Toast.LENGTH_SHORT).show()
             }
         }
     }
