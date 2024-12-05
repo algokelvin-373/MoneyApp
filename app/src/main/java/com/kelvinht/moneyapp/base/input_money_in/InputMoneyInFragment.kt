@@ -17,13 +17,15 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.kelvinht.moneyapp.R
 import com.kelvinht.moneyapp.base.input_money_in.InputMoneyInViewModel
 import com.kelvinht.moneyapp.base.input_money_in.InputMoneyInViewModelFactory
 import com.kelvinht.moneyapp.data.MoneyIn
+import com.kelvinht.moneyapp.databinding.DialogListTypeBinding
 import com.kelvinht.moneyapp.databinding.FragmentAddMoneyInBinding
 import java.io.File
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
@@ -56,7 +58,18 @@ class InputMoneyInFragment : Fragment() {
 
         binding.txtType.setOnClickListener {
             val dialog = Dialog(requireContext())
-            dialog.setContentView(R.layout.dialog_list_type)
+            val bindingDialog = DialogListTypeBinding.inflate(LayoutInflater.from(requireContext()))
+            dialog.setContentView(bindingDialog.root)
+            bindingDialog.txtPendapatanLain.setOnClickListener {
+                typeData = "Pendapatan Lain"
+                binding.txtType.text = typeData
+                dialog.dismiss()
+            }
+            bindingDialog.txtNonPendapatan.setOnClickListener {
+                typeData = "Non Pendapatan"
+                binding.txtType.text = typeData
+                dialog.dismiss()
+            }
             dialog.show()
         }
 
@@ -66,15 +79,19 @@ class InputMoneyInFragment : Fragment() {
             openCamera()
         }
         binding.btnSave.setOnClickListener {
+            val currentDateTime = LocalDateTime.now()
+            val dateFormatted = DateTimeFormatter.ofPattern("dd MMM yyyy")
+            val timeFormatted = DateTimeFormatter.ofPattern("HH:mm:ss")
+
             val moneyIn = MoneyIn(
                 dataInto = binding.edtDataTo.text.toString(),
                 dataFrom = binding.edtDataFrom.text.toString(),
                 amount = binding.edtAmount.text.toString().toInt(),
                 description = binding.edtDescription.text.toString(),
-                type = "Pendapatan Lain",
+                type = typeData,
                 photoPath = strNamePhoto,
-                time = "13:00",
-                date = "24 Juli 2024"
+                time = currentDateTime.format(timeFormatted),
+                date = currentDateTime.format(dateFormatted)
             )
             viewModel.insert(moneyIn).observe(viewLifecycleOwner) {
                 if (it != null) {
@@ -109,7 +126,6 @@ class InputMoneyInFragment : Fragment() {
     private fun openCamera() {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (cameraIntent.resolveActivity(requireActivity().packageManager) != null) {
-            // Membuat file untuk menyimpan gambar
             val storageDir = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "money_app")
             if (!storageDir.exists()) {
                 storageDir.mkdirs()
