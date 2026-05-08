@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:huawei_account/huawei_account.dart';
 
 class AuthService {
@@ -12,14 +13,24 @@ class AuthService {
       _paramsHelper.createParams(),
     );
 
-    // 1. Cek apakah sebelumnya sudah login
-    AuthAccount? account = await authService.silentSignIn();
-    if (account != null) return account;
+    try {
+      // 1. Coba silent sign in (jika sudah pernah izin)
+      return await authService.silentSignIn();
+    } on PlatformException catch (e) {
+      // 2. Tangkap error jika pengguna BELUM memberikan izin
+      if (e.code == '2002') {
+        // ⚠️ Ini kuncinya! Tampilkan halaman login.
+        return await authService.signIn();
+      }
 
-    // 2. Tampilkan UI login (bisa throw exception jika error)
-    account = await authService.signIn();
-    // signIn() mengembalikan null saat user tekan back/cancel
-    return account;
+      // Error lain (misal 907135000 jika fingerprint salah)
+      print('Login error (${e.code}): ${e.message}');
+      return null;
+    } catch (e) {
+      // Exception di luar PlatformException
+      print('Login error: $e');
+      return null;
+    }
   }
 
   Future<void> logout() async {
