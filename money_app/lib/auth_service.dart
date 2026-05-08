@@ -1,35 +1,43 @@
+// auth_service.dart
 import 'package:flutter/services.dart';
 import 'package:huawei_account/huawei_account.dart';
+
+class LoginResult {
+  final AuthAccount? account;
+  final String method; // 'silent', 'explicit', 'cancelled', 'error'
+
+  LoginResult({this.account, required this.method});
+}
 
 class AuthService {
   final AccountAuthParamsHelper _paramsHelper = AccountAuthParamsHelper();
 
-  /// Mencoba login.
-  /// - Return [AuthAccount] jika berhasil.
-  /// - Return `null` jika pengguna **membatalkan** dialog login.
-  /// - Throw exception jika terjadi error lain (konfigurasi, jaringan, dll).
-  Future<AuthAccount?> login() async {
+  Future<LoginResult> login() async {
     final AccountAuthService authService = AccountAuthManager.getService(
       _paramsHelper.createParams(),
     );
 
     try {
-      // 1. Coba silent sign in (jika sudah pernah izin)
-      return await authService.silentSignIn();
+      // 1. Coba silent sign-in
+      final account = await authService.silentSignIn();
+      return LoginResult(account: account, method: 'silent');
     } on PlatformException catch (e) {
-      // 2. Tangkap error jika pengguna BELUM memberikan izin
       if (e.code == '2002') {
-        // ⚠️ Ini kuncinya! Tampilkan halaman login.
-        return await authService.signIn();
+        // 2. Belum pernah izin → tampilkan UI login
+        final account = await authService.signIn();
+        if (account != null) {
+          return LoginResult(account: account, method: 'explicit');
+        } else {
+          // Pengguna membatalkan dialog signIn
+          return LoginResult(account: null, method: 'cancelled');
+        }
       }
-
-      // Error lain (misal 907135000 jika fingerprint salah)
+      // Error lain (konfigurasi, jaringan, dll.)
       print('Login error (${e.code}): ${e.message}');
-      return null;
+      return LoginResult(account: null, method: 'error');
     } catch (e) {
-      // Exception di luar PlatformException
       print('Login error: $e');
-      return null;
+      return LoginResult(account: null, method: 'error');
     }
   }
 

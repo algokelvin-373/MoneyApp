@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:money_app/auth_service.dart';
+import 'auth_service.dart'; // pastikan import sesuai
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +15,6 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      // Mulai dari LoginPage
       home: const LoginPage(),
     );
   }
@@ -37,23 +36,51 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _loginWithHuawei() async {
     setState(() => _isLoading = true);
     try {
-      final account = await AuthService().login();
-      if (account != null && mounted) {
+      final result = await AuthService().login();
+
+      if (!mounted) return;
+
+      if (result.account != null) {
+        // Tampilkan snackbar singkat "Metode masuk: ..." sebelum pindah halaman
+        final methodText =
+            result.method == 'silent' ? 'Silent Sign-In' : 'Sign-In';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Metode masuk: $methodText'),
+            duration: const Duration(seconds: 1),
+          ),
+        );
+
+        // Langsung pindah ke halaman utama sambil membawa info metode login
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => MyHomePage(title: 'Dashboard Keuangan'),
+            builder:
+                (_) => MyHomePage(
+                  title: 'Dashboard Keuangan',
+                  loginMethod: result.method,
+                ),
           ),
         );
-      } else if (mounted) {
-        // account == null → pengguna sengaja membatalkan
+      } else {
+        // result.account == null → tangani sesuai penyebabnya
+        String message;
+        switch (result.method) {
+          case 'cancelled':
+            message = 'Login dibatalkan.';
+            break;
+          case 'error':
+            message = 'Terjadi kesalahan teknis. Coba lagi.';
+            break;
+          default:
+            message = 'Gagal login.';
+        }
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('Login dibatalkan.')));
+        ).showSnackBar(SnackBar(content: Text(message)));
       }
     } catch (e) {
       if (mounted) {
-        // Exception berarti ada error teknis
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Gagal login: ${e.toString()}')));
@@ -94,9 +121,10 @@ class _LoginPageState extends State<LoginPage> {
 // Halaman Utama (setelah login sukses)
 // ------------------------------------------
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
   final String title;
+  final String? loginMethod; // 'silent', 'explicit', dll.
+
+  const MyHomePage({super.key, required this.title, this.loginMethod});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -104,6 +132,25 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // Tampilkan snackbar sambutan begitu halaman pertama kali ditampilkan
+    if (widget.loginMethod != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final methodText =
+            widget.loginMethod == 'silent' ? 'Silent Sign-In' : 'Sign-In';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Selamat datang! kamu sukses masuk via $methodText'),
+            duration: const Duration(seconds: 2),
+            backgroundColor: Colors.green,
+          ),
+        );
+      });
+    }
+  }
 
   void _incrementCounter() {
     setState(() {
