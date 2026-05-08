@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'auth_service.dart'; // pastikan import sesuai
+import 'auth_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,13 +15,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const LoginPage(),
+      home: const LoginPage(), // pengecekan dilakukan di sini
     );
   }
 }
 
 // ------------------------------------------
-// Halaman Login
+// Halaman Login (dengan pengecekan otomatis)
 // ------------------------------------------
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -32,49 +32,57 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
+  bool _checkingSession = true; // sedang mengecek sesi?
+
+  @override
+  void initState() {
+    super.initState();
+    _checkExistingSession();
+  }
+
+  Future<void> _checkExistingSession() async {
+    // Coba login diam-diam
+    final account = await AuthService().silentLoginOnly();
+    if (!mounted) return;
+    if (account != null) {
+      // Sudah login → langsung masuk dashboard
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const MyHomePage(title: 'Dashboard Keuangan'),
+        ),
+      );
+    } else {
+      // Belum login → tampilkan tombol login
+      setState(() => _checkingSession = false);
+    }
+  }
 
   Future<void> _loginWithHuawei() async {
     setState(() => _isLoading = true);
     try {
       final result = await AuthService().login();
-
       if (!mounted) return;
 
       if (result.account != null) {
-        // Tampilkan snackbar singkat "Metode masuk: ..." sebelum pindah halaman
-        final methodText =
-            result.method == 'silent' ? 'Silent Sign-In' : 'Sign-In';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Metode masuk: $methodText'),
+            content: Text(
+              'Metode masuk: ${result.method == 'silent' ? 'Silent Sign-In' : 'Sign-In'}',
+            ),
             duration: const Duration(seconds: 1),
           ),
         );
-
-        // Langsung pindah ke halaman utama sambil membawa info metode login
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder:
-                (_) => MyHomePage(
-                  title: 'Dashboard Keuangan',
-                  loginMethod: result.method,
-                ),
+            builder: (_) => const MyHomePage(title: 'Dashboard Keuangan'),
           ),
         );
       } else {
-        // result.account == null → tangani sesuai penyebabnya
-        String message;
-        switch (result.method) {
-          case 'cancelled':
-            message = 'Login dibatalkan.';
-            break;
-          case 'error':
-            message = 'Terjadi kesalahan teknis. Coba lagi.';
-            break;
-          default:
-            message = 'Gagal login.';
-        }
+        String message = 'Gagal login.';
+        if (result.method == 'cancelled') message = 'Login dibatalkan.';
+        if (result.method == 'error') message = 'Terjadi kesalahan teknis.';
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(message)));
@@ -92,6 +100,11 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Saat mengecek sesi, tampilkan indikator loading
+    if (_checkingSession) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
@@ -118,13 +131,11 @@ class _LoginPageState extends State<LoginPage> {
 }
 
 // ------------------------------------------
-// Halaman Utama (setelah login sukses)
+// Halaman Utama (after login) dengan Logout
 // ------------------------------------------
 class MyHomePage extends StatefulWidget {
   final String title;
-  final String? loginMethod; // 'silent', 'explicit', dll.
-
-  const MyHomePage({super.key, required this.title, this.loginMethod});
+  const MyHomePage({super.key, required this.title});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -133,29 +144,21 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    // Tampilkan snackbar sambutan begitu halaman pertama kali ditampilkan
-    if (widget.loginMethod != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final methodText =
-            widget.loginMethod == 'silent' ? 'Silent Sign-In' : 'Sign-In';
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Selamat datang! kamu sukses masuk via $methodText'),
-            duration: const Duration(seconds: 2),
-            backgroundColor: Colors.green,
-          ),
-        );
-      });
-    }
-  }
-
   void _incrementCounter() {
     setState(() {
       _counter++;
     });
+  }
+
+  Future<void> _logout() async {
+    await AuthService().logout();
+    if (!mounted) return;
+    // Kembali ke halaman login, hapus semua history
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginPage()),
+      (route) => false,
+    );
   }
 
   @override
@@ -164,12 +167,21 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Keluar',
+            onPressed: _logout,
+          ),
+        ],
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text('Login berhasil! Counter:'),
+            const Text('Selamat datang! Anda sudah login.'),
+            const SizedBox(height: 20),
+            const Text('Counter:'),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
