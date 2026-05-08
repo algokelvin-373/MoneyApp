@@ -3,6 +3,8 @@ plugins {
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+    // Tambahkan agconnect plugin
+    id("com.huawei.agconnect")
 }
 
 android {
@@ -37,6 +39,11 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+}
+
+dependencies {
+    // Tambahkan agconnect core dependency
+    implementation("com.huawei.agconnect:agconnect-core:1.9.1.300")
 }
 
 flutter {
