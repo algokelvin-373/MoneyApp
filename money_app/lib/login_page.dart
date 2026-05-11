@@ -3,8 +3,9 @@
 // ------------------------------------------
 
 import 'package:flutter/material.dart';
+import 'package:huawei_account/huawei_account.dart';
 import 'package:money_app/auth_service.dart';
-import 'package:money_app/main.dart';
+import 'package:money_app/home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -15,7 +16,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
-  bool _checkingSession = true; // sedang mengecek sesi?
+  bool _checkingSession = true;
 
   @override
   void initState() {
@@ -24,26 +25,11 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _checkExistingSession() async {
-    // Coba login diam-diam
     final account = await AuthService().silentLoginOnly();
     if (!mounted) return;
     if (account != null) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder:
-              (_) => MyHomePage(
-                title: 'Dashboard Keuangan',
-                displayName: account.displayName,
-                avatarUri: account.avatarUri,
-                email: account.email,
-                gender: account.gender,
-                carrierId: account.carrierId, // Gunakan carrierId
-              ),
-        ),
-      );
+      _goToHome(account);
     } else {
-      // Belum login → tampilkan tombol login
       setState(() => _checkingSession = false);
     }
   }
@@ -63,40 +49,20 @@ class _LoginPageState extends State<LoginPage> {
             duration: const Duration(seconds: 1),
           ),
         );
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder:
-                (_) => MyHomePage(
-                  title: 'Dashboard Keuangan',
-                  displayName: result.account!.displayName,
-                  avatarUri: result.account!.avatarUri,
-                  email: result.account!.email,
-                  gender: result.account!.gender,
-                  carrierId: result.account!.carrierId,
-                ),
-          ),
-        );
+        _goToHome(result.account!);
       } else {
-        String message = 'Gagal login.';
-        if (result.method == 'cancelled') {
-          message =
-              result.errMessage.isNotEmpty
-                  ? 'Login dibatalkan: ${result.errMessage}'
-                  : 'Login dibatalkan.';
-        }
-        if (result.method == 'error1') {
-          message =
-              result.errMessage.isNotEmpty
-                  ? 'Terjadi kesalahan teknis 1: ${result.errMessage}'
-                  : 'Terjadi kesalahan teknis 1.';
-        }
-        if (result.method == 'error2') {
-          message =
-              result.errMessage.isNotEmpty
-                  ? 'Terjadi kesalahan teknis 2: ${result.errMessage}'
-                  : 'Terjadi kesalahan teknis 2.';
-        }
+        // Tampilkan pesan sesuai method
+        final message = switch (result.method) {
+          'cancelled' =>
+            result.errMessage.isNotEmpty
+                ? 'Login dibatalkan: ${result.errMessage}'
+                : 'Login dibatalkan.',
+          'error' =>
+            result.errMessage.isNotEmpty
+                ? 'Terjadi kesalahan teknis: ${result.errMessage}'
+                : 'Terjadi kesalahan teknis.',
+          _ => 'Gagal login.',
+        };
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(message)));
@@ -105,16 +71,32 @@ class _LoginPageState extends State<LoginPage> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Gagal login: ${e.toString()}')));
+        ).showSnackBar(SnackBar(content: Text('Gagal login: $e')));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
 
+  void _goToHome(AuthAccount account) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder:
+            (_) => MyHomePage(
+              title: 'Dashboard Keuangan',
+              displayName: account.displayName,
+              avatarUri: account.avatarUri,
+              email: account.email,
+              gender: account.gender,
+              carrierId: account.carrierId,
+            ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Saat mengecek sesi, tampilkan indikator loading
     if (_checkingSession) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
