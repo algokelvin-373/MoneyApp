@@ -53,6 +53,7 @@ class _LoginPageState extends State<LoginPage> {
               (_) => MyHomePage(
                 title: 'Dashboard Keuangan',
                 displayName: account.displayName,
+                avatarUri: account.avatarUri,
               ),
         ),
       );
@@ -83,7 +84,8 @@ class _LoginPageState extends State<LoginPage> {
             builder:
                 (_) => MyHomePage(
                   title: 'Dashboard Keuangan',
-                  displayName: result.account!.displayName,
+                  displayName: result.account!.avatarUri,
+                  avatarUri: result.account!.avatarUri, // 👈 tambahkan ini
                 ),
           ),
         );
@@ -160,22 +162,20 @@ class _LoginPageState extends State<LoginPage> {
 class MyHomePage extends StatefulWidget {
   final String title;
   final String? displayName;
+  final String? avatarUri;
 
-  const MyHomePage({super.key, required this.title, this.displayName});
+  const MyHomePage({
+    super.key,
+    required this.title,
+    this.displayName,
+    this.avatarUri,
+  });
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   Future<void> _logout() async {
     await AuthService().logout();
     if (!mounted) return;
@@ -205,24 +205,30 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            // 🖼️ Avatar
+            if (widget.avatarUri != null && widget.avatarUri!.isNotEmpty)
+              CircleAvatar(
+                radius: 40,
+                backgroundImage: NetworkImage(widget.avatarUri!),
+                onBackgroundImageError:
+                    (_, __) => const Icon(Icons.person, size: 40),
+              )
+            else
+              const CircleAvatar(
+                radius: 40,
+                child: Icon(Icons.person, size: 40),
+              ),
+            const SizedBox(height: 16),
+
+            // 👋 Sapaan
             if (widget.displayName != null)
               Text(
                 'Halo, ${widget.displayName}!',
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
             const SizedBox(height: 20),
-            const Text('Counter:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }
