@@ -16,20 +16,20 @@ class AuthService {
         ..setEmail()
         ..setCarrierId();
 
-  /// Pengecekan diam-diam – TIDAK akan menampilkan UI login.
+  /// Cek login diam‑diam – TANPA menampilkan UI.
   Future<AuthAccount?> silentLoginOnly() async {
     final AccountAuthService authService = AccountAuthManager.getService(
       _paramsHelper.createParams(),
     );
     try {
       return await authService.silentSignIn();
-    } catch (e) {
-      // Jika belum ada izin (2002) atau error lain, kembalikan null saja.
+    } catch (_) {
+      // Gagal diam‑diam → tidak perlu tindakan khusus
       return null;
     }
   }
 
-  /// Login penuh – coba silent dulu, lalu fallback ke UI (signIn).
+  /// Login penuh – silent lalu fallback ke explicit (UI) jika perlu.
   Future<LoginResult> login() async {
     final AccountAuthService authService = AccountAuthManager.getService(
       _paramsHelper.createParams(),
@@ -38,7 +38,8 @@ class AuthService {
     try {
       final account = await authService.silentSignIn();
       return LoginResult(account: account, method: 'silent');
-    } on PlatformException catch (e) {
+    } on PlatformException catch (_) {
+      // Silent gagal → hapus sesi lama, lalu tampilkan UI izin baru
       await authService.signOut();
       try {
         final account = await authService.signIn();
@@ -47,14 +48,15 @@ class AuthService {
         } else {
           return LoginResult(account: null, method: 'cancelled');
         }
-      } catch (signInError) {
+      } catch (e) {
         return LoginResult(
           account: null,
           method: 'error',
-          errMessage: signInError.toString(),
+          errMessage: e.toString(),
         );
       }
     } catch (e) {
+      // Exception non‑Platform
       return LoginResult(
         account: null,
         method: 'error',
@@ -69,6 +71,6 @@ class AuthService {
         _paramsHelper.createParams(),
       );
       await authService.signOut();
-    } catch (e) {}
+    } catch (_) {}
   }
 }
