@@ -54,6 +54,9 @@ class _LoginPageState extends State<LoginPage> {
                 title: 'Dashboard Keuangan',
                 displayName: account.displayName,
                 avatarUri: account.avatarUri,
+                email: account.email,
+                gender: account.gender,
+                unionId: account.unionId,
               ),
         ),
       );
@@ -84,8 +87,11 @@ class _LoginPageState extends State<LoginPage> {
             builder:
                 (_) => MyHomePage(
                   title: 'Dashboard Keuangan',
-                  displayName: result.account!.avatarUri,
-                  avatarUri: result.account!.avatarUri, // 👈 tambahkan ini
+                  displayName: result.account!.displayName,
+                  avatarUri: result.account!.avatarUri,
+                  email: result.account!.email,
+                  gender: result.account!.gender,
+                  unionId: result.account!.unionId,
                 ),
           ),
         );
@@ -163,12 +169,18 @@ class MyHomePage extends StatefulWidget {
   final String title;
   final String? displayName;
   final String? avatarUri;
+  final String? email;
+  final int? gender;
+  final String? unionId;
 
   const MyHomePage({
     super.key,
     required this.title,
     this.displayName,
     this.avatarUri,
+    this.email,
+    this.gender,
+    this.unionId,
   });
 
   @override
@@ -187,6 +199,25 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  Widget _buildInfoRow(String label, String? value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(
+              '$label:',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          Expanded(child: Text(value ?? 'Tidak tersedia')),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -202,32 +233,57 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            // 🖼️ Avatar
-            if (widget.avatarUri != null && widget.avatarUri!.isNotEmpty)
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Foto profil
               CircleAvatar(
-                radius: 40,
-                backgroundImage: NetworkImage(widget.avatarUri!),
-                onBackgroundImageError:
-                    (_, __) => const Icon(Icons.person, size: 40),
-              )
-            else
-              const CircleAvatar(
-                radius: 40,
-                child: Icon(Icons.person, size: 40),
+                radius: 50,
+                backgroundImage:
+                    widget.avatarUri != null && widget.avatarUri!.isNotEmpty
+                        ? NetworkImage(widget.avatarUri!)
+                        : null,
+                child:
+                    (widget.avatarUri == null || widget.avatarUri!.isEmpty)
+                        ? const Icon(Icons.person, size: 50)
+                        : null,
               ),
-            const SizedBox(height: 16),
+              const SizedBox(height: 20),
 
-            // 👋 Sapaan
-            if (widget.displayName != null)
-              Text(
-                'Halo, ${widget.displayName}!',
-                style: Theme.of(context).textTheme.headlineSmall,
+              // Nama
+              if (widget.displayName != null)
+                Text(
+                  'Halo, ${widget.displayName}!',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+
+              const SizedBox(height: 16),
+
+              // Kartu data
+              Card(
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildInfoRow('Nama', widget.displayName),
+                      _buildInfoRow('Email', widget.email),
+                      _buildInfoRow(
+                        'Jenis Kelamin',
+                        widget.gender != null
+                            ? (widget.gender == 1 ? 'Perempuan' : 'Laki-laki')
+                            : 'Tidak tersedia',
+                      ),
+                      _buildInfoRow('Union ID', widget.unionId),
+                    ],
+                  ),
+                ),
               ),
-            const SizedBox(height: 20),
-          ],
+            ],
+          ),
         ),
       ),
     );
