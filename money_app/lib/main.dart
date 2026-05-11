@@ -49,7 +49,11 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => const MyHomePage(title: 'Dashboard Keuangan'),
+          builder:
+              (_) => MyHomePage(
+                title: 'Dashboard Keuangan',
+                displayName: account.displayName,
+              ),
         ),
       );
     } else {
@@ -76,13 +80,33 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => const MyHomePage(title: 'Dashboard Keuangan'),
+            builder:
+                (_) => MyHomePage(
+                  title: 'Dashboard Keuangan',
+                  displayName: result.account!.displayName,
+                ),
           ),
         );
       } else {
         String message = 'Gagal login.';
-        if (result.method == 'cancelled') message = 'Login dibatalkan.';
-        if (result.method == 'error') message = 'Terjadi kesalahan teknis.';
+        if (result.method == 'cancelled') {
+          message =
+              result.errMessage.isNotEmpty
+                  ? 'Login dibatalkan: ${result.errMessage}'
+                  : 'Login dibatalkan.';
+        }
+        if (result.method == 'error1') {
+          message =
+              result.errMessage.isNotEmpty
+                  ? 'Terjadi kesalahan teknis 1: ${result.errMessage}'
+                  : 'Terjadi kesalahan teknis 1.';
+        }
+        if (result.method == 'error2') {
+          message =
+              result.errMessage.isNotEmpty
+                  ? 'Terjadi kesalahan teknis 2: ${result.errMessage}'
+                  : 'Terjadi kesalahan teknis 2.';
+        }
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(message)));
@@ -135,7 +159,9 @@ class _LoginPageState extends State<LoginPage> {
 // ------------------------------------------
 class MyHomePage extends StatefulWidget {
   final String title;
-  const MyHomePage({super.key, required this.title});
+  final String? displayName;
+
+  const MyHomePage({super.key, required this.title, this.displayName});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -179,7 +205,11 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text('Selamat datang! Anda sudah login.'),
+            if (widget.displayName != null)
+              Text(
+                'Halo, ${widget.displayName}!',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
             const SizedBox(height: 20),
             const Text('Counter:'),
             Text(
