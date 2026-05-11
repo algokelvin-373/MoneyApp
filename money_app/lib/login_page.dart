@@ -8,7 +8,9 @@ import 'package:money_app/auth_service.dart';
 import 'package:money_app/home_page.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final bool afterLogout; // <-- tambahkan
+
+  const LoginPage({super.key, this.afterLogout = false});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -25,6 +27,12 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _checkExistingSession() async {
+    // Jika habis logout, langsung tampilkan tombol login
+    if (widget.afterLogout) {
+      setState(() => _checkingSession = false);
+      return;
+    }
+
     final account = await AuthService().silentLoginOnly();
     if (!mounted) return;
     if (account != null) {

@@ -34,7 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!mounted) return;
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (_) => const LoginPage()),
+      MaterialPageRoute(builder: (_) => const LoginPage(afterLogout: true)),
       (route) => false,
     );
   }
@@ -67,13 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Keluar',
-            onPressed: _logout,
-          ),
-        ],
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -116,6 +109,19 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       _infoRow('Carrier ID', widget.carrierId?.toString()),
                     ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              // Tombol Logout
+              ElevatedButton.icon(
+                onPressed: _logout,
+                icon: const Icon(Icons.logout),
+                label: const Text('Keluar'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
                   ),
                 ),
               ),
