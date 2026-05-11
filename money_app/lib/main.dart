@@ -45,7 +45,6 @@ class _LoginPageState extends State<LoginPage> {
     final account = await AuthService().silentLoginOnly();
     if (!mounted) return;
     if (account != null) {
-      // Sudah login → langsung masuk dashboard
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -56,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
                 avatarUri: account.avatarUri,
                 email: account.email,
                 gender: account.gender,
-                unionId: account.unionId,
+                carrierId: account.carrierId, // Gunakan carrierId
               ),
         ),
       );
@@ -91,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                   avatarUri: result.account!.avatarUri,
                   email: result.account!.email,
                   gender: result.account!.gender,
-                  unionId: result.account!.unionId,
+                  carrierId: result.account!.carrierId,
                 ),
           ),
         );
@@ -171,7 +170,7 @@ class MyHomePage extends StatefulWidget {
   final String? avatarUri;
   final String? email;
   final int? gender;
-  final String? unionId;
+  final int? carrierId; // Ganti mobile dengan carrierId
 
   const MyHomePage({
     super.key,
@@ -180,7 +179,7 @@ class MyHomePage extends StatefulWidget {
     this.avatarUri,
     this.email,
     this.gender,
-    this.unionId,
+    this.carrierId,
   });
 
   @override
@@ -277,7 +276,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ? (widget.gender == 1 ? 'Perempuan' : 'Laki-laki')
                             : 'Tidak tersedia',
                       ),
-                      _buildInfoRow('Union ID', widget.unionId),
+                      _buildInfoRow('Carrier ID', widget.carrierId?.toString()),
                     ],
                   ),
                 ),

@@ -11,7 +11,10 @@ class LoginResult {
 
 class AuthService {
   final AccountAuthParamsHelper _paramsHelper =
-      AccountAuthParamsHelper()..setProfile();
+      AccountAuthParamsHelper()
+        ..setProfile()
+        ..setEmail()
+        ..setCarrierId();
 
   /// Pengecekan diam-diam – TIDAK akan menampilkan UI login.
   Future<AuthAccount?> silentLoginOnly() async {
