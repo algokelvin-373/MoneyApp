@@ -5,6 +5,10 @@
 import 'package:flutter/material.dart';
 import 'package:money_app/auth_service.dart';
 import 'package:money_app/login_page.dart';
+import 'package:money_app/work_manager/floating_window_service.dart';
+import 'package:money_app/work_manager/permission_service.dart';
+import 'package:money_app/work_manager/schedule_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyHomePage extends StatefulWidget {
   final String title;
@@ -29,6 +33,58 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool _isCheckingPending = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSchedule();
+    _checkPendingFloating();
+  }
+
+  void _loadSchedule() async {
+    await fetchAndSchedule();
+  }
+
+  Future<void> _checkPendingFloating() async {
+    if (_isCheckingPending) return;
+
+    _isCheckingPending = true;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool pending = prefs.getBool('pending_floating') ?? false;
+    if (pending) {
+      await prefs.setBool('pending_floating', false);
+      String imageUrl = prefs.getString('floating_image_url') ?? '';
+      String message = prefs.getString('floating_message') ?? '';
+
+      // Cek mounted sebelum request permission (karena async)
+      if (!mounted) {
+        _isCheckingPending = false;
+        return;
+      }
+
+      bool hasPermission = await PermissionService.requestOverlayPermission();
+      if (!mounted) {
+        _isCheckingPending = false;
+        return;
+      }
+
+      if (hasPermission) {
+        FloatingWindowService.showFloatingUI(context, message, imageUrl);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Izin overlay diperlukan untuk menampilkan floating UI',
+            ),
+          ),
+        );
+      }
+    }
+    _isCheckingPending = false;
+  }
+
   Future<void> _logout() async {
     await AuthService().logout();
     if (!mounted) return;
@@ -124,6 +180,22 @@ class _MyHomePageState extends State<MyHomePage> {
                     vertical: 12,
                   ),
                 ),
+              ),
+              const SizedBox(height: 24),
+              // Di bagian Column setelah tombol logout
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () async {
+                  await testScheduleNow();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Test jadwal dalam 5 detik, tutup aplikasi lalu tunggu notifikasi',
+                      ),
+                    ),
+                  );
+                },
+                child: Text('Test Floating UI (5 detik)'),
               ),
             ],
           ),

@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:money_app/login_page.dart';
+import 'package:workmanager/workmanager.dart';
+import 'package:money_app/work_manager/schedule_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Inisialisasi WorkManager dengan callbackDispatcher
+  await Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+
   runApp(const MyApp());
 }
 
