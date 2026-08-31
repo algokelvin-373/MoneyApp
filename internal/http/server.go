@@ -129,7 +129,7 @@ func (s *Server) listTransactions(w http.ResponseWriter, r *http.Request, user a
 		Offset:  parseInt(r.URL.Query().Get("offset"), 0),
 	}
 	filter.StartDate = parseDatePtr(r.URL.Query().Get("start_date"))
-	filter.EndDate = parseDatePtr(r.URL.Query().Get("end_date"))
+	filter.EndDate = parseEndDatePtr(r.URL.Query().Get("end_date"))
 	items, err := s.txs.List(filter)
 	if err != nil {
 		WriteError(w, err)
@@ -187,7 +187,7 @@ func (s *Server) deleteTransaction(w http.ResponseWriter, r *http.Request, user 
 }
 
 func (s *Server) dashboardSummary(w http.ResponseWriter, r *http.Request, user auth.User) {
-	result, err := s.dashboard.Summary(user.ID, parseDatePtr(r.URL.Query().Get("start_date")), parseDatePtr(r.URL.Query().Get("end_date")))
+	result, err := s.dashboard.Summary(user.ID, parseDatePtr(r.URL.Query().Get("start_date")), parseEndDatePtr(r.URL.Query().Get("end_date")))
 	if err != nil {
 		WriteError(w, err)
 		return
@@ -196,7 +196,7 @@ func (s *Server) dashboardSummary(w http.ResponseWriter, r *http.Request, user a
 }
 
 func (s *Server) spendingInsight(w http.ResponseWriter, r *http.Request, user auth.User) {
-	result, err := s.insights.Spending(user.ID, parseDatePtr(r.URL.Query().Get("start_date")), parseDatePtr(r.URL.Query().Get("end_date")))
+	result, err := s.insights.Spending(user.ID, parseDatePtr(r.URL.Query().Get("start_date")), parseEndDatePtr(r.URL.Query().Get("end_date")))
 	if err != nil {
 		WriteError(w, err)
 		return
@@ -225,6 +225,15 @@ func parseDatePtr(value string) *time.Time {
 		return nil
 	}
 	return &parsed
+}
+
+func parseEndDatePtr(value string) *time.Time {
+	parsed := parseDatePtr(value)
+	if parsed == nil {
+		return nil
+	}
+	endOfDay := parsed.Add(24*time.Hour - time.Nanosecond)
+	return &endOfDay
 }
 
 func parseInt(value string, fallback int) int {

@@ -114,7 +114,7 @@ func (s *Service) Create(input CreateInput) (Transaction, error) {
 		}
 		now := s.clock.Now()
 		created, err = s.transactions.Create(Transaction{
-			ID:                shared.ID("trx-" + now.Format("20060102150405.000000000")),
+			ID:                shared.NewID("trx"),
 			UserID:            input.UserID,
 			AccountID:         acc.ID,
 			AccountCode:       acc.Code,
