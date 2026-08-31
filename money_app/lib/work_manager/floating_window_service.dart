@@ -1,8 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 
 class FloatingWindowService {
   static OverlayEntry? _overlayEntry;
   static OverlayState? _overlayState;
+
+  /// Meminta izin overlay dari pengguna
+  static Future<bool> requestOverlayPermission() async {
+    final bool? status = await FlutterOverlayWindow.requestPermission();
+    // Konversi null menjadi false
+    return status ?? false;
+  }
+
+  /// Mengecek apakah izin sudah diberikan
+  static Future<bool> isPermitted() async {
+    final bool? status = await FlutterOverlayWindow.isPermissionGranted();
+    return status ?? false;
+  }
+
+  /// Menampilkan floating UI dari background atau foreground
+  static Future<void> showOverlay() async {
+    await FlutterOverlayWindow.showOverlay(
+      height: 350,
+      width: 300,
+      enableDrag: true,
+      positionGravity: PositionGravity.auto,
+      overlayTitle: "Money App",
+      overlayContent: "Floating UI aktif",
+    );
+  }
+
+  /// Menutup floating UI
+  static Future<void> hideOverlay() async {
+    await FlutterOverlayWindow.closeOverlay();
+  }
 
   static void showFloatingUI(
     BuildContext context,

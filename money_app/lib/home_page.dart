@@ -40,6 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _loadSchedule();
     _checkPendingFloating();
+    _requestOverlayPermission();
   }
 
   void _loadSchedule() async {
@@ -83,6 +84,18 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     }
     _isCheckingPending = false;
+  }
+
+  Future<void> _requestOverlayPermission() async {
+    final hasPermission =
+        await FloatingWindowService.requestOverlayPermission();
+    if (!hasPermission && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Izin overlay diperlukan untuk notifikasi pop-up.'),
+        ),
+      );
+    }
   }
 
   Future<void> _logout() async {

@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:money_app/work_manager/floating_window_service.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -20,34 +21,10 @@ void callbackDispatcher() {
 }
 
 Future<void> _showFloatingFromSchedule() async {
-  print("Waktu jadwal terpenuhi, aktifkan notifikasi");
+  print("Waktu jadwal terpenuhi, menampilkan floating UI...");
 
-  // Inisialisasi plugin notifikasi
-  const AndroidInitializationSettings androidSettings =
-      AndroidInitializationSettings('@mipmap/ic_launcher');
-  const InitializationSettings initSettings = InitializationSettings(
-    android: androidSettings,
-  );
-  await flutterLocalNotifications.initialize(initSettings);
-
-  const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-    'floating_channel',
-    'Floating Notification',
-    importance: Importance.high,
-    priority: Priority.high,
-  );
-  const NotificationDetails details = NotificationDetails(
-    android: androidDetails,
-  );
-  await flutterLocalNotifications.show(
-    0,
-    'Pengingat',
-    'Klik untuk menampilkan floating UI',
-    details,
-  );
-
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.setBool('pending_floating', true);
+  // Panggil MethodChannel untuk tampilkan overlay
+  await FloatingWindowService.showOverlay();
 }
 
 // Fungsi untuk mengambil jadwal dari API dan mendaftarkan ke WorkManager
