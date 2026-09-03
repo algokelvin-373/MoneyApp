@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.kelvinht.moneyapp.MainActivity
 import com.kelvinht.moneyapp.R
 import com.kelvinht.moneyapp.databinding.FragmentHomeBinding
 import com.kelvinht.moneyapp.databinding.ItemHomeTransactionBinding
@@ -30,6 +31,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, HomeViewModelFactory())[HomeViewModel::class.java]
         render(viewModel.loadHome())
+        setupNavigation()
     }
 
     override fun onDestroyView() {
@@ -114,5 +116,11 @@ class HomeFragment : Fragment() {
 
     private fun color(resId: Int): Int {
         return ContextCompat.getColor(requireContext(), resId)
+    }
+
+    private fun setupNavigation() {
+        binding.navWallets.root.setOnClickListener { (activity as? MainActivity)?.openWallets() }
+        binding.navHistory.root.setOnClickListener { (activity as? MainActivity)?.openHistory() }
+        binding.navReports.root.setOnClickListener { (activity as? MainActivity)?.openReports() }
     }
 }

@@ -218,6 +218,7 @@
         android:paddingEnd="24dp">
 
         <LinearLayout
+            android:id="@+id/nav_home"
             android:layout_width="0dp"
             android:layout_height="64dp"
             android:layout_weight="1"
@@ -240,8 +241,16 @@
                 android:textSize="15sp" />
         </LinearLayout>
 
-        <include layout="@layout/item_home_nav_wallet" />
-        <include layout="@layout/item_home_nav_history" />
-        <include layout="@layout/item_home_nav_reports" />
+        <include
+            android:id="@+id/nav_wallets"
+            layout="@layout/item_home_nav_wallet" />
+
+        <include
+            android:id="@+id/nav_history"
+            layout="@layout/item_home_nav_history" />
+
+        <include
+            android:id="@+id/nav_reports"
+            layout="@layout/item_home_nav_reports" />
     </LinearLayout>
 </LinearLayout>

@@ -24,4 +24,14 @@
     <color name="home_icon_red_bg">#FFD8D6</color>
     <color name="home_icon_blue_bg">#D8E0FF</color>
     <color name="home_icon_green_bg">#7CEBAF</color>
+    <color name="wallet_cash_bg">#78E9AE</color>
+    <color name="wallet_ovo_bg">#E4D9F6</color>
+    <color name="wallet_gopay_bg">#D9F7FF</color>
+    <color name="wallet_ovo">#6B3FB2</color>
+    <color name="wallet_cyan">#00BBD8</color>
+    <color name="field_border">#C4C8D8</color>
+    <color name="keypad_bg">#EAEFFF</color>
+    <color name="report_purple">#5C49B4</color>
+    <color name="report_track">#E7ECFF</color>
+    <color name="report_tip_icon">#3E7CE5</color>
 </resources>
