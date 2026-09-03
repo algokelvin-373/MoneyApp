@@ -2,8 +2,8 @@ package com.kelvinht.moneyapp
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.kelvinht.moneyapp.base.list_money_in.ListMoneyInFragment
 import com.kelvinht.moneyapp.databinding.ActivityMainBinding
+import com.kelvinht.moneyapp.feature.home.presentation.HomeFragment
 
 
 class MainActivity : AppCompatActivity() {
@@ -14,10 +14,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(binding.fragmentContainer.id, ListMoneyInFragment())
+                .replace(binding.fragmentContainer.id, HomeFragment())
                 .commit()
         }
     }

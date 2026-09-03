@@ -9,4 +9,19 @@
     <color name="red_ff1100">#ff1100</color>
     <color name="blue_0072c8">#0072c8</color>
     <color name="blue_8fcaff">#8fcaff</color>
+    <color name="home_background">#FAF8FF</color>
+    <color name="home_primary">#0648B8</color>
+    <color name="home_primary_dark">#073F9F</color>
+    <color name="home_primary_light">#3567BC</color>
+    <color name="home_text">#071B46</color>
+    <color name="home_muted">#4B4E60</color>
+    <color name="home_card_light">#E9EEFF</color>
+    <color name="home_card_green">#80EFB4</color>
+    <color name="home_green">#087A57</color>
+    <color name="home_red">#D1131B</color>
+    <color name="home_nav_bg">#E8EEFF</color>
+    <color name="home_chip_border">#4E7DD4</color>
+    <color name="home_icon_red_bg">#FFD8D6</color>
+    <color name="home_icon_blue_bg">#D8E0FF</color>
+    <color name="home_icon_green_bg">#7CEBAF</color>
 </resources>
