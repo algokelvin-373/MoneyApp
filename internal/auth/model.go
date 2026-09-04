@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"strings"
 	"time"
 
@@ -18,9 +19,9 @@ type User struct {
 }
 
 type Repository interface {
-	Create(user User) (User, error)
-	FindByEmail(email string) (User, error)
-	FindByID(id shared.ID) (User, error)
+	Create(ctx context.Context, user User) (User, error)
+	FindByEmail(ctx context.Context, email string) (User, error)
+	FindByID(ctx context.Context, id shared.ID) (User, error)
 }
 
 type PasswordHasher interface {
@@ -61,7 +62,7 @@ type AuthResult struct {
 	AccessToken string `json:"access_token"`
 }
 
-func (s *Service) Register(input RegisterInput) (AuthResult, error) {
+func (s *Service) Register(ctx context.Context, input RegisterInput) (AuthResult, error) {
 	input.Email = strings.TrimSpace(strings.ToLower(input.Email))
 	input.Name = strings.TrimSpace(input.Name)
 	if input.Name == "" || input.Email == "" || len(input.Password) < 8 {
@@ -74,7 +75,7 @@ func (s *Service) Register(input RegisterInput) (AuthResult, error) {
 	}
 
 	now := s.clock.Now()
-	user, err := s.users.Create(User{
+	user, err := s.users.Create(ctx, User{
 		ID:           shared.ID("user-" + now.Format("20060102150405.000000000")),
 		Name:         input.Name,
 		Email:        input.Email,
@@ -85,7 +86,7 @@ func (s *Service) Register(input RegisterInput) (AuthResult, error) {
 	if err != nil {
 		return AuthResult{}, err
 	}
-	if err := s.accounts.CreateDefaultAccounts(user.ID); err != nil {
+	if err := s.accounts.CreateDefaultAccounts(ctx, user.ID); err != nil {
 		return AuthResult{}, err
 	}
 
@@ -96,9 +97,9 @@ func (s *Service) Register(input RegisterInput) (AuthResult, error) {
 	return AuthResult{User: user, AccessToken: token}, nil
 }
 
-func (s *Service) Login(input LoginInput) (AuthResult, error) {
+func (s *Service) Login(ctx context.Context, input LoginInput) (AuthResult, error) {
 	email := strings.TrimSpace(strings.ToLower(input.Email))
-	user, err := s.users.FindByEmail(email)
+	user, err := s.users.FindByEmail(ctx, email)
 	if err != nil || !s.hasher.Compare(user.PasswordHash, input.Password) {
 		return AuthResult{}, shared.ErrUnauthorized
 	}
@@ -110,10 +111,10 @@ func (s *Service) Login(input LoginInput) (AuthResult, error) {
 	return AuthResult{User: user, AccessToken: token}, nil
 }
 
-func (s *Service) Authenticate(token string) (User, error) {
+func (s *Service) Authenticate(ctx context.Context, token string) (User, error) {
 	userID, err := s.tokens.Parse(token)
 	if err != nil {
 		return User{}, shared.ErrUnauthorized
 	}
-	return s.users.FindByID(userID)
+	return s.users.FindByID(ctx, userID)
 }

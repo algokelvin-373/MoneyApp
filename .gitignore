@@ -8,3 +8,5 @@
 # Local secrets and workspace-only artifacts
 API Key*.txt
 .dump/
+.env
+postgres-data/

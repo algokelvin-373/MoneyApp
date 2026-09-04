@@ -1,6 +1,7 @@
 package transaction
 
 import (
+	"context"
 	"strings"
 	"time"
 
@@ -45,16 +46,16 @@ type Filter struct {
 }
 
 type Repository interface {
-	Create(tx Transaction) (Transaction, error)
-	Update(tx Transaction) (Transaction, error)
-	FindByIDForUser(id, userID shared.ID) (Transaction, error)
-	FindByIdempotencyKey(userID shared.ID, key string) (Transaction, error)
-	List(filter Filter) ([]Transaction, error)
-	SoftDelete(id, userID shared.ID, deletedAt time.Time) error
+	Create(ctx context.Context, tx Transaction) (Transaction, error)
+	Update(ctx context.Context, tx Transaction) (Transaction, error)
+	FindByIDForUser(ctx context.Context, id, userID shared.ID) (Transaction, error)
+	FindByIdempotencyKey(ctx context.Context, userID shared.ID, key string) (Transaction, error)
+	List(ctx context.Context, filter Filter) ([]Transaction, error)
+	SoftDelete(ctx context.Context, id, userID shared.ID, deletedAt time.Time) error
 }
 
 type UnitOfWork interface {
-	Do(fn func() error) error
+	Do(ctx context.Context, fn func(context.Context) error) error
 }
 
 type Service struct {
@@ -91,17 +92,17 @@ type UpdateInput struct {
 	Note            string    `json:"note"`
 }
 
-func (s *Service) Create(input CreateInput) (Transaction, error) {
+func (s *Service) Create(ctx context.Context, input CreateInput) (Transaction, error) {
 	if input.IdempotencyKey != "" {
-		existing, err := s.transactions.FindByIdempotencyKey(input.UserID, input.IdempotencyKey)
+		existing, err := s.transactions.FindByIdempotencyKey(ctx, input.UserID, input.IdempotencyKey)
 		if err == nil {
 			return existing, nil
 		}
 	}
 
 	var created Transaction
-	err := s.uow.Do(func() error {
-		acc, code, err := s.validate(input.UserID, input.AccountID, input.Code, input.Type, input.Amount, input.TransactionDate)
+	err := s.uow.Do(ctx, func(txCtx context.Context) error {
+		acc, code, err := s.validate(txCtx, input.UserID, input.AccountID, input.Code, input.Type, input.Amount, input.TransactionDate)
 		if err != nil {
 			return err
 		}
@@ -109,11 +110,11 @@ func (s *Service) Create(input CreateInput) (Transaction, error) {
 		if input.Type == TypeCredit && acc.Balance+delta < 0 {
 			return shared.ErrInsufficientBalance
 		}
-		if _, err := s.accounts.AdjustBalance(acc.ID, input.UserID, delta); err != nil {
+		if _, err := s.accounts.AdjustBalance(txCtx, acc.ID, input.UserID, delta); err != nil {
 			return err
 		}
 		now := s.clock.Now()
-		created, err = s.transactions.Create(Transaction{
+		created, err = s.transactions.Create(txCtx, Transaction{
 			ID:                shared.NewID("trx"),
 			UserID:            input.UserID,
 			AccountID:         acc.ID,
@@ -133,18 +134,18 @@ func (s *Service) Create(input CreateInput) (Transaction, error) {
 	return created, err
 }
 
-func (s *Service) Update(input UpdateInput) (Transaction, error) {
+func (s *Service) Update(ctx context.Context, input UpdateInput) (Transaction, error) {
 	var updated Transaction
-	err := s.uow.Do(func() error {
-		oldTx, err := s.transactions.FindByIDForUser(input.ID, input.UserID)
+	err := s.uow.Do(ctx, func(txCtx context.Context) error {
+		oldTx, err := s.transactions.FindByIDForUser(txCtx, input.ID, input.UserID)
 		if err != nil {
 			return err
 		}
-		newAcc, code, err := s.validate(input.UserID, input.AccountID, input.Code, input.Type, input.Amount, input.TransactionDate)
+		newAcc, code, err := s.validate(txCtx, input.UserID, input.AccountID, input.Code, input.Type, input.Amount, input.TransactionDate)
 		if err != nil {
 			return err
 		}
-		oldAcc, err := s.accounts.FindByIDForUser(oldTx.AccountID, input.UserID)
+		oldAcc, err := s.accounts.FindByIDForUser(txCtx, oldTx.AccountID, input.UserID)
 		if err != nil {
 			return err
 		}
@@ -156,10 +157,10 @@ func (s *Service) Update(input UpdateInput) (Transaction, error) {
 		if input.Type == TypeCredit && availableNewBalance+delta < 0 {
 			return shared.ErrInsufficientBalance
 		}
-		if _, err := s.accounts.AdjustBalance(oldAcc.ID, input.UserID, -balanceDelta(oldTx.Type, oldTx.Amount)); err != nil {
+		if _, err := s.accounts.AdjustBalance(txCtx, oldAcc.ID, input.UserID, -balanceDelta(oldTx.Type, oldTx.Amount)); err != nil {
 			return err
 		}
-		if _, err := s.accounts.AdjustBalance(newAcc.ID, input.UserID, delta); err != nil {
+		if _, err := s.accounts.AdjustBalance(txCtx, newAcc.ID, input.UserID, delta); err != nil {
 			return err
 		}
 		oldTx.AccountID = newAcc.ID
@@ -171,48 +172,48 @@ func (s *Service) Update(input UpdateInput) (Transaction, error) {
 		oldTx.TransactionDate = input.TransactionDate
 		oldTx.Note = strings.TrimSpace(input.Note)
 		oldTx.UpdatedAt = s.clock.Now()
-		updated, err = s.transactions.Update(oldTx)
+		updated, err = s.transactions.Update(txCtx, oldTx)
 		return err
 	})
 	return updated, err
 }
 
-func (s *Service) Delete(id, userID shared.ID) error {
-	return s.uow.Do(func() error {
-		tx, err := s.transactions.FindByIDForUser(id, userID)
+func (s *Service) Delete(ctx context.Context, id, userID shared.ID) error {
+	return s.uow.Do(ctx, func(txCtx context.Context) error {
+		tx, err := s.transactions.FindByIDForUser(txCtx, id, userID)
 		if err != nil {
 			return err
 		}
-		if _, err := s.accounts.AdjustBalance(tx.AccountID, userID, -balanceDelta(tx.Type, tx.Amount)); err != nil {
+		if _, err := s.accounts.AdjustBalance(txCtx, tx.AccountID, userID, -balanceDelta(tx.Type, tx.Amount)); err != nil {
 			return err
 		}
-		return s.transactions.SoftDelete(id, userID, s.clock.Now())
+		return s.transactions.SoftDelete(txCtx, id, userID, s.clock.Now())
 	})
 }
 
-func (s *Service) List(filter Filter) ([]Transaction, error) {
+func (s *Service) List(ctx context.Context, filter Filter) ([]Transaction, error) {
 	if filter.Limit <= 0 || filter.Limit > 100 {
 		filter.Limit = 50
 	}
-	return s.transactions.List(filter)
+	return s.transactions.List(ctx, filter)
 }
 
-func (s *Service) Get(id, userID shared.ID) (Transaction, error) {
-	return s.transactions.FindByIDForUser(id, userID)
+func (s *Service) Get(ctx context.Context, id, userID shared.ID) (Transaction, error) {
+	return s.transactions.FindByIDForUser(ctx, id, userID)
 }
 
-func (s *Service) validate(userID, accountID shared.ID, codeValue string, txType Type, amount int64, txDate time.Time) (account.Account, transactioncode.TransactionCode, error) {
+func (s *Service) validate(ctx context.Context, userID, accountID shared.ID, codeValue string, txType Type, amount int64, txDate time.Time) (account.Account, transactioncode.TransactionCode, error) {
 	if amount <= 0 || accountID == "" || codeValue == "" || txDate.IsZero() || (txType != TypeDebit && txType != TypeCredit) {
 		return account.Account{}, transactioncode.TransactionCode{}, shared.ErrValidation
 	}
-	acc, err := s.accounts.FindByIDForUser(accountID, userID)
+	acc, err := s.accounts.FindByIDForUser(ctx, accountID, userID)
 	if err != nil {
 		return account.Account{}, transactioncode.TransactionCode{}, err
 	}
 	if !acc.IsActive {
 		return account.Account{}, transactioncode.TransactionCode{}, shared.ErrValidation
 	}
-	code, err := s.codes.FindByCode(codeValue)
+	code, err := s.codes.FindByCode(ctx, codeValue)
 	if err != nil {
 		return account.Account{}, transactioncode.TransactionCode{}, err
 	}

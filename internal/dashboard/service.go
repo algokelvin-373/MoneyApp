@@ -1,6 +1,7 @@
 package dashboard
 
 import (
+	"context"
 	"time"
 
 	"moneyapp/internal/account"
@@ -26,8 +27,8 @@ func NewService(accounts account.Repository, transactions transaction.Repository
 	return &Service{accounts: accounts, transactions: transactions}
 }
 
-func (s *Service) Summary(userID shared.ID, startDate, endDate *time.Time) (Summary, error) {
-	accounts, err := s.accounts.ListByUser(userID)
+func (s *Service) Summary(ctx context.Context, userID shared.ID, startDate, endDate *time.Time) (Summary, error) {
+	accounts, err := s.accounts.ListByUser(ctx, userID)
 	if err != nil {
 		return Summary{}, err
 	}
@@ -37,7 +38,7 @@ func (s *Service) Summary(userID shared.ID, startDate, endDate *time.Time) (Summ
 			result.TotalBalance += acc.Balance
 		}
 	}
-	txs, err := s.transactions.List(transaction.Filter{UserID: userID, StartDate: startDate, EndDate: endDate, Limit: 100})
+	txs, err := s.transactions.List(ctx, transaction.Filter{UserID: userID, StartDate: startDate, EndDate: endDate, Limit: 100})
 	if err != nil {
 		return Summary{}, err
 	}

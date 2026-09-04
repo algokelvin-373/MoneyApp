@@ -9,7 +9,7 @@ This repository contains:
 
 ## Backend
 
-Run:
+Run with the in-memory adapter:
 
 ```bash
 go run ./cmd/api
@@ -19,6 +19,30 @@ Base URL:
 
 ```text
 http://localhost:8080/api/v1
+```
+
+### PostgreSQL
+
+Start PostgreSQL:
+
+```powershell
+docker compose up -d postgres
+```
+
+Configure the backend in PowerShell and run it:
+
+```powershell
+$env:DATABASE_URL="postgres://moneyapp:moneyapp@localhost:5432/moneyapp?sslmode=disable"
+$env:JWT_SECRET="replace-with-a-long-random-secret"
+go run ./cmd/api
+```
+
+The backend checks the connection and applies the idempotent schema migration on startup. The SQL schema is in `internal/repository/postgres/migrations/000001_init.sql`.
+
+Connect manually with `psql`:
+
+```powershell
+psql "postgres://moneyapp:moneyapp@localhost:5432/moneyapp?sslmode=disable"
 ```
 
 Implemented foundation:
@@ -32,7 +56,7 @@ Implemented foundation:
 - Standard API response envelope.
 - Clean domain/service/repository boundaries.
 
-Current backend adapter is in-memory for fast portfolio iteration. PostgreSQL should be added behind repository interfaces without changing use cases.
+The backend supports both in-memory and PostgreSQL repository adapters. PostgreSQL is selected when `DATABASE_URL` is present.
 
 ## Android
 

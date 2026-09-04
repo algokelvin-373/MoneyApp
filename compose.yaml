@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: moneyapp-postgres
+    environment:
+      POSTGRES_DB: moneyapp
+      POSTGRES_USER: moneyapp
+      POSTGRES_PASSWORD: moneyapp
+    ports:
+      - "5432:5432"
+    volumes:
+      - moneyapp-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U moneyapp -d moneyapp"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  moneyapp-postgres-data:

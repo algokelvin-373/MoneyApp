@@ -1,6 +1,7 @@
 package memory
 
 import (
+	"context"
 	"sort"
 	"sync"
 	"time"
@@ -39,7 +40,7 @@ func (s *Store) UnitOfWork() shared.UnitOfWorkFunc {
 	return shared.UnitOfWorkFunc{}
 }
 
-func (s *Store) Create(user auth.User) (auth.User, error) {
+func (s *Store) Create(_ context.Context, user auth.User) (auth.User, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if _, exists := s.userByEmail[user.Email]; exists {
@@ -51,7 +52,7 @@ func (s *Store) Create(user auth.User) (auth.User, error) {
 	return user, nil
 }
 
-func (s *Store) FindByEmail(email string) (auth.User, error) {
+func (s *Store) FindByEmail(_ context.Context, email string) (auth.User, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	id, ok := s.userByEmail[email]
@@ -61,7 +62,7 @@ func (s *Store) FindByEmail(email string) (auth.User, error) {
 	return s.users[id], nil
 }
 
-func (s *Store) FindByID(id shared.ID) (auth.User, error) {
+func (s *Store) FindByID(_ context.Context, id shared.ID) (auth.User, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	user, ok := s.users[id]
@@ -82,7 +83,7 @@ func NewAccountRepository(store *Store) account.Repository {
 	return AccountRepository{store: store}
 }
 
-func (r AccountRepository) ListByUser(userID shared.ID) ([]account.Account, error) {
+func (r AccountRepository) ListByUser(_ context.Context, userID shared.ID) ([]account.Account, error) {
 	r.store.mu.Lock()
 	defer r.store.mu.Unlock()
 	var result []account.Account
@@ -95,13 +96,13 @@ func (r AccountRepository) ListByUser(userID shared.ID) ([]account.Account, erro
 	return result, nil
 }
 
-func (r AccountRepository) FindByIDForUser(id, userID shared.ID) (account.Account, error) {
+func (r AccountRepository) FindByIDForUser(_ context.Context, id, userID shared.ID) (account.Account, error) {
 	r.store.mu.Lock()
 	defer r.store.mu.Unlock()
 	return r.findByIDForUser(id, userID)
 }
 
-func (r AccountRepository) FindByCodeForUser(code string, userID shared.ID) (account.Account, error) {
+func (r AccountRepository) FindByCodeForUser(_ context.Context, code string, userID shared.ID) (account.Account, error) {
 	r.store.mu.Lock()
 	defer r.store.mu.Unlock()
 	for _, item := range r.store.accounts {
@@ -112,7 +113,7 @@ func (r AccountRepository) FindByCodeForUser(code string, userID shared.ID) (acc
 	return account.Account{}, shared.ErrNotFound
 }
 
-func (r AccountRepository) Create(item account.Account) (account.Account, error) {
+func (r AccountRepository) Create(_ context.Context, item account.Account) (account.Account, error) {
 	r.store.mu.Lock()
 	defer r.store.mu.Unlock()
 	item.ID = shared.NewID("account")
@@ -120,7 +121,7 @@ func (r AccountRepository) Create(item account.Account) (account.Account, error)
 	return item, nil
 }
 
-func (r AccountRepository) Update(item account.Account) (account.Account, error) {
+func (r AccountRepository) Update(_ context.Context, item account.Account) (account.Account, error) {
 	r.store.mu.Lock()
 	defer r.store.mu.Unlock()
 	if _, ok := r.store.accounts[item.ID]; !ok {
@@ -130,7 +131,7 @@ func (r AccountRepository) Update(item account.Account) (account.Account, error)
 	return item, nil
 }
 
-func (r AccountRepository) AdjustBalance(id, userID shared.ID, delta int64) (account.Account, error) {
+func (r AccountRepository) AdjustBalance(_ context.Context, id, userID shared.ID, delta int64) (account.Account, error) {
 	r.store.mu.Lock()
 	defer r.store.mu.Unlock()
 	item, err := r.findByIDForUser(id, userID)
@@ -157,7 +158,7 @@ func NewTransactionCodeRepository(store *Store) transactioncode.Repository {
 	return TransactionCodeRepository{store: store}
 }
 
-func (r TransactionCodeRepository) List(codeType *transactioncode.CodeType) ([]transactioncode.TransactionCode, error) {
+func (r TransactionCodeRepository) List(_ context.Context, codeType *transactioncode.CodeType) ([]transactioncode.TransactionCode, error) {
 	r.store.mu.Lock()
 	defer r.store.mu.Unlock()
 	var result []transactioncode.TransactionCode
@@ -170,7 +171,7 @@ func (r TransactionCodeRepository) List(codeType *transactioncode.CodeType) ([]t
 	return result, nil
 }
 
-func (r TransactionCodeRepository) FindByID(id shared.ID) (transactioncode.TransactionCode, error) {
+func (r TransactionCodeRepository) FindByID(_ context.Context, id shared.ID) (transactioncode.TransactionCode, error) {
 	r.store.mu.Lock()
 	defer r.store.mu.Unlock()
 	for _, item := range r.store.codes {
@@ -181,7 +182,7 @@ func (r TransactionCodeRepository) FindByID(id shared.ID) (transactioncode.Trans
 	return transactioncode.TransactionCode{}, shared.ErrNotFound
 }
 
-func (r TransactionCodeRepository) FindByCode(code string) (transactioncode.TransactionCode, error) {
+func (r TransactionCodeRepository) FindByCode(_ context.Context, code string) (transactioncode.TransactionCode, error) {
 	r.store.mu.Lock()
 	defer r.store.mu.Unlock()
 	item, ok := r.store.codes[code]
@@ -197,14 +198,14 @@ func NewTransactionRepository(store *Store) transaction.Repository {
 	return TransactionRepository{store: store}
 }
 
-func (r TransactionRepository) Create(tx transaction.Transaction) (transaction.Transaction, error) {
+func (r TransactionRepository) Create(_ context.Context, tx transaction.Transaction) (transaction.Transaction, error) {
 	r.store.mu.Lock()
 	defer r.store.mu.Unlock()
 	r.store.transactions[tx.ID] = tx
 	return tx, nil
 }
 
-func (r TransactionRepository) Update(tx transaction.Transaction) (transaction.Transaction, error) {
+func (r TransactionRepository) Update(_ context.Context, tx transaction.Transaction) (transaction.Transaction, error) {
 	r.store.mu.Lock()
 	defer r.store.mu.Unlock()
 	if _, ok := r.store.transactions[tx.ID]; !ok {
@@ -214,7 +215,7 @@ func (r TransactionRepository) Update(tx transaction.Transaction) (transaction.T
 	return tx, nil
 }
 
-func (r TransactionRepository) FindByIDForUser(id, userID shared.ID) (transaction.Transaction, error) {
+func (r TransactionRepository) FindByIDForUser(_ context.Context, id, userID shared.ID) (transaction.Transaction, error) {
 	r.store.mu.Lock()
 	defer r.store.mu.Unlock()
 	tx, ok := r.store.transactions[id]
@@ -224,7 +225,7 @@ func (r TransactionRepository) FindByIDForUser(id, userID shared.ID) (transactio
 	return tx, nil
 }
 
-func (r TransactionRepository) FindByIdempotencyKey(userID shared.ID, key string) (transaction.Transaction, error) {
+func (r TransactionRepository) FindByIdempotencyKey(_ context.Context, userID shared.ID, key string) (transaction.Transaction, error) {
 	r.store.mu.Lock()
 	defer r.store.mu.Unlock()
 	if key == "" {
@@ -238,7 +239,7 @@ func (r TransactionRepository) FindByIdempotencyKey(userID shared.ID, key string
 	return transaction.Transaction{}, shared.ErrNotFound
 }
 
-func (r TransactionRepository) List(filter transaction.Filter) ([]transaction.Transaction, error) {
+func (r TransactionRepository) List(_ context.Context, filter transaction.Filter) ([]transaction.Transaction, error) {
 	r.store.mu.Lock()
 	defer r.store.mu.Unlock()
 	var result []transaction.Transaction
@@ -274,7 +275,7 @@ func (r TransactionRepository) List(filter transaction.Filter) ([]transaction.Tr
 	return result[filter.Offset:end], nil
 }
 
-func (r TransactionRepository) SoftDelete(id, userID shared.ID, deletedAt time.Time) error {
+func (r TransactionRepository) SoftDelete(_ context.Context, id, userID shared.ID, deletedAt time.Time) error {
 	r.store.mu.Lock()
 	defer r.store.mu.Unlock()
 	tx, ok := r.store.transactions[id]

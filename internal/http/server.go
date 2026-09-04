@@ -58,7 +58,7 @@ func (s *Server) register(w http.ResponseWriter, r *http.Request) {
 		WriteError(w, shared.ErrValidation)
 		return
 	}
-	result, err := s.auth.Register(input)
+	result, err := s.auth.Register(r.Context(), input)
 	if err != nil {
 		WriteError(w, err)
 		return
@@ -72,7 +72,7 @@ func (s *Server) login(w http.ResponseWriter, r *http.Request) {
 		WriteError(w, shared.ErrValidation)
 		return
 	}
-	result, err := s.auth.Login(input)
+	result, err := s.auth.Login(r.Context(), input)
 	if err != nil {
 		WriteError(w, err)
 		return
@@ -89,7 +89,7 @@ func (s *Server) logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) listAccounts(w http.ResponseWriter, r *http.Request, user auth.User) {
-	items, err := s.accounts.List(user.ID)
+	items, err := s.accounts.List(r.Context(), user.ID)
 	if err != nil {
 		WriteError(w, err)
 		return
@@ -98,7 +98,7 @@ func (s *Server) listAccounts(w http.ResponseWriter, r *http.Request, user auth.
 }
 
 func (s *Server) getAccount(w http.ResponseWriter, r *http.Request, user auth.User) {
-	item, err := s.accounts.Get(shared.ID(r.PathValue("id")), user.ID)
+	item, err := s.accounts.Get(r.Context(), shared.ID(r.PathValue("id")), user.ID)
 	if err != nil {
 		WriteError(w, err)
 		return
@@ -112,7 +112,7 @@ func (s *Server) listCodes(w http.ResponseWriter, r *http.Request, user auth.Use
 		value := transactioncode.CodeType(raw)
 		codeType = &value
 	}
-	items, err := s.codes.List(codeType)
+	items, err := s.codes.List(r.Context(), codeType)
 	if err != nil {
 		WriteError(w, err)
 		return
@@ -131,7 +131,7 @@ func (s *Server) listTransactions(w http.ResponseWriter, r *http.Request, user a
 	}
 	filter.StartDate = parseDatePtr(r.URL.Query().Get("start_date"))
 	filter.EndDate = parseEndDatePtr(r.URL.Query().Get("end_date"))
-	items, err := s.txs.List(filter)
+	items, err := s.txs.List(r.Context(), filter)
 	if err != nil {
 		WriteError(w, err)
 		return
@@ -140,7 +140,7 @@ func (s *Server) listTransactions(w http.ResponseWriter, r *http.Request, user a
 }
 
 func (s *Server) getTransaction(w http.ResponseWriter, r *http.Request, user auth.User) {
-	item, err := s.txs.Get(shared.ID(r.PathValue("id")), user.ID)
+	item, err := s.txs.Get(r.Context(), shared.ID(r.PathValue("id")), user.ID)
 	if err != nil {
 		WriteError(w, err)
 		return
@@ -155,7 +155,7 @@ func (s *Server) createTransaction(w http.ResponseWriter, r *http.Request, user 
 		return
 	}
 	input.UserID = user.ID
-	item, err := s.txs.Create(input)
+	item, err := s.txs.Create(r.Context(), input)
 	if err != nil {
 		WriteError(w, err)
 		return
@@ -171,7 +171,7 @@ func (s *Server) updateTransaction(w http.ResponseWriter, r *http.Request, user 
 	}
 	input.UserID = user.ID
 	input.ID = shared.ID(r.PathValue("id"))
-	item, err := s.txs.Update(input)
+	item, err := s.txs.Update(r.Context(), input)
 	if err != nil {
 		WriteError(w, err)
 		return
@@ -180,7 +180,7 @@ func (s *Server) updateTransaction(w http.ResponseWriter, r *http.Request, user 
 }
 
 func (s *Server) deleteTransaction(w http.ResponseWriter, r *http.Request, user auth.User) {
-	if err := s.txs.Delete(shared.ID(r.PathValue("id")), user.ID); err != nil {
+	if err := s.txs.Delete(r.Context(), shared.ID(r.PathValue("id")), user.ID); err != nil {
 		WriteError(w, err)
 		return
 	}
@@ -188,7 +188,7 @@ func (s *Server) deleteTransaction(w http.ResponseWriter, r *http.Request, user 
 }
 
 func (s *Server) dashboardSummary(w http.ResponseWriter, r *http.Request, user auth.User) {
-	result, err := s.dashboard.Summary(user.ID, parseDatePtr(r.URL.Query().Get("start_date")), parseEndDatePtr(r.URL.Query().Get("end_date")))
+	result, err := s.dashboard.Summary(r.Context(), user.ID, parseDatePtr(r.URL.Query().Get("start_date")), parseEndDatePtr(r.URL.Query().Get("end_date")))
 	if err != nil {
 		WriteError(w, err)
 		return
@@ -197,7 +197,7 @@ func (s *Server) dashboardSummary(w http.ResponseWriter, r *http.Request, user a
 }
 
 func (s *Server) spendingInsight(w http.ResponseWriter, r *http.Request, user auth.User) {
-	result, err := s.insights.Spending(user.ID, parseDatePtr(r.URL.Query().Get("start_date")), parseEndDatePtr(r.URL.Query().Get("end_date")))
+	result, err := s.insights.Spending(r.Context(), user.ID, parseDatePtr(r.URL.Query().Get("start_date")), parseEndDatePtr(r.URL.Query().Get("end_date")))
 	if err != nil {
 		WriteError(w, err)
 		return
@@ -208,7 +208,7 @@ func (s *Server) spendingInsight(w http.ResponseWriter, r *http.Request, user au
 func (s *Server) withAuth(next func(http.ResponseWriter, *http.Request, auth.User)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		token := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
-		user, err := s.auth.Authenticate(token)
+		user, err := s.auth.Authenticate(r.Context(), token)
 		if err != nil {
 			WriteError(w, shared.ErrUnauthorized)
 			return

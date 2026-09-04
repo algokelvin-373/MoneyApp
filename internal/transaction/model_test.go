@@ -1,6 +1,7 @@
 package transaction
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -12,11 +13,11 @@ import (
 func TestCreateCreditRejectsNegativeBalance(t *testing.T) {
 	store := newMemoryFixture()
 	userID := shared.ID("user-1")
-	acc, _ := store.accounts.Create(account.Account{ID: "acc-1", UserID: userID, Code: "GOPAY", Name: "GoPay", IsActive: true})
+	acc, _ := store.accounts.Create(context.Background(), account.Account{ID: "acc-1", UserID: userID, Code: "GOPAY", Name: "GoPay", IsActive: true})
 	store.codes.items["FOOD"] = transactioncode.TransactionCode{ID: "code-food", Code: "FOOD", Type: transactioncode.CodeTypeExpense, IsActive: true}
 	service := NewService(store.transactions, store.accounts, store.codes, noopUOW{}, fixedClock{})
 
-	_, err := service.Create(CreateInput{
+	_, err := service.Create(context.Background(), CreateInput{
 		UserID:          userID,
 		AccountID:       acc.ID,
 		Code:            "FOOD",
@@ -38,7 +39,7 @@ func (fixedClock) Now() time.Time {
 
 type noopUOW struct{}
 
-func (noopUOW) Do(fn func() error) error { return fn() }
+func (noopUOW) Do(ctx context.Context, fn func(context.Context) error) error { return fn(ctx) }
 
 type memoryFixture struct {
 	accounts     *memoryAccountRepo
@@ -52,27 +53,29 @@ func newMemoryFixture() memoryFixture {
 
 type memoryAccountRepo struct{ items map[shared.ID]account.Account }
 
-func (r *memoryAccountRepo) ListByUser(userID shared.ID) ([]account.Account, error) { return nil, nil }
-func (r *memoryAccountRepo) FindByIDForUser(id, userID shared.ID) (account.Account, error) {
+func (r *memoryAccountRepo) ListByUser(context.Context, shared.ID) ([]account.Account, error) {
+	return nil, nil
+}
+func (r *memoryAccountRepo) FindByIDForUser(_ context.Context, id, userID shared.ID) (account.Account, error) {
 	item, ok := r.items[id]
 	if !ok || item.UserID != userID {
 		return account.Account{}, shared.ErrNotFound
 	}
 	return item, nil
 }
-func (r *memoryAccountRepo) FindByCodeForUser(code string, userID shared.ID) (account.Account, error) {
+func (r *memoryAccountRepo) FindByCodeForUser(context.Context, string, shared.ID) (account.Account, error) {
 	return account.Account{}, shared.ErrNotFound
 }
-func (r *memoryAccountRepo) Create(item account.Account) (account.Account, error) {
+func (r *memoryAccountRepo) Create(_ context.Context, item account.Account) (account.Account, error) {
 	r.items[item.ID] = item
 	return item, nil
 }
-func (r *memoryAccountRepo) Update(item account.Account) (account.Account, error) {
+func (r *memoryAccountRepo) Update(_ context.Context, item account.Account) (account.Account, error) {
 	r.items[item.ID] = item
 	return item, nil
 }
-func (r *memoryAccountRepo) AdjustBalance(id, userID shared.ID, delta int64) (account.Account, error) {
-	item, err := r.FindByIDForUser(id, userID)
+func (r *memoryAccountRepo) AdjustBalance(ctx context.Context, id, userID shared.ID, delta int64) (account.Account, error) {
+	item, err := r.FindByIDForUser(ctx, id, userID)
 	if err != nil {
 		return account.Account{}, err
 	}
@@ -85,13 +88,13 @@ type memoryCodeRepo struct {
 	items map[string]transactioncode.TransactionCode
 }
 
-func (r *memoryCodeRepo) List(codeType *transactioncode.CodeType) ([]transactioncode.TransactionCode, error) {
+func (r *memoryCodeRepo) List(context.Context, *transactioncode.CodeType) ([]transactioncode.TransactionCode, error) {
 	return nil, nil
 }
-func (r *memoryCodeRepo) FindByID(id shared.ID) (transactioncode.TransactionCode, error) {
+func (r *memoryCodeRepo) FindByID(context.Context, shared.ID) (transactioncode.TransactionCode, error) {
 	return transactioncode.TransactionCode{}, shared.ErrNotFound
 }
-func (r *memoryCodeRepo) FindByCode(code string) (transactioncode.TransactionCode, error) {
+func (r *memoryCodeRepo) FindByCode(_ context.Context, code string) (transactioncode.TransactionCode, error) {
 	item, ok := r.items[code]
 	if !ok {
 		return transactioncode.TransactionCode{}, shared.ErrNotFound
@@ -101,19 +104,21 @@ func (r *memoryCodeRepo) FindByCode(code string) (transactioncode.TransactionCod
 
 type memoryTxRepo struct{ items map[shared.ID]Transaction }
 
-func (r *memoryTxRepo) Create(tx Transaction) (Transaction, error) {
+func (r *memoryTxRepo) Create(_ context.Context, tx Transaction) (Transaction, error) {
 	r.items[tx.ID] = tx
 	return tx, nil
 }
-func (r *memoryTxRepo) Update(tx Transaction) (Transaction, error) {
+func (r *memoryTxRepo) Update(_ context.Context, tx Transaction) (Transaction, error) {
 	r.items[tx.ID] = tx
 	return tx, nil
 }
-func (r *memoryTxRepo) FindByIDForUser(id, userID shared.ID) (Transaction, error) {
+func (r *memoryTxRepo) FindByIDForUser(context.Context, shared.ID, shared.ID) (Transaction, error) {
 	return Transaction{}, shared.ErrNotFound
 }
-func (r *memoryTxRepo) FindByIdempotencyKey(userID shared.ID, key string) (Transaction, error) {
+func (r *memoryTxRepo) FindByIdempotencyKey(context.Context, shared.ID, string) (Transaction, error) {
 	return Transaction{}, shared.ErrNotFound
 }
-func (r *memoryTxRepo) List(filter Filter) ([]Transaction, error)                  { return nil, nil }
-func (r *memoryTxRepo) SoftDelete(id, userID shared.ID, deletedAt time.Time) error { return nil }
+func (r *memoryTxRepo) List(context.Context, Filter) ([]Transaction, error) { return nil, nil }
+func (r *memoryTxRepo) SoftDelete(context.Context, shared.ID, shared.ID, time.Time) error {
+	return nil
+}

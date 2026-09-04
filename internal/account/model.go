@@ -1,6 +1,7 @@
 package account
 
 import (
+	"context"
 	"time"
 
 	"moneyapp/internal/shared"
@@ -18,12 +19,12 @@ type Account struct {
 }
 
 type Repository interface {
-	ListByUser(userID shared.ID) ([]Account, error)
-	FindByIDForUser(id, userID shared.ID) (Account, error)
-	FindByCodeForUser(code string, userID shared.ID) (Account, error)
-	Create(account Account) (Account, error)
-	Update(account Account) (Account, error)
-	AdjustBalance(id, userID shared.ID, delta int64) (Account, error)
+	ListByUser(ctx context.Context, userID shared.ID) ([]Account, error)
+	FindByIDForUser(ctx context.Context, id, userID shared.ID) (Account, error)
+	FindByCodeForUser(ctx context.Context, code string, userID shared.ID) (Account, error)
+	Create(ctx context.Context, account Account) (Account, error)
+	Update(ctx context.Context, account Account) (Account, error)
+	AdjustBalance(ctx context.Context, id, userID shared.ID, delta int64) (Account, error)
 }
 
 type Service struct {
@@ -35,15 +36,15 @@ func NewService(repo Repository, clock shared.Clock) *Service {
 	return &Service{repo: repo, clock: clock}
 }
 
-func (s *Service) List(userID shared.ID) ([]Account, error) {
-	return s.repo.ListByUser(userID)
+func (s *Service) List(ctx context.Context, userID shared.ID) ([]Account, error) {
+	return s.repo.ListByUser(ctx, userID)
 }
 
-func (s *Service) Get(id, userID shared.ID) (Account, error) {
-	return s.repo.FindByIDForUser(id, userID)
+func (s *Service) Get(ctx context.Context, id, userID shared.ID) (Account, error) {
+	return s.repo.FindByIDForUser(ctx, id, userID)
 }
 
-func (s *Service) CreateDefaultAccounts(userID shared.ID) error {
+func (s *Service) CreateDefaultAccounts(ctx context.Context, userID shared.ID) error {
 	defaults := []struct {
 		code string
 		name string
@@ -55,7 +56,7 @@ func (s *Service) CreateDefaultAccounts(userID shared.ID) error {
 
 	now := s.clock.Now()
 	for _, item := range defaults {
-		_, err := s.repo.Create(Account{
+		_, err := s.repo.Create(ctx, Account{
 			ID:        "",
 			UserID:    userID,
 			Code:      item.code,

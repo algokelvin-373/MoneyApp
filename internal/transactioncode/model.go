@@ -1,6 +1,7 @@
 package transactioncode
 
 import (
+	"context"
 	"time"
 
 	"moneyapp/internal/shared"
@@ -24,9 +25,9 @@ type TransactionCode struct {
 }
 
 type Repository interface {
-	List(codeType *CodeType) ([]TransactionCode, error)
-	FindByID(id shared.ID) (TransactionCode, error)
-	FindByCode(code string) (TransactionCode, error)
+	List(ctx context.Context, codeType *CodeType) ([]TransactionCode, error)
+	FindByID(ctx context.Context, id shared.ID) (TransactionCode, error)
+	FindByCode(ctx context.Context, code string) (TransactionCode, error)
 }
 
 type Service struct {
@@ -37,8 +38,8 @@ func NewService(repo Repository) *Service {
 	return &Service{repo: repo}
 }
 
-func (s *Service) List(codeType *CodeType) ([]TransactionCode, error) {
-	return s.repo.List(codeType)
+func (s *Service) List(ctx context.Context, codeType *CodeType) ([]TransactionCode, error) {
+	return s.repo.List(ctx, codeType)
 }
 
 func SeedCodes(now time.Time) []TransactionCode {

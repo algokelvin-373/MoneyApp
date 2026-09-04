@@ -1,6 +1,7 @@
 package insight
 
 import (
+	"context"
 	"time"
 
 	"moneyapp/internal/shared"
@@ -26,8 +27,8 @@ func NewService(transactions transaction.Repository) *Service {
 	return &Service{transactions: transactions}
 }
 
-func (s *Service) Spending(userID shared.ID, startDate, endDate *time.Time) (SpendingSummary, error) {
-	txs, err := s.transactions.List(transaction.Filter{
+func (s *Service) Spending(ctx context.Context, userID shared.ID, startDate, endDate *time.Time) (SpendingSummary, error) {
+	txs, err := s.transactions.List(ctx, transaction.Filter{
 		UserID:    userID,
 		Type:      transaction.TypeCredit,
 		StartDate: startDate,
