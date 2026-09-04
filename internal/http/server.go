@@ -2,6 +2,7 @@ package http
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -48,7 +49,7 @@ func (s *Server) Routes() http.Handler {
 	mux.HandleFunc("GET /api/v1/health", func(w http.ResponseWriter, r *http.Request) {
 		WriteSuccess(w, http.StatusOK, "API is healthy", map[string]string{"status": "ok"})
 	})
-	return mux
+	return accessLog(mux, log.Default())
 }
 
 func (s *Server) register(w http.ResponseWriter, r *http.Request) {

@@ -4,11 +4,10 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import com.kelvinht.moneyapp.BuildConfig
 
 object ApiClient {
-    private const val DEFAULT_BASE_URL = "http://10.0.2.2:8080/api/v1/"
-
-    fun retrofit(baseUrl: String = DEFAULT_BASE_URL): Retrofit {
+    fun retrofit(baseUrl: String = BuildConfig.API_BASE_URL): Retrofit {
         val logging = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }

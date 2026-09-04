@@ -20,6 +20,9 @@ import (
 )
 
 func main() {
+	log.SetOutput(os.Stdout)
+	log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds | log.LUTC)
+
 	clock := shared.SystemClock{}
 	store := memory.NewStore(clock)
 	accountRepo := memory.NewAccountRepository(store)

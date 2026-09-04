@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/home_background"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="false"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="24dp"
+            android:paddingTop="34dp"
+            android:paddingEnd="24dp"
+            android:paddingBottom="32dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/button_back"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Kembali"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_back" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Catat Transaksi"
+                    android:textColor="@color/home_primary"
+                    android:textSize="29sp"
+                    android:textStyle="bold" />
+
+                <Space
+                    android:layout_width="48dp"
+                    android:layout_height="48dp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="92dp"
+                android:gravity="center"
+                android:text="NOMINAL"
+                android:textColor="@color/home_muted"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="74dp"
+                android:layout_marginTop="18dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:text="Rp"
+                    android:textColor="@color/home_primary"
+                    android:textSize="38sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/text_amount"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/home_primary"
+                    android:textSize="44sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:background="@color/home_background"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="Kategori"
+                android:textColor="@color/home_muted"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:layout_marginTop="-8dp"
+                android:background="@drawable/bg_input_outline"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp">
+
+                <TextView
+                    android:id="@+id/text_category"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/home_text"
+                    android:textSize="22sp" />
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_chevron_down" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="18dp"
+                android:background="@color/home_background"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="Tanggal"
+                android:textColor="@color/home_muted"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/text_date"
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:layout_marginTop="-8dp"
+                android:background="@drawable/bg_input_outline"
+                android:gravity="center_vertical"
+                android:paddingStart="18dp"
+                android:textColor="@color/home_text"
+                android:textSize="22sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:text="SUMBER DANA"
+                android:textColor="@color/home_muted"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="14dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/chip_cash"
+                    android:layout_width="86dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_source_selected"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/chip_ovo"
+                    android:layout_width="86dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="12dp"
+                    android:background="@drawable/bg_source_unselected"
+                    android:gravity="center"
+                    android:textColor="@color/home_text"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/chip_gopay"
+                    android:layout_width="100dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="12dp"
+                    android:background="@drawable/bg_source_unselected"
+                    android:gravity="center"
+                    android:textColor="@color/home_text"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="34dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:orientation="horizontal">
+                    <TextView android:id="@+id/key_1" style="@style/KeypadKey" android:text="1" />
+                    <TextView android:id="@+id/key_2" style="@style/KeypadKey" android:layout_marginStart="8dp" android:text="2" />
+                    <TextView android:id="@+id/key_3" style="@style/KeypadKey" android:layout_marginStart="8dp" android:text="3" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+                    <TextView android:id="@+id/key_4" style="@style/KeypadKey" android:text="4" />
+                    <TextView android:id="@+id/key_5" style="@style/KeypadKey" android:layout_marginStart="8dp" android:text="5" />
+                    <TextView android:id="@+id/key_6" style="@style/KeypadKey" android:layout_marginStart="8dp" android:text="6" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+                    <TextView android:id="@+id/key_7" style="@style/KeypadKey" android:text="7" />
+                    <TextView android:id="@+id/key_8" style="@style/KeypadKey" android:layout_marginStart="8dp" android:text="8" />
+                    <TextView android:id="@+id/key_9" style="@style/KeypadKey" android:layout_marginStart="8dp" android:text="9" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+                    <TextView android:id="@+id/key_00" style="@style/KeypadKey" android:text="00" />
+                    <TextView android:id="@+id/key_0" style="@style/KeypadKey" android:layout_marginStart="8dp" android:text="0" />
+                    <ImageButton
+                        android:id="@+id/key_backspace"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_keypad_button"
+                        android:contentDescription="Hapus"
+                        android:padding="20dp"
+                        android:src="@drawable/ic_delete_key" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/button_save"
+                android:layout_width="match_parent"
+                android:layout_height="62dp"
+                android:layout_marginTop="28dp"
+                android:background="@drawable/bg_primary_pill"
+                android:gravity="center"
+                android:text="SIMPAN TRANSAKSI"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
