@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:fillViewport="false"
+        android:clipToPadding="false"
         android:overScrollMode="never">
 
         <LinearLayout
@@ -17,244 +17,169 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingStart="24dp"
-            android:paddingTop="34dp"
+            android:paddingTop="20dp"
             android:paddingEnd="24dp"
-            android:paddingBottom="32dp">
+            android:paddingBottom="28dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="52dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Riwayat"
+                    android:textColor="@color/home_text"
+                    android:textSize="27sp"
+                    android:textStyle="bold" />
 
                 <ImageButton
-                    android:id="@+id/button_back"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Kembali"
-                    android:padding="8dp"
-                    android:src="@drawable/ic_back" />
+                    android:contentDescription="Filter"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_filter" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="Catat Transaksi"
-                    android:textColor="@color/home_primary"
-                    android:textSize="29sp"
-                    android:textStyle="bold" />
+                <ImageButton
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_marginStart="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Notifikasi"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_home_bell" />
 
-                <Space
-                    android:layout_width="48dp"
-                    android:layout_height="48dp" />
+                <ImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_home_avatar"
+                    android:contentDescription="Profil"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_profile"
+                    android:tint="@color/home_primary" />
             </LinearLayout>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="92dp"
-                android:gravity="center"
-                android:text="NOMINAL"
-                android:textColor="@color/home_muted"
-                android:textSize="17sp"
-                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="74dp"
-                android:layout_marginTop="18dp"
-                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:text="Rp"
-                    android:textColor="@color/home_primary"
-                    android:textSize="38sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/text_amount"
-                    android:layout_width="160dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textColor="@color/home_primary"
-                    android:textSize="44sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                android:background="@color/home_background"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:text="Kategori"
-                android:textColor="@color/home_muted"
-                android:textSize="17sp"
-                android:textStyle="bold" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="58dp"
-                android:layout_marginTop="-8dp"
-                android:background="@drawable/bg_input_outline"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="18dp"
-                android:paddingEnd="18dp">
-
-                <TextView
-                    android:id="@+id/text_category"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textColor="@color/home_text"
-                    android:textSize="22sp" />
+                    android:text="Pantau dan kelola seluruh arus keuangan Anda"
+                    android:textColor="@color/home_muted"
+                    android:textSize="15sp" />
 
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:contentDescription="@null"
-                    android:src="@drawable/ic_chevron_down" />
+                <TextView
+                    android:id="@+id/text_month"
+                    android:layout_width="90dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_history_chip"
+                    android:gravity="center"
+                    android:textColor="@color/home_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="18dp"
-                android:background="@color/home_background"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:text="Tanggal"
-                android:textColor="@color/home_muted"
-                android:textSize="17sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/text_date"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="58dp"
-                android:layout_marginTop="-8dp"
-                android:background="@drawable/bg_input_outline"
-                android:gravity="center_vertical"
-                android:paddingStart="18dp"
-                android:textColor="@color/home_text"
-                android:textSize="22sp" />
+                android:layout_height="190dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_history_summary"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:text="SUMBER DANA"
-                android:textColor="@color/home_muted"
-                android:textSize="17sp"
-                android:textStyle="bold" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="94dp" android:orientation="horizontal">
+                    <LinearLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="↓  Total Masuk" android:textColor="@color/home_muted" android:textSize="15sp" android:textStyle="bold" />
+                        <TextView android:id="@+id/text_total_income" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:textColor="@color/home_green" android:textSize="24sp" android:textStyle="bold" />
+                        <TextView android:id="@+id/text_income_count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textColor="@color/home_muted" android:textSize="14sp" />
+                    </LinearLayout>
+                    <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@drawable/bg_history_divider" />
+                    <LinearLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_marginStart="14dp" android:layout_weight="1" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="↑  Total Keluar" android:textColor="@color/home_muted" android:textSize="15sp" android:textStyle="bold" />
+                        <TextView android:id="@+id/text_total_expense" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:textColor="@color/home_text" android:textSize="24sp" android:textStyle="bold" />
+                        <TextView android:id="@+id/text_expense_count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textColor="@color/home_muted" android:textSize="14sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:gravity="center_vertical" android:orientation="horizontal">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Net Arus Kas Bulanan" android:textColor="@color/home_muted" android:textSize="14sp" android:textStyle="bold" />
+                    <TextView android:id="@+id/text_net_cash_flow" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/home_green" android:textSize="14sp" android:textStyle="bold" />
+                </LinearLayout>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="8dp" android:layout_marginTop="8dp" android:orientation="horizontal">
+                    <View android:id="@+id/progress_income" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="3" android:background="@drawable/bg_history_progress_green" />
+                    <View android:id="@+id/progress_expense" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/bg_history_progress_red" />
+                </LinearLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
-                android:layout_marginTop="14dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/chip_cash"
-                    android:layout_width="86dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/bg_source_selected"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/chip_ovo"
-                    android:layout_width="86dp"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="12dp"
-                    android:background="@drawable/bg_source_unselected"
-                    android:gravity="center"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/bg_history_search"
+                android:elevation="1dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="12dp">
+                <ImageView android:layout_width="24dp" android:layout_height="24dp" android:contentDescription="@null" android:src="@drawable/ic_search" />
+                <EditText
+                    android:id="@+id/input_search"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="Cari merchant, kategori, catatan..."
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxLines="1"
                     android:textColor="@color/home_text"
-                    android:textSize="20sp" />
+                    android:textColorHint="#8A8E9F"
+                    android:textSize="15sp" />
+            </LinearLayout>
 
-                <TextView
-                    android:id="@+id/chip_gopay"
-                    android:layout_width="100dp"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="12dp"
-                    android:background="@drawable/bg_source_unselected"
-                    android:gravity="center"
-                    android:textColor="@color/home_text"
-                    android:textSize="20sp" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="48dp" android:layout_marginTop="12dp" android:orientation="horizontal">
+                <TextView android:layout_width="0dp" android:layout_height="42dp" android:layout_weight="1.2" android:background="@drawable/bg_history_month" android:gravity="center" android:text="▣ Bulan Ini (Okt 2023)⌄" android:textColor="@color/white" android:textSize="14sp" android:textStyle="bold" />
+                <TextView android:layout_width="0dp" android:layout_height="42dp" android:layout_marginStart="12dp" android:layout_weight="0.9" android:background="@drawable/bg_history_chip" android:gravity="center" android:text="▣ Semua Akun⌄" android:textColor="@color/home_text" android:textSize="14sp" android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/history_groups_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="34dp"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:orientation="horizontal">
-                    <TextView android:id="@+id/key_1" style="@style/KeypadKey" android:text="1" />
-                    <TextView android:id="@+id/key_2" style="@style/KeypadKey" android:layout_marginStart="8dp" android:text="2" />
-                    <TextView android:id="@+id/key_3" style="@style/KeypadKey" android:layout_marginStart="8dp" android:text="3" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
-                    <TextView android:id="@+id/key_4" style="@style/KeypadKey" android:text="4" />
-                    <TextView android:id="@+id/key_5" style="@style/KeypadKey" android:layout_marginStart="8dp" android:text="5" />
-                    <TextView android:id="@+id/key_6" style="@style/KeypadKey" android:layout_marginStart="8dp" android:text="6" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
-                    <TextView android:id="@+id/key_7" style="@style/KeypadKey" android:text="7" />
-                    <TextView android:id="@+id/key_8" style="@style/KeypadKey" android:layout_marginStart="8dp" android:text="8" />
-                    <TextView android:id="@+id/key_9" style="@style/KeypadKey" android:layout_marginStart="8dp" android:text="9" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
-                    <TextView android:id="@+id/key_00" style="@style/KeypadKey" android:text="00" />
-                    <TextView android:id="@+id/key_0" style="@style/KeypadKey" android:layout_marginStart="8dp" android:text="0" />
-                    <ImageButton
-                        android:id="@+id/key_backspace"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_keypad_button"
-                        android:contentDescription="Hapus"
-                        android:padding="20dp"
-                        android:src="@drawable/ic_delete_key" />
-                </LinearLayout>
-            </LinearLayout>
+                android:orientation="vertical" />
 
             <TextView
-                android:id="@+id/button_save"
+                android:id="@+id/text_display_info"
                 android:layout_width="match_parent"
-                android:layout_height="62dp"
-                android:layout_marginTop="28dp"
-                android:background="@drawable/bg_primary_pill"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
                 android:gravity="center"
-                android:text="SIMPAN TRANSAKSI"
-                android:textColor="@color/white"
-                android:textSize="17sp"
+                android:textColor="@color/home_muted"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/button_load_previous"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bg_history_load"
+                android:gravity="center"
+                android:text="↶ Muat Transaksi Sebelumnya"
+                android:textColor="@color/home_primary"
+                android:textSize="15sp"
                 android:textStyle="bold" />
         </LinearLayout>
     </ScrollView>
@@ -268,32 +193,12 @@
         android:orientation="horizontal"
         android:paddingStart="24dp"
         android:paddingEnd="24dp">
-
         <include android:id="@+id/nav_home" layout="@layout/item_home_nav_home" />
         <include android:id="@+id/nav_wallets" layout="@layout/item_home_nav_wallet" />
-
-        <LinearLayout
-            android:id="@+id/nav_history"
-            android:layout_width="0dp"
-            android:layout_height="64dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_home_nav_selected"
-            android:gravity="center"
-            android:orientation="vertical">
-            <ImageView
-                android:layout_width="26dp"
-                android:layout_height="26dp"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_nav_history"
-                android:tint="@color/white" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="History"
-                android:textColor="@color/white"
-                android:textSize="15sp" />
+        <LinearLayout android:layout_width="0dp" android:layout_height="64dp" android:layout_weight="1" android:background="@drawable/bg_home_nav_selected" android:gravity="center" android:orientation="vertical">
+            <ImageView android:layout_width="26dp" android:layout_height="26dp" android:contentDescription="@null" android:src="@drawable/ic_nav_history" android:tint="@color/white" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="History" android:textColor="@color/white" android:textSize="15sp" />
         </LinearLayout>
-
         <include android:id="@+id/nav_reports" layout="@layout/item_home_nav_reports" />
     </LinearLayout>
 </LinearLayout>

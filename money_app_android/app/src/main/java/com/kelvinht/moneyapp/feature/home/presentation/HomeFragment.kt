@@ -119,6 +119,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupNavigation() {
+        binding.buttonAddTransaction.setOnClickListener { (activity as? MainActivity)?.openTransactionEntry() }
+        binding.textSeeAll.setOnClickListener { (activity as? MainActivity)?.openHistory() }
         binding.navWallets.root.setOnClickListener { (activity as? MainActivity)?.openWallets() }
         binding.navHistory.root.setOnClickListener { (activity as? MainActivity)?.openHistory() }
         binding.navReports.root.setOnClickListener { (activity as? MainActivity)?.openReports() }

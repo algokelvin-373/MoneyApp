@@ -7,6 +7,7 @@ import com.kelvinht.moneyapp.databinding.ActivityMainBinding
 import com.kelvinht.moneyapp.feature.history.presentation.HistoryFragment
 import com.kelvinht.moneyapp.feature.home.presentation.HomeFragment
 import com.kelvinht.moneyapp.feature.reports.presentation.ReportsFragment
+import com.kelvinht.moneyapp.feature.transactionentry.presentation.TransactionEntryFragment
 import com.kelvinht.moneyapp.feature.wallets.presentation.WalletsFragment
 
 
@@ -30,6 +31,8 @@ class MainActivity : AppCompatActivity() {
     fun openHistory() = showFragment(HistoryFragment())
 
     fun openReports() = showFragment(ReportsFragment())
+
+    fun openTransactionEntry() = showFragment(TransactionEntryFragment())
 
     private fun showFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
