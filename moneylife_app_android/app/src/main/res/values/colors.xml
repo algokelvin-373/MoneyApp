@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#0F766E</color>
+    <color name="colorPrimaryDark">#115E59</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorSecondary">#F59E0B</color>
+
+    <color name="colorError">#DC2626</color>
+    <color name="colorSuccess">#16A34A</color>
+    <color name="colorWarning">#F59E0B</color>
+
+    <color name="background">#F1F5F9</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="onSurface">#0F172A</color>
+    <color name="textSecondary">#64748B</color>
+    <color name="track">#E2E8F0</color>
+
+    <color name="category_makan">#16A34A</color>
+    <color name="category_transport">#2563EB</color>
+    <color name="category_jajan">#F59E0B</color>
+
+    <color name="ic_launcher_background">#0F766E</color>
+</resources>

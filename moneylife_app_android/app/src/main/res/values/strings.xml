@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MoneyLife</string>
+
+    <!-- Home screen -->
+    <string name="today_spending">Pengeluaran Hari Ini</string>
+    <string name="today_history">Riwayat Hari Ini</string>
+    <string name="zero_rupiah">Rp 0</string>
+    <string name="limit_placeholder">dari Rp 100.000</string>
+    <string name="empty_emoji">🗒️</string>
+    <string name="empty_message">Belum ada pengeluaran hari ini</string>
+    <string name="add_expense">Catat Pengeluaran</string>
+
+    <!-- Add expense screen -->
+    <string name="category_label">Kategori</string>
+    <string name="category_makan">Makan</string>
+    <string name="category_transport">Transport</string>
+    <string name="category_jajan">Jajan</string>
+    <string name="amount_hint">Nominal</string>
+    <string name="currency_prefix">Rp</string>
+    <string name="note_hint">Catatan (opsional)</string>
+    <string name="save">Simpan</string>
+    <string name="saving">Menyimpan…</string>
+    <string name="delete">Hapus</string>
+    <string name="cancel">Batal</string>
+    <string name="delete_confirm_title">Hapus pengeluaran?</string>
+    <string name="delete_confirm_message">Data yang dihapus tidak dapat dikembalikan.</string>
+</resources>
