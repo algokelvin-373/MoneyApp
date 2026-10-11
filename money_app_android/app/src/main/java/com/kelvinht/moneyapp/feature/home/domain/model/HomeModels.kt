@@ -1,34 +1,20 @@
 package com.kelvinht.moneyapp.feature.home.domain.model
 
 data class HomeSnapshot(
-    val userName: String,
-    val totalBalance: Long,
-    val monthlyGrowth: Long,
-    val wallets: List<HomeWallet>,
-    val recentTransactions: List<HomeTransaction>
+    val dateLabel: String,
+    val dailySpent: Long,
+    val dailyLimit: Long,
+    val averageDaily: Long,
+    val budgetCondition: String,
+    val categories: List<HomeBudgetCategory>,
+    val todayTransactionCount: Int
 )
 
-data class HomeWallet(
+data class HomeBudgetCategory(
     val name: String,
-    val balance: Long,
-    val type: WalletType
+    val spent: Long,
+    val limit: Long,
+    val type: BudgetCategoryType
 )
 
-enum class WalletType {
-    CASH,
-    E_WALLET,
-    BANK
-}
-
-data class HomeTransaction(
-    val title: String,
-    val subtitle: String,
-    val amount: Long,
-    val type: TransactionDisplayType
-)
-
-enum class TransactionDisplayType {
-    INCOME,
-    EXPENSE,
-    TRANSFER
-}
+enum class BudgetCategoryType { FOOD, TRANSPORT, SNACK }

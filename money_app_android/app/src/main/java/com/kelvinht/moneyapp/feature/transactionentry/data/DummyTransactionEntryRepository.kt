@@ -5,10 +5,12 @@ import com.kelvinht.moneyapp.feature.transactionentry.domain.repository.Transact
 
 class DummyTransactionEntryRepository : TransactionEntryRepository {
     override fun getOptions() = TransactionEntryOptions(
-        categories = listOf("Makanan", "Transportasi", "Belanja", "Tagihan"),
-        fundingSources = listOf("Tunai", "OVO", "GoPay"),
-        selectedCategory = "Pilih Kategori",
+        categories = listOf("Makan", "Transport", "Jajan"),
+        fundingSources = listOf("Tunai"),
+        selectedCategory = "Makan",
         selectedSource = "Tunai",
-        datePlaceholder = "mm/dd/yyyy"
+        transactionDate = "Hari ini, 14:20 WIB",
+        note = "Makan siang Rendang & Es Teh",
+        initialAmount = 45_000
     )
 }
