@@ -15,7 +15,10 @@ Repository Pattern** dengan **Room** sebagai database lokal.
   (mendekati batas, >= 80%), merah (melebihi batas).
 - Peringatan nominal jika pengeluaran melebihi batas Rp 100.000/hari.
 - Riwayat pengeluaran hari ini (terbaru di atas) + hapus dengan konfirmasi.
-- Data tersimpan permanen secara lokal dengan Room.
+- Sisa batas harian otomatis menjadi tabungan saat berganti hari; jika
+  pengeluaran melebihi batas Rp 100.000, tabungan hari itu bernilai 0.
+- Saldo tabungan (kumulatif) ditampilkan di beranda dan tersimpan permanen
+  secara lokal dengan Room.
 
 ## Struktur Proyek (Clean Architecture)
 
@@ -58,6 +61,20 @@ Semua perhitungan ada di domain model `DailyBudget`:
 - `usagePercent`: 0..100 untuk progress bar.
 
 Batas default: `DailyBudget.DEFAULT_DAILY_LIMIT = 100_000L`.
+
+## Logika Tabungan (Rollover)
+
+Setiap kali aplikasi dibuka (`HomeViewModel.refresh`), `RolloverDailySavingsUseCase`
+membandingkan tanggal aktif terakhir dengan tanggal hari ini:
+
+- Jika tanggal belum pernah tercatat, hanya mencatat tanggal aktif hari ini.
+- Jika sudah berganti hari, sisa batas hari sebelumnya dihitung sebagai
+  `limit - total pengeluaran` lalu disimpan ke tabel `daily_savings` sebagai
+  tabungan harian.
+- Jika pengeluaran hari itu **lebih dari Rp 100.000 (batas)**, tabungan hari itu
+  bernilai **0** (`coerceAtLeast(0L)`).
+- Saldo tabungan di beranda adalah kumulatif dari seluruh tabungan harian
+  (`SavingsDao.observeBalance`).
 
 ## Build
 

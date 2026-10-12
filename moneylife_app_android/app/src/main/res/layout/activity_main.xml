@@ -266,7 +266,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Rata-rata/hari"
+                                android:text="Saldo Tabungan"
                                 android:textColor="@color/textSecondary"
                                 android:textSize="11sp" />
 
@@ -651,50 +651,4 @@
                 app:cornerRadius="30dp" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="78dp"
-        android:background="@color/surface"
-        android:elevation="12dp"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="⌂&#10;Beranda"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="▥&#10;Statistik"
-            android:textColor="@color/navMuted"
-            android:textSize="12sp" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="▣&#10;Anggaran"
-            android:textColor="@color/navMuted"
-            android:textSize="12sp" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="○&#10;Profil"
-            android:textColor="@color/navMuted"
-            android:textSize="12sp" />
-    </LinearLayout>
 </LinearLayout>

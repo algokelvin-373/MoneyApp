@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         binding.textRemaining.text = state.remainingText
         binding.progressDaily.setProgressCompat(state.usagePercent, true)
         binding.textUsage.text = state.usageText
-        binding.textAverage.text = state.averageText
+        binding.textAverage.text = state.savingsText
         binding.textCondition.text = state.conditionText
         binding.textMakanAmount.text = state.makanText
         binding.textTransportAmount.text = state.transportText

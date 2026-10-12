@@ -10,13 +10,15 @@ import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.domain.usecase.CalculateDailyBudgetUseCase
 import com.kelvinht.moneylife.domain.usecase.DeleteExpenseUseCase
 import com.kelvinht.moneylife.domain.usecase.GetDailyExpensesUseCase
+import com.kelvinht.moneylife.domain.usecase.ObserveSavingsBalanceUseCase
+import com.kelvinht.moneylife.domain.usecase.RolloverDailySavingsUseCase
 import com.kelvinht.moneylife.presentation.common.toStyle
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -25,6 +27,8 @@ class HomeViewModel(
     private val getDailyExpenses: GetDailyExpensesUseCase,
     private val calculateDailyBudget: CalculateDailyBudgetUseCase,
     private val deleteExpense: DeleteExpenseUseCase,
+    private val observeSavingsBalance: ObserveSavingsBalanceUseCase,
+    private val rolloverDailySavings: RolloverDailySavingsUseCase,
     private val dailyLimit: Long
 ) : ViewModel() {
 
@@ -32,8 +36,11 @@ class HomeViewModel(
 
     val uiState: StateFlow<HomeUiState> = dateKey
         .flatMapLatest { key ->
-            getDailyExpenses(key).map { expenses ->
-                toUiState(calculateDailyBudget(key, expenses, dailyLimit))
+            combine(getDailyExpenses(key), observeSavingsBalance()) { expenses, savingsBalance ->
+                toUiState(
+                    budget = calculateDailyBudget(key, expenses, dailyLimit),
+                    savingsBalance = savingsBalance
+                )
             }
         }
         .stateIn(
@@ -42,16 +49,24 @@ class HomeViewModel(
             initialValue = HomeUiState(dateLabel = DateUtils.displayDate(dateKey.value))
         )
 
+    init {
+        refresh()
+    }
+
     /** Re-reads "today" so a new day (or a newly added expense) is reflected. */
     fun refresh() {
-        dateKey.value = DateUtils.todayKey()
+        val today = DateUtils.todayKey()
+        viewModelScope.launch {
+            rolloverDailySavings(today, dailyLimit)
+            dateKey.value = today
+        }
     }
 
     fun deleteExpense(id: Long) {
         viewModelScope.launch { deleteExpense.invoke(id) }
     }
 
-    private fun toUiState(budget: DailyBudget): HomeUiState {
+    private fun toUiState(budget: DailyBudget, savingsBalance: Long): HomeUiState {
         val status = when {
             budget.isOverLimit -> BudgetStatus.OVER
             budget.usagePercent >= WARNING_THRESHOLD -> BudgetStatus.WARNING
@@ -70,7 +85,7 @@ class HomeViewModel(
             },
             usagePercent = budget.usagePercent,
             usageText = budget.usagePercent.toString() + "% Terpakai",
-            averageText = RupiahFormatter.format(budget.spent),
+            savingsText = RupiahFormatter.format(savingsBalance),
             conditionText = when (status) {
                 BudgetStatus.SAFE -> "Sangat Aman"
                 BudgetStatus.WARNING -> "Perlu Dijaga"

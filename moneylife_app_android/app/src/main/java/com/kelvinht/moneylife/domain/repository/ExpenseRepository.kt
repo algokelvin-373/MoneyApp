@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.Flow
 interface ExpenseRepository {
     fun observeExpensesByDate(dateKey: String): Flow<List<Expense>>
 
+    suspend fun getExpensesByDate(dateKey: String): List<Expense>
+
     suspend fun addExpense(expense: Expense): Long
 
     suspend fun deleteExpenseById(id: Long)

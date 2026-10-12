@@ -15,6 +15,8 @@ class HomeViewModelFactory(
                 getDailyExpenses = container.getDailyExpenses,
                 calculateDailyBudget = container.calculateDailyBudget,
                 deleteExpense = container.deleteExpense,
+                observeSavingsBalance = container.observeSavingsBalance,
+                rolloverDailySavings = container.rolloverDailySavings,
                 dailyLimit = container.dailyLimit
             ) as T
         }

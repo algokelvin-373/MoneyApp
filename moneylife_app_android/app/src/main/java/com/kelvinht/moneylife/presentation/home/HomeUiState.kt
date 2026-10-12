@@ -24,7 +24,7 @@ data class HomeUiState(
     val overLimitText: String? = null,
     val usagePercent: Int = 0,
     val usageText: String = "0% Terpakai",
-    val averageText: String = "Rp 0",
+    val savingsText: String = "Rp 0",
     val conditionText: String = "Sangat Aman",
     val makanText: String = "Rp 0/50k",
     val transportText: String = "Rp 0/30k",
