@@ -19,7 +19,7 @@
     <string name="amount_hint">Nominal</string>
     <string name="currency_prefix">Rp</string>
     <string name="note_hint">Catatan (opsional)</string>
-    <string name="save">Simpan</string>
+    <string name="save">Simpan Pengeluaran ✓</string>
     <string name="saving">Menyimpan…</string>
     <string name="delete">Hapus</string>
     <string name="cancel">Batal</string>

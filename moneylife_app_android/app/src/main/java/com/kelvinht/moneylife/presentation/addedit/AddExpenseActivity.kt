@@ -5,6 +5,7 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -12,6 +13,10 @@ import com.kelvinht.moneylife.MoneyLifeApplication
 import com.kelvinht.moneylife.R
 import com.kelvinht.moneylife.databinding.ActivityAddExpenseBinding
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
+import com.kelvinht.moneylife.core.format.RupiahFormatter
+import com.google.android.material.card.MaterialCardView
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.launch
 
 class AddExpenseActivity : AppCompatActivity() {
@@ -27,7 +32,6 @@ class AddExpenseActivity : AppCompatActivity() {
         binding = ActivityAddExpenseBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupToolbar()
         setupCategorySelector()
         setupInputs()
         setupSaveButton()
@@ -39,23 +43,10 @@ class AddExpenseActivity : AppCompatActivity() {
         return true
     }
 
-    private fun setupToolbar() {
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowTitleEnabled(true)
-    }
-
     private fun setupCategorySelector() {
-        binding.groupCategory.setOnCheckedStateChangeListener { _, checkedIds ->
-            val checkedId = checkedIds.firstOrNull() ?: return@setOnCheckedStateChangeListener
-            val category = when (checkedId) {
-                R.id.chipTransport -> ExpenseCategory.TRANSPORT
-                R.id.chipJajan -> ExpenseCategory.JAJAN
-                else -> ExpenseCategory.MAKAN
-            }
-            viewModel.selectCategory(category)
-        }
-        binding.groupCategory.check(R.id.chipMakan)
+        binding.categoryMakan.setOnClickListener { viewModel.selectCategory(ExpenseCategory.MAKAN) }
+        binding.categoryTransport.setOnClickListener { viewModel.selectCategory(ExpenseCategory.TRANSPORT) }
+        binding.categoryJajan.setOnClickListener { viewModel.selectCategory(ExpenseCategory.JAJAN) }
     }
 
     private fun setupInputs() {
@@ -65,6 +56,14 @@ class AddExpenseActivity : AppCompatActivity() {
         binding.inputNote.addTextChangedListener { editable ->
             viewModel.onNoteChanged(editable?.toString().orEmpty())
         }
+        binding.quick10.setOnClickListener { viewModel.addQuickAmount(10_000) }
+        binding.quick20.setOnClickListener { viewModel.addQuickAmount(20_000) }
+        binding.quick50.setOnClickListener { viewModel.addQuickAmount(50_000) }
+        binding.quick100.setOnClickListener { viewModel.addQuickAmount(100_000) }
+        binding.buttonReset.setOnClickListener { viewModel.reset() }
+        binding.buttonBack.setOnClickListener { finish() }
+        binding.textTransactionTime.text =
+            "Hari ini, " + LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")) + " WIB"
     }
 
     private fun setupSaveButton() {
@@ -80,6 +79,16 @@ class AddExpenseActivity : AppCompatActivity() {
     }
 
     private fun render(state: AddExpenseUiState) {
+        val formattedAmount = state.amountInput.toLongOrNull()?.let(RupiahFormatter::formatDigits).orEmpty()
+        if (binding.inputAmount.text?.toString() != formattedAmount) {
+            binding.inputAmount.setText(formattedAmount)
+            binding.inputAmount.setSelection(formattedAmount.length)
+        }
+        if (binding.inputNote.text?.toString() != state.note) {
+            binding.inputNote.setText(state.note)
+            binding.inputNote.setSelection(state.note.length)
+        }
+        renderCategory(state.category)
         binding.textError.text = state.error.orEmpty()
         binding.textError.visibility = if (state.error == null) View.GONE else View.VISIBLE
 
@@ -90,5 +99,27 @@ class AddExpenseActivity : AppCompatActivity() {
             setResult(RESULT_OK)
             finish()
         }
+    }
+
+    private fun renderCategory(selected: ExpenseCategory) {
+        val cards = listOf(
+            binding.categoryMakan to ExpenseCategory.MAKAN,
+            binding.categoryTransport to ExpenseCategory.TRANSPORT,
+            binding.categoryJajan to ExpenseCategory.JAJAN
+        )
+        cards.forEach { (card, category) ->
+            styleCategory(card, category == selected)
+        }
+        binding.checkMakan.visibility = if (selected == ExpenseCategory.MAKAN) View.VISIBLE else View.GONE
+        binding.checkTransport.visibility = if (selected == ExpenseCategory.TRANSPORT) View.VISIBLE else View.GONE
+        binding.checkJajan.visibility = if (selected == ExpenseCategory.JAJAN) View.VISIBLE else View.GONE
+    }
+
+    private fun styleCategory(card: MaterialCardView, selected: Boolean) {
+        card.strokeWidth = resources.getDimensionPixelSize(if (selected) R.dimen.selected_stroke else R.dimen.default_stroke)
+        card.strokeColor = ContextCompat.getColor(
+            this,
+            if (selected) R.color.colorPrimaryDark else R.color.cardBorder
+        )
     }
 }

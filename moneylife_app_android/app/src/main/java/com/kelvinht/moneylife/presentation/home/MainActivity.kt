@@ -37,7 +37,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupToolbar()
         setupList()
         setupActions()
         observeState()
@@ -46,11 +45,6 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         viewModel.refresh()
-    }
-
-    private fun setupToolbar() {
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(true)
     }
 
     private fun setupList() {
@@ -79,6 +73,12 @@ class MainActivity : AppCompatActivity() {
         binding.textLimit.text = state.limitText
         binding.textRemaining.text = state.remainingText
         binding.progressDaily.setProgressCompat(state.usagePercent, true)
+        binding.textUsage.text = state.usageText
+        binding.textAverage.text = state.averageText
+        binding.textCondition.text = state.conditionText
+        binding.textMakanAmount.text = state.makanText
+        binding.textTransportAmount.text = state.transportText
+        binding.textJajanAmount.text = state.jajanText
 
         val accentColorRes = when (state.budgetStatus) {
             BudgetStatus.SAFE -> R.color.colorSuccess

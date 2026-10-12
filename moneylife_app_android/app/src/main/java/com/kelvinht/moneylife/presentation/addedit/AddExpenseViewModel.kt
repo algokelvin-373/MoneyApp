@@ -30,6 +30,16 @@ class AddExpenseViewModel(
         _uiState.update { it.copy(note = value) }
     }
 
+    fun addQuickAmount(value: Long) {
+        val current = _uiState.value.amountInput.toLongOrNull() ?: 0L
+        val updated = (current + value).coerceAtMost(MAX_AMOUNT)
+        _uiState.update { it.copy(amountInput = updated.toString(), error = null) }
+    }
+
+    fun reset() {
+        _uiState.value = AddExpenseUiState(amountInput = "", note = "")
+    }
+
     fun save() {
         val amount = _uiState.value.amountInput.toLongOrNull()
         if (amount == null || amount <= 0L) {
@@ -59,5 +69,6 @@ class AddExpenseViewModel(
 
     private companion object {
         const val MAX_AMOUNT_DIGITS = 9
+        const val MAX_AMOUNT = 999_999_999L
     }
 }

@@ -6,6 +6,7 @@ import com.kelvinht.moneylife.core.format.RupiahFormatter
 import com.kelvinht.moneylife.core.util.DateUtils
 import com.kelvinht.moneylife.domain.model.DailyBudget
 import com.kelvinht.moneylife.domain.model.Expense
+import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.domain.usecase.CalculateDailyBudgetUseCase
 import com.kelvinht.moneylife.domain.usecase.DeleteExpenseUseCase
 import com.kelvinht.moneylife.domain.usecase.GetDailyExpensesUseCase
@@ -60,7 +61,7 @@ class HomeViewModel(
         return HomeUiState(
             dateLabel = DateUtils.displayDate(budget.dateKey),
             spentText = RupiahFormatter.format(budget.spent),
-            limitText = "dari ${RupiahFormatter.format(budget.limit)}",
+            limitText = "Batas harian: ${RupiahFormatter.format(budget.limit)}",
             remainingText = "Sisa ${RupiahFormatter.format(budget.remaining)}",
             overLimitText = if (budget.isOverLimit) {
                 "Lebih ${RupiahFormatter.format(budget.overSpent)} dari batas harian"
@@ -68,10 +69,30 @@ class HomeViewModel(
                 null
             },
             usagePercent = budget.usagePercent,
+            usageText = budget.usagePercent.toString() + "% Terpakai",
+            averageText = RupiahFormatter.format(budget.spent),
+            conditionText = when (status) {
+                BudgetStatus.SAFE -> "Sangat Aman"
+                BudgetStatus.WARNING -> "Perlu Dijaga"
+                BudgetStatus.OVER -> "Melebihi Limit"
+            },
+            makanText = categoryTotal(budget.expenses, ExpenseCategory.MAKAN, "50k"),
+            transportText = categoryTotal(budget.expenses, ExpenseCategory.TRANSPORT, "30k"),
+            jajanText = categoryTotal(budget.expenses, ExpenseCategory.JAJAN, "20k"),
             budgetStatus = status,
             expenses = budget.expenses.map { it.toUiModel() },
             isEmpty = budget.expenses.isEmpty()
         )
+    }
+
+    private fun categoryTotal(
+        expenses: List<Expense>,
+        category: ExpenseCategory,
+        limitLabel: String
+    ): String {
+        val total = expenses.filter { it.category == category }.sumOf { it.amount }
+        val compact = if (total == 0L) "Rp 0" else RupiahFormatter.format(total)
+        return "$compact/$limitLabel"
     }
 
     private fun Expense.toUiModel(): ExpenseUiModel = ExpenseUiModel(
