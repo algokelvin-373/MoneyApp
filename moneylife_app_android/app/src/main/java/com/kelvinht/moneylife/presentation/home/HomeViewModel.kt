@@ -33,6 +33,8 @@ class HomeViewModel(
 ) : ViewModel() {
 
     private val dateKey = MutableStateFlow(DateUtils.todayKey())
+    private var lastTodayKey = dateKey.value
+    val selectedDateKey: String get() = dateKey.value
 
     val uiState: StateFlow<HomeUiState> = dateKey
         .flatMapLatest { key ->
@@ -46,20 +48,38 @@ class HomeViewModel(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
-            initialValue = HomeUiState(dateLabel = DateUtils.displayDate(dateKey.value))
+            initialValue = HomeUiState(dateKey = dateKey.value, dateLabel = DateUtils.displayDate(dateKey.value))
         )
 
     init {
         refresh()
     }
 
-    /** Re-reads "today" so a new day (or a newly added expense) is reflected. */
+    /** Advance the selected day only when the user was viewing today. */
     fun refresh() {
         val today = DateUtils.todayKey()
         viewModelScope.launch {
             rolloverDailySavings(today, dailyLimit)
-            dateKey.value = today
+            if (dateKey.value == lastTodayKey) dateKey.value = today
+            lastTodayKey = today
         }
+    }
+
+    fun selectDate(key: String) {
+        if (key <= DateUtils.todayKey()) dateKey.value = key
+    }
+
+    fun previousDay() {
+        dateKey.value = DateUtils.dateKey(DateUtils.parseDate(dateKey.value).minusDays(1))
+    }
+
+    fun nextDay() {
+        val next = DateUtils.dateKey(DateUtils.parseDate(dateKey.value).plusDays(1))
+        selectDate(next)
+    }
+
+    fun showToday() {
+        dateKey.value = DateUtils.todayKey()
     }
 
     fun deleteExpense(id: Long) {
@@ -74,6 +94,7 @@ class HomeViewModel(
         }
 
         return HomeUiState(
+            dateKey = budget.dateKey,
             dateLabel = DateUtils.displayDate(budget.dateKey),
             spentText = RupiahFormatter.format(budget.spent),
             limitText = "Batas harian: ${RupiahFormatter.format(budget.limit)}",

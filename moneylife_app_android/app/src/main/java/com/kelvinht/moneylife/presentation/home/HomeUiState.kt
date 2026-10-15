@@ -17,6 +17,7 @@ data class ExpenseUiModel(
 )
 
 data class HomeUiState(
+    val dateKey: String = "",
     val dateLabel: String = "",
     val spentText: String = "Rp 0",
     val limitText: String = "",

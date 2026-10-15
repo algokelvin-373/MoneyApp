@@ -1,5 +1,6 @@
 package com.kelvinht.moneylife.presentation.home
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -14,8 +15,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kelvinht.moneylife.MoneyLifeApplication
 import com.kelvinht.moneylife.R
+import com.kelvinht.moneylife.core.util.DateUtils
 import com.kelvinht.moneylife.databinding.ActivityMainBinding
 import com.kelvinht.moneylife.presentation.addedit.AddExpenseActivity
+import java.time.LocalDate
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -55,8 +58,25 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupActions() {
         binding.fabAdd.setOnClickListener {
-            addExpenseLauncher.launch(Intent(this, AddExpenseActivity::class.java))
+            addExpenseLauncher.launch(
+                Intent(this, AddExpenseActivity::class.java)
+                    .putExtra(AddExpenseActivity.EXTRA_DATE_KEY, viewModel.selectedDateKey)
+            )
         }
+        binding.textDate.setOnClickListener { showDatePicker() }
+        binding.textHistoryDate.setOnClickListener { showDatePicker() }
+        binding.buttonPreviousDay.setOnClickListener { viewModel.previousDay() }
+        binding.buttonNextDay.setOnClickListener { viewModel.nextDay() }
+        binding.buttonToday.setOnClickListener { viewModel.showToday() }
+    }
+
+    private fun showDatePicker() {
+        val selected = DateUtils.parseDate(viewModel.selectedDateKey)
+        DatePickerDialog(this, { _, year, month, day ->
+            viewModel.selectDate(DateUtils.dateKey(LocalDate.of(year, month + 1, day)))
+        }, selected.year, selected.monthValue - 1, selected.dayOfMonth).apply {
+            datePicker.maxDate = System.currentTimeMillis()
+        }.show()
     }
 
     private fun observeState() {
@@ -69,6 +89,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun render(state: HomeUiState) {
         binding.textDate.text = state.dateLabel
+        binding.textDate.contentDescription = getString(R.string.choose_date) + ": " + state.dateLabel
+        binding.textHistoryDate.text = state.dateLabel
+        binding.textHistoryDate.contentDescription = getString(R.string.choose_date) + ": " + state.dateLabel
+        val isToday = state.dateKey == DateUtils.todayKey()
+        binding.buttonNextDay.isEnabled = !isToday
+        binding.buttonToday.visibility = if (isToday) View.GONE else View.VISIBLE
         binding.textSpent.text = state.spentText
         binding.textLimit.text = state.limitText
         binding.textRemaining.text = state.remainingText

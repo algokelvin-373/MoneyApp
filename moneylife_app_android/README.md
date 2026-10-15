@@ -9,16 +9,20 @@ Repository Pattern** dengan **Room** sebagai database lokal.
 
 ## Fitur
 
-- Catat pengeluaran harian (kategori: Makan, Transport, Jajan).
-- Ringkasan pengeluaran hari ini dan sisa batas harian.
+- Catat pengeluaran pada hari ini atau tanggal sebelumnya (kategori: Makan,
+  Transport, Jajan). Ketuk tanggal transaksi atau tombol **Ubah** saat mengisi.
+- Pilih tanggal pada beranda, atau gunakan panah hari sebelumnya/berikutnya,
+  untuk melihat ringkasan dan riwayat pengeluaran pada tanggal tersebut.
 - Progress bar batas harian yang berubah warna: hijau (aman), oranye
   (mendekati batas, >= 80%), merah (melebihi batas).
 - Peringatan nominal jika pengeluaran melebihi batas Rp 100.000/hari.
-- Riwayat pengeluaran hari ini (terbaru di atas) + hapus dengan konfirmasi.
+- Riwayat pengeluaran menurut tanggal (terbaru di atas) + hapus dengan konfirmasi.
 - Sisa batas harian otomatis menjadi tabungan saat berganti hari; jika
   pengeluaran melebihi batas Rp 100.000, tabungan hari itu bernilai 0.
 - Saldo tabungan (kumulatif) ditampilkan di beranda dan tersimpan permanen
   secara lokal dengan Room.
+- Jika transaksi tanggal lampau ditambah atau dihapus, tabungan tanggal itu
+  dihitung ulang agar saldo tetap sesuai.
 
 ## Struktur Proyek (Clean Architecture)
 
@@ -75,6 +79,8 @@ membandingkan tanggal aktif terakhir dengan tanggal hari ini:
   bernilai **0** (`coerceAtLeast(0L)`).
 - Saldo tabungan di beranda adalah kumulatif dari seluruh tabungan harian
   (`SavingsDao.observeBalance`).
+- Perubahan pada pengeluaran tanggal lampau langsung menghitung ulang tabungan
+  tanggal tersebut.
 
 ## Build
 

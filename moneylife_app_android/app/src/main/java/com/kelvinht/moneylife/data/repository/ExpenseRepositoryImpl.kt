@@ -18,6 +18,8 @@ class ExpenseRepositoryImpl(
     override suspend fun getExpensesByDate(dateKey: String): List<Expense> =
         dao.getByDate(dateKey).map { it.toDomain() }
 
+    override suspend fun getExpenseById(id: Long): Expense? = dao.getById(id)?.toDomain()
+
     override suspend fun addExpense(expense: Expense): Long =
         dao.insert(expense.toEntity())
 

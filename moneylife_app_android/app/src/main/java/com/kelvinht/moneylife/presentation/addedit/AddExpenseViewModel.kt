@@ -3,6 +3,7 @@ package com.kelvinht.moneylife.presentation.addedit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
+import com.kelvinht.moneylife.core.util.DateUtils
 import com.kelvinht.moneylife.domain.usecase.AddExpenseUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,6 +31,12 @@ class AddExpenseViewModel(
         _uiState.update { it.copy(note = value) }
     }
 
+    fun selectDate(dateKey: String) {
+        if (dateKey <= DateUtils.todayKey()) {
+            _uiState.update { it.copy(dateKey = dateKey, error = null) }
+        }
+    }
+
     fun addQuickAmount(value: Long) {
         val current = _uiState.value.amountInput.toLongOrNull() ?: 0L
         val updated = (current + value).coerceAtMost(MAX_AMOUNT)
@@ -37,7 +44,7 @@ class AddExpenseViewModel(
     }
 
     fun reset() {
-        _uiState.value = AddExpenseUiState(amountInput = "", note = "")
+        _uiState.value = AddExpenseUiState(amountInput = "", note = "", dateKey = _uiState.value.dateKey)
     }
 
     fun save() {
@@ -47,13 +54,15 @@ class AddExpenseViewModel(
             return
         }
 
+        val snapshot = _uiState.value
         _uiState.update { it.copy(isSaving = true, error = null) }
 
         viewModelScope.launch {
             addExpense(
-                category = _uiState.value.category,
+                category = snapshot.category,
                 amount = amount,
-                note = _uiState.value.note
+                note = snapshot.note,
+                dateKey = snapshot.dateKey
             ).onSuccess {
                 _uiState.update { it.copy(isSaving = false, isSaved = true) }
             }.onFailure { throwable ->

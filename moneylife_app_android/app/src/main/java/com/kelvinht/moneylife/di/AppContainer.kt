@@ -24,13 +24,13 @@ class AppContainer(context: Context) {
 
     private val expenseRepository: ExpenseRepository = ExpenseRepositoryImpl(database.expenseDao())
     private val savingsRepository: SavingsRepository = SavingsRepositoryImpl(database.savingsDao())
+    val dailyLimit: Long = DailyBudget.DEFAULT_DAILY_LIMIT
 
     val getDailyExpenses: GetDailyExpensesUseCase = GetDailyExpensesUseCase(expenseRepository)
     val calculateDailyBudget: CalculateDailyBudgetUseCase = CalculateDailyBudgetUseCase()
-    val addExpense: AddExpenseUseCase = AddExpenseUseCase(expenseRepository)
-    val deleteExpense: DeleteExpenseUseCase = DeleteExpenseUseCase(expenseRepository)
+    val addExpense: AddExpenseUseCase = AddExpenseUseCase(expenseRepository, savingsRepository, dailyLimit)
+    val deleteExpense: DeleteExpenseUseCase = DeleteExpenseUseCase(expenseRepository, savingsRepository, dailyLimit)
     val observeSavingsBalance = ObserveSavingsBalanceUseCase(savingsRepository)
     val rolloverDailySavings = RolloverDailySavingsUseCase(expenseRepository, savingsRepository)
 
-    val dailyLimit: Long = DailyBudget.DEFAULT_DAILY_LIMIT
 }

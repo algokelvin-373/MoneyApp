@@ -1,5 +1,6 @@
 package com.kelvinht.moneylife.presentation.addedit
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -14,9 +15,8 @@ import com.kelvinht.moneylife.R
 import com.kelvinht.moneylife.databinding.ActivityAddExpenseBinding
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.core.format.RupiahFormatter
+import com.kelvinht.moneylife.core.util.DateUtils
 import com.google.android.material.card.MaterialCardView
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.launch
 
 class AddExpenseActivity : AppCompatActivity() {
@@ -31,6 +31,10 @@ class AddExpenseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAddExpenseBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (savedInstanceState == null) {
+            intent.getStringExtra(EXTRA_DATE_KEY)?.let(viewModel::selectDate)
+        }
 
         setupCategorySelector()
         setupInputs()
@@ -62,8 +66,17 @@ class AddExpenseActivity : AppCompatActivity() {
         binding.quick100.setOnClickListener { viewModel.addQuickAmount(100_000) }
         binding.buttonReset.setOnClickListener { viewModel.reset() }
         binding.buttonBack.setOnClickListener { finish() }
-        binding.textTransactionTime.text =
-            "Hari ini, " + LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")) + " WIB"
+        binding.buttonChangeDate.setOnClickListener { showDatePicker() }
+        binding.textTransactionTime.setOnClickListener { showDatePicker() }
+    }
+
+    private fun showDatePicker() {
+        val selected = DateUtils.parseDate(viewModel.uiState.value.dateKey)
+        DatePickerDialog(this, { _, year, month, day ->
+            viewModel.selectDate(DateUtils.dateKey(java.time.LocalDate.of(year, month + 1, day)))
+        }, selected.year, selected.monthValue - 1, selected.dayOfMonth).apply {
+            datePicker.maxDate = System.currentTimeMillis()
+        }.show()
     }
 
     private fun setupSaveButton() {
@@ -89,6 +102,7 @@ class AddExpenseActivity : AppCompatActivity() {
             binding.inputNote.setSelection(state.note.length)
         }
         renderCategory(state.category)
+        binding.textTransactionTime.text = DateUtils.displayDate(state.dateKey)
         binding.textError.text = state.error.orEmpty()
         binding.textError.visibility = if (state.error == null) View.GONE else View.VISIBLE
 
@@ -121,5 +135,9 @@ class AddExpenseActivity : AppCompatActivity() {
             this,
             if (selected) R.color.colorPrimaryDark else R.color.cardBorder
         )
+    }
+
+    companion object {
+        const val EXTRA_DATE_KEY = "com.kelvinht.moneylife.DATE_KEY"
     }
 }

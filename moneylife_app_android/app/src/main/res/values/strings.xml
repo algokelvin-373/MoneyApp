@@ -9,6 +9,10 @@
     <string name="limit_placeholder">dari Rp 100.000</string>
     <string name="empty_emoji">🗒️</string>
     <string name="empty_message">Belum ada pengeluaran hari ini</string>
+    <string name="choose_date">Pilih tanggal</string>
+    <string name="back_to_today">Hari Ini</string>
+    <string name="previous_day">Hari sebelumnya</string>
+    <string name="next_day">Hari berikutnya</string>
     <string name="add_expense">Catat Pengeluaran</string>
 
     <!-- Add expense screen -->

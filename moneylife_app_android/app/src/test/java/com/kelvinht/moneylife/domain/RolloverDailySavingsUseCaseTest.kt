@@ -99,6 +99,8 @@ private class FakeExpenseRepository(
 
     override suspend fun getExpensesByDate(dateKey: String): List<Expense> = expenses
 
+    override suspend fun getExpenseById(id: Long): Expense? = expenses.find { it.id == id }
+
     override suspend fun addExpense(expense: Expense): Long = 0L
 
     override suspend fun deleteExpenseById(id: Long) = Unit

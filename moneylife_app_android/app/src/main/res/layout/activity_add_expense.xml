@@ -375,7 +375,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="WAKTU TRANSAKSI"
+                android:text="TANGGAL TRANSAKSI"
                 android:textColor="@color/textSecondary"
                 android:textSize="13sp"
                 android:textStyle="bold" />
@@ -417,6 +417,7 @@
                         tools:text="Hari ini, 14:20 WIB" />
 
                     <TextView
+                        android:id="@+id/buttonChangeDate"
                         android:layout_width="58dp"
                         android:layout_height="36dp"
                         android:background="@drawable/bg_pill_mint"

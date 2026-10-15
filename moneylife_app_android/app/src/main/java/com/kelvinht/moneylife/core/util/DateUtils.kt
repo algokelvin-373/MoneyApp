@@ -21,6 +21,10 @@ object DateUtils {
 
     fun todayKey(): String = LocalDate.now().format(dateKeyFormatter)
 
+    fun parseDate(dateKey: String): LocalDate = LocalDate.parse(dateKey, dateKeyFormatter)
+
+    fun dateKey(date: LocalDate): String = date.format(dateKeyFormatter)
+
     fun displayDate(dateKey: String): String =
         LocalDate.parse(dateKey, dateKeyFormatter).format(displayFormatter)
 
