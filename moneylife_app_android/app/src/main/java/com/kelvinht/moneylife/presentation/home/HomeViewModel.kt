@@ -38,7 +38,10 @@ class HomeViewModel(
 
     val uiState: StateFlow<HomeUiState> = dateKey
         .flatMapLatest { key ->
-            combine(getDailyExpenses(key), observeSavingsBalance()) { expenses, savingsBalance ->
+            combine(
+                getDailyExpenses(key),
+                observeSavingsBalance(DateUtils.monthKeyOf(key))
+            ) { expenses, savingsBalance ->
                 toUiState(
                     budget = calculateDailyBudget(key, expenses, dailyLimit),
                     savingsBalance = savingsBalance

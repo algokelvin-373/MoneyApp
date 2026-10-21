@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 class ObserveSavingsBalanceUseCase(
     private val repository: SavingsRepository
 ) {
-    operator fun invoke(): Flow<Long> = repository.observeBalance()
+    operator fun invoke(monthKey: String): Flow<Long> = repository.observeBalance(monthKey)
 }

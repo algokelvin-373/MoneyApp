@@ -113,7 +113,7 @@ private class FakeSavingsRepository(
     val saved = linkedMapOf<String, Long>()
     private val balance = MutableStateFlow(0L)
 
-    override fun observeBalance(): Flow<Long> = balance
+    override fun observeBalance(monthKey: String): Flow<Long> = balance
 
     override suspend fun saveDailySaving(dateKey: String, amount: Long) {
         saved[dateKey] = amount

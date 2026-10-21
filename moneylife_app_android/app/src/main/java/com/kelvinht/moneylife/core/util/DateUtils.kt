@@ -25,6 +25,9 @@ object DateUtils {
 
     fun dateKey(date: LocalDate): String = date.format(dateKeyFormatter)
 
+    /** Extracts the "yyyy-MM" month key from a "yyyy-MM-dd" date key. */
+    fun monthKeyOf(dateKey: String): String = dateKey.substring(0, 7)
+
     fun displayDate(dateKey: String): String =
         LocalDate.parse(dateKey, dateKeyFormatter).format(displayFormatter)
 
