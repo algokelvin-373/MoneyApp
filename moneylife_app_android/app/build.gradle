@@ -4,6 +4,12 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+// Room exports the schema of every database version into app/schemas so the
+// migrations can be validated against the real schema history.
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 android {
     namespace 'com.kelvinht.moneylife'
     compileSdk 35

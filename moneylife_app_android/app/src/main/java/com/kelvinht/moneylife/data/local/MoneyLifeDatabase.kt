@@ -15,7 +15,7 @@ import com.kelvinht.moneylife.data.local.entity.ExpenseEntity
 @Database(
     entities = [ExpenseEntity::class, DailySavingEntity::class, AppStateEntity::class],
     version = 2,
-    exportSchema = false
+    exportSchema = true
 )
 abstract class MoneyLifeDatabase : RoomDatabase() {
 
