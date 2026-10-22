@@ -5,5 +5,7 @@ data class TransactionEntryOptions(
     val fundingSources: List<String>,
     val selectedCategory: String,
     val selectedSource: String,
-    val datePlaceholder: String
+    val transactionDate: String,
+    val note: String,
+    val initialAmount: Long
 )

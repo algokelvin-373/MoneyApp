@@ -1,34 +1,38 @@
 package com.kelvinht.moneyapp.feature.transactionentry.presentation
 
 import androidx.lifecycle.ViewModel
+import com.kelvinht.moneyapp.core.format.RupiahFormatter
 import com.kelvinht.moneyapp.feature.transactionentry.domain.usecase.GetTransactionEntryOptionsUseCase
 
 class TransactionEntryViewModel(getOptions: GetTransactionEntryOptionsUseCase) : ViewModel() {
     private val options = getOptions()
-    private var rawAmount = "0"
-    private var selectedSource = options.selectedSource
+    private var amount = options.initialAmount
+    private var selectedCategory = options.selectedCategory
 
     fun load(): TransactionEntryUiState = buildState()
 
-    fun onKeyPressed(key: String): TransactionEntryUiState {
-        rawAmount = when (key) {
-            "backspace" -> rawAmount.dropLast(1).ifEmpty { "0" }
-            "00" -> if (rawAmount == "0") "0" else rawAmount + key
-            else -> if (rawAmount == "0") key else rawAmount + key
-        }
+    fun addQuickAmount(value: Long): TransactionEntryUiState {
+        amount = (amount + value).coerceAtMost(999_999_999)
         return buildState()
     }
 
-    fun selectSource(source: String): TransactionEntryUiState {
-        if (source in options.fundingSources) selectedSource = source
+    fun selectCategory(category: String): TransactionEntryUiState {
+        if (category in options.categories) selectedCategory = category
+        return buildState()
+    }
+
+    fun reset(): TransactionEntryUiState {
+        amount = 0
+        selectedCategory = options.selectedCategory
         return buildState()
     }
 
     private fun buildState() = TransactionEntryUiState(
-        amount = rawAmount,
-        category = options.selectedCategory,
-        datePlaceholder = options.datePlaceholder,
-        sources = options.fundingSources.map { FundingSourceUi(it, it == selectedSource) },
-        isSaveEnabled = rawAmount != "0"
+        amount = RupiahFormatter.format(amount),
+        categories = options.categories.map { EntryCategoryUi(it, it == selectedCategory) },
+        transactionDate = options.transactionDate,
+        source = options.selectedSource,
+        note = options.note,
+        isSaveEnabled = amount > 0
     )
 }

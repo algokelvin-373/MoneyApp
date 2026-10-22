@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#0B7668</color>
+    <color name="colorPrimaryDark">#075E55</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorSecondary">#F59E0B</color>
+
+    <color name="colorError">#DC2626</color>
+    <color name="colorSuccess">#16A34A</color>
+    <color name="colorWarning">#F59E0B</color>
+
+    <color name="background">#F6F9F8</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="onSurface">#0F172A</color>
+    <color name="textSecondary">#64748B</color>
+    <color name="track">#E2E8F0</color>
+    <color name="cardBorder">#DDE7E5</color>
+    <color name="mintSurface">#E8F8F3</color>
+    <color name="mintStrong">#C8F2E7</color>
+    <color name="softBlue">#EDF3FF</color>
+    <color name="softOrange">#FFF5DC</color>
+    <color name="softRed">#FFF0F2</color>
+    <color name="navMuted">#94A6BE</color>
+
+    <color name="category_makan">#16A34A</color>
+    <color name="category_transport">#2563EB</color>
+    <color name="category_jajan">#F59E0B</color>
+
+    <color name="ic_launcher_background">#0F766E</color>
+</resources>

@@ -34,4 +34,20 @@
     <color name="report_purple">#5C49B4</color>
     <color name="report_track">#E7ECFF</color>
     <color name="report_tip_icon">#3E7CE5</color>
+    <color name="ml_background">#F6F8F7</color>
+    <color name="ml_header">#0B3532</color>
+    <color name="ml_primary">#07856F</color>
+    <color name="ml_primary_dark">#006B5C</color>
+    <color name="ml_mint">#CFF5E8</color>
+    <color name="ml_mint_light">#E8F8F2</color>
+    <color name="ml_text">#173634</color>
+    <color name="ml_text_secondary">#60716F</color>
+    <color name="ml_border">#DCE6E3</color>
+    <color name="ml_track">#DCE9E6</color>
+    <color name="ml_food">#FFAA58</color>
+    <color name="ml_food_bg">#FFF3E4</color>
+    <color name="ml_transport">#5284EA</color>
+    <color name="ml_transport_bg">#EAF0FF</color>
+    <color name="ml_snack">#A866D0</color>
+    <color name="ml_snack_bg">#F2E8FB</color>
 </resources>

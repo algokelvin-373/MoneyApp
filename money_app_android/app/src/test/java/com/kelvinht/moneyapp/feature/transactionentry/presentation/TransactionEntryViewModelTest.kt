@@ -10,28 +10,24 @@ import org.junit.Test
 
 class TransactionEntryViewModelTest {
     @Test
-    fun load_returnsInitialEntryState() {
+    fun load_returnsReferenceInitialState() {
         val state = viewModel().load()
 
-        assertEquals("0", state.amount)
-        assertEquals("Pilih Kategori", state.category)
-        assertEquals("mm/dd/yyyy", state.datePlaceholder)
-        assertFalse(state.isSaveEnabled)
-        assertTrue(state.sources.first().isSelected)
+        assertEquals("Rp 45.000", state.amount)
+        assertEquals("Hari ini, 14:20 WIB", state.transactionDate)
+        assertTrue(state.categories.first().isSelected)
+        assertTrue(state.isSaveEnabled)
     }
 
     @Test
-    fun keypadAndFundingSource_updateState() {
+    fun quickAmountCategoryAndReset_updateState() {
         val viewModel = viewModel()
-        viewModel.onKeyPressed("1")
-        viewModel.onKeyPressed("2")
-        val amountState = viewModel.onKeyPressed("00")
-        assertEquals("1200", amountState.amount)
-        assertTrue(amountState.isSaveEnabled)
-
-        val sourceState = viewModel.selectSource("GoPay")
-        assertTrue(sourceState.sources.last().isSelected)
-        assertFalse(sourceState.sources.first().isSelected)
+        assertEquals("Rp 65.000", viewModel.addQuickAmount(20_000).amount)
+        val categoryState = viewModel.selectCategory("Jajan")
+        assertTrue(categoryState.categories.last().isSelected)
+        val resetState = viewModel.reset()
+        assertEquals("Rp 0", resetState.amount)
+        assertFalse(resetState.isSaveEnabled)
     }
 
     private fun viewModel() = TransactionEntryViewModel(GetTransactionEntryOptionsUseCase(FakeEntryRepository()))
@@ -39,10 +35,12 @@ class TransactionEntryViewModelTest {
 
 private class FakeEntryRepository : TransactionEntryRepository {
     override fun getOptions() = TransactionEntryOptions(
-        categories = listOf("Makanan"),
-        fundingSources = listOf("Tunai", "OVO", "GoPay"),
-        selectedCategory = "Pilih Kategori",
+        categories = listOf("Makan", "Transport", "Jajan"),
+        fundingSources = listOf("Tunai"),
+        selectedCategory = "Makan",
         selectedSource = "Tunai",
-        datePlaceholder = "mm/dd/yyyy"
+        transactionDate = "Hari ini, 14:20 WIB",
+        note = "Makan siang Rendang & Es Teh",
+        initialAmount = 45_000
     )
 }
