@@ -55,10 +55,6 @@ class HomeViewModel(
             initialValue = HomeUiState(dateKey = dateKey.value, dateLabel = DateUtils.displayDate(dateKey.value))
         )
 
-    init {
-        refresh()
-    }
-
     /** Advance the selected day only when the user was viewing today. */
     fun refresh() {
         val today = DateUtils.todayKey()
