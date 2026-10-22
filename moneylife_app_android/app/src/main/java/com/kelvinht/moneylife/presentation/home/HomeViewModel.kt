@@ -100,7 +100,8 @@ class HomeViewModel(
             dateKey = budget.dateKey,
             dateLabel = DateUtils.displayDate(budget.dateKey),
             spentText = RupiahFormatter.format(budget.spent),
-            limitText = "Batas harian: ${RupiahFormatter.format(budget.limit)}",
+            limitText = RupiahFormatter.format(budget.limit),
+            limitShortText = RupiahFormatter.formatCompact(budget.limit),
             remainingText = "Sisa ${RupiahFormatter.format(budget.remaining)}",
             overLimitText = if (budget.isOverLimit) {
                 "Lebih ${RupiahFormatter.format(budget.overSpent)} dari batas harian"

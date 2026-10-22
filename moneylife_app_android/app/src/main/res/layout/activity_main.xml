@@ -194,7 +194,7 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/textSecondary"
                         android:textSize="14sp"
-                        tools:text="dari Rp 100.000" />
+                        tools:text="@string/limit_from_format" />
 
                     <com.google.android.material.progressindicator.LinearProgressIndicator
                         android:id="@+id/progressDaily"
@@ -223,11 +223,12 @@
                             tools:text="Sisa Rp 100.000" />
 
                         <TextView
+                            android:id="@+id/textLimitShort"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Limit: 100k"
                             android:textColor="@color/navMuted"
-                            android:textSize="13sp" />
+                            android:textSize="13sp"
+                            tools:text="@string/limit_short_format" />
                     </LinearLayout>
 
                     <TextView

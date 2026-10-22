@@ -6,8 +6,8 @@
     <string name="today_spending">Pengeluaran Hari Ini</string>
     <string name="today_history">Riwayat Hari Ini</string>
     <string name="zero_rupiah">Rp 0</string>
-    <string name="limit_placeholder">dari Rp 100.000</string>
-    <string name="empty_emoji">🗒️</string>
+    <string name="limit_from_format">dari %1$s</string>
+    <string name="limit_short_format">Limit: %1$s</string>
     <string name="empty_message">Belum ada pengeluaran hari ini</string>
     <string name="choose_date">Pilih tanggal</string>
     <string name="back_to_today">Hari Ini</string>

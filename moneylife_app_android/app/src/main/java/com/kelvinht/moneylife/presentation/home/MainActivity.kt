@@ -96,7 +96,8 @@ class MainActivity : AppCompatActivity() {
         binding.buttonNextDay.isEnabled = !isToday
         binding.buttonToday.visibility = if (isToday) View.GONE else View.VISIBLE
         binding.textSpent.text = state.spentText
-        binding.textLimit.text = state.limitText
+        binding.textLimit.text = getString(R.string.limit_from_format, state.limitText)
+        binding.textLimitShort.text = getString(R.string.limit_short_format, state.limitShortText)
         binding.textRemaining.text = state.remainingText
         binding.progressDaily.setProgressCompat(state.usagePercent, true)
         binding.textUsage.text = state.usageText
