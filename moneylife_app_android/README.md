@@ -19,8 +19,9 @@ Repository Pattern** dengan **Room** sebagai database lokal.
 - Riwayat pengeluaran menurut tanggal (terbaru di atas) + hapus dengan konfirmasi.
 - Sisa batas harian otomatis menjadi tabungan saat berganti hari; jika
   pengeluaran melebihi batas Rp 100.000, tabungan hari itu bernilai 0.
-- Saldo tabungan (kumulatif) ditampilkan di beranda dan tersimpan permanen
-  secara lokal dengan Room.
+- Saldo tabungan per bulan ditampilkan di beranda dan tersimpan permanen
+  secara lokal dengan Room. Saldo otomatis kembali ke Rp 0 saat memasuki
+  bulan baru.
 - Jika transaksi tanggal lampau ditambah atau dihapus, tabungan tanggal itu
   dihitung ulang agar saldo tetap sesuai.
 
@@ -77,8 +78,10 @@ membandingkan tanggal aktif terakhir dengan tanggal hari ini:
   tabungan harian.
 - Jika pengeluaran hari itu **lebih dari Rp 100.000 (batas)**, tabungan hari itu
   bernilai **0** (`coerceAtLeast(0L)`).
-- Saldo tabungan di beranda adalah kumulatif dari seluruh tabungan harian
-  (`SavingsDao.observeBalance`).
+- Saldo tabungan di beranda adalah penjumlahan tabungan harian pada bulan
+  yang sedang dilihat (`SavingsDao.observeBalance`), sehingga otomatis
+  bernilai 0 saat memasuki bulan baru. Tabungan bulan sebelumnya tetap
+  tersimpan dan bisa dilihat dengan membuka tanggal pada bulan tersebut.
 - Perubahan pada pengeluaran tanggal lampau langsung menghitung ulang tabungan
   tanggal tersebut.
 

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 class SavingsRepositoryImpl(
     private val dao: SavingsDao
 ) : SavingsRepository {
-    override fun observeBalance(): Flow<Long> = dao.observeBalance()
+    override fun observeBalance(monthKey: String): Flow<Long> = dao.observeBalance(monthKey)
 
     override suspend fun saveDailySaving(dateKey: String, amount: Long) {
         dao.saveDailySaving(DailySavingEntity(dateKey = dateKey, amount = amount))

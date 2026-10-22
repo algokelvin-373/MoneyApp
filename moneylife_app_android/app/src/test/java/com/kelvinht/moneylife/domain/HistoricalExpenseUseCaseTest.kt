@@ -65,7 +65,7 @@ private class MemoryExpenseRepository : ExpenseRepository {
 
 private class MemorySavingsRepository : SavingsRepository {
     val saved = mutableMapOf<String, Long>()
-    override fun observeBalance(): Flow<Long> = MutableStateFlow(saved.values.sum())
+    override fun observeBalance(monthKey: String): Flow<Long> = MutableStateFlow(saved.values.sum())
     override suspend fun saveDailySaving(dateKey: String, amount: Long) {
         saved[dateKey] = amount
     }
