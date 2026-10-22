@@ -5,13 +5,19 @@ import com.kelvinht.moneylife.domain.model.Expense
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.domain.repository.ExpenseRepository
 import com.kelvinht.moneylife.domain.repository.SavingsRepository
+import com.kelvinht.moneylife.domain.repository.TransactionRunner
 
 /**
  * Validates and persists a new expense.
+ *
+ * The expense and the matching daily saving are written inside a single
+ * transaction, so the savings balance can never get out of sync with the
+ * recorded expenses.
  */
 class AddExpenseUseCase(
     private val repository: ExpenseRepository,
     private val savingsRepository: SavingsRepository,
+    private val transactionRunner: TransactionRunner,
     private val dailyLimit: Long
 ) {
     suspend operator fun invoke(
@@ -33,12 +39,14 @@ class AddExpenseUseCase(
         )
 
         return runCatching {
-            val id = repository.addExpense(expense)
-            if (dateKey < DateUtils.todayKey()) {
-                val spent = repository.getExpensesByDate(dateKey).sumOf { it.amount }
-                savingsRepository.saveDailySaving(dateKey, (dailyLimit - spent).coerceAtLeast(0L))
+            transactionRunner.runInTransaction {
+                val id = repository.addExpense(expense)
+                if (dateKey < DateUtils.todayKey()) {
+                    val spent = repository.getExpensesByDate(dateKey).sumOf { it.amount }
+                    savingsRepository.saveDailySaving(dateKey, (dailyLimit - spent).coerceAtLeast(0L))
+                }
+                id
             }
-            id
         }
     }
 }
