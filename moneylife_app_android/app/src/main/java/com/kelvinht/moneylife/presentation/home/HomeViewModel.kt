@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kelvinht.moneylife.core.format.RupiahFormatter
 import com.kelvinht.moneylife.core.util.DateUtils
+import com.kelvinht.moneylife.domain.model.CategoryBudget
 import com.kelvinht.moneylife.domain.model.DailyBudget
 import com.kelvinht.moneylife.domain.model.Expense
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
@@ -116,9 +117,9 @@ class HomeViewModel(
                 BudgetStatus.WARNING -> "Perlu Dijaga"
                 BudgetStatus.OVER -> "Melebihi Limit"
             },
-            makanText = categoryTotal(budget.expenses, ExpenseCategory.MAKAN, "50k"),
-            transportText = categoryTotal(budget.expenses, ExpenseCategory.TRANSPORT, "30k"),
-            jajanText = categoryTotal(budget.expenses, ExpenseCategory.JAJAN, "20k"),
+            makanText = categoryTotal(budget.expenses, ExpenseCategory.MAKAN),
+            transportText = categoryTotal(budget.expenses, ExpenseCategory.TRANSPORT),
+            jajanText = categoryTotal(budget.expenses, ExpenseCategory.JAJAN),
             budgetStatus = status,
             expenses = budget.expenses.map { it.toUiModel() },
             isEmpty = budget.expenses.isEmpty()
@@ -127,12 +128,11 @@ class HomeViewModel(
 
     private fun categoryTotal(
         expenses: List<Expense>,
-        category: ExpenseCategory,
-        limitLabel: String
+        category: ExpenseCategory
     ): String {
         val total = expenses.filter { it.category == category }.sumOf { it.amount }
         val compact = if (total == 0L) "Rp 0" else RupiahFormatter.format(total)
-        return "$compact/$limitLabel"
+        return "$compact/${CategoryBudget.limitLabelFor(category)}"
     }
 
     private fun Expense.toUiModel(): ExpenseUiModel = ExpenseUiModel(
