@@ -433,26 +433,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="22dp"
-                android:text="SUMBER DANA / DOMPET"
-                android:textColor="@color/textSecondary"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="58dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/bg_pill_outline"
-                android:gravity="center"
-                android:text="●  Tunai"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="22dp"
                 android:text="CATATAN (OPSIONAL)"
                 android:textColor="@color/textSecondary"
                 android:textSize="13sp"
@@ -510,7 +490,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="116dp"
+        android:layout_height="96dp"
         android:background="@color/surface"
         android:elevation="12dp"
         android:gravity="center"
@@ -529,13 +509,5 @@
             android:textStyle="bold"
             app:backgroundTint="@color/colorPrimaryDark"
             app:cornerRadius="16dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Tersimpan otomatis dan tersinkron ke dompet Tunai"
-            android:textColor="@color/navMuted"
-            android:textSize="10sp" />
     </LinearLayout>
 </LinearLayout>

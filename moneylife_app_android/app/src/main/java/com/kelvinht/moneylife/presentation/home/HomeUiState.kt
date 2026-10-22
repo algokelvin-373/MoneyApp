@@ -21,6 +21,7 @@ data class HomeUiState(
     val dateLabel: String = "",
     val spentText: String = "Rp 0",
     val limitText: String = "",
+    val limitShortText: String = "",
     val remainingText: String = "",
     val overLimitText: String? = null,
     val usagePercent: Int = 0,

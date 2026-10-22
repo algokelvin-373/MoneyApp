@@ -32,7 +32,7 @@ class AddExpenseViewModel(
     }
 
     fun selectDate(dateKey: String) {
-        if (dateKey <= DateUtils.todayKey()) {
+        if (DateUtils.isTodayOrPast(dateKey)) {
             _uiState.update { it.copy(dateKey = dateKey, error = null) }
         }
     }

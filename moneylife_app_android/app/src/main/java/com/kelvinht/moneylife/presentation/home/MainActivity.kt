@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +18,7 @@ import com.kelvinht.moneylife.core.util.DateUtils
 import com.kelvinht.moneylife.databinding.ActivityMainBinding
 import com.kelvinht.moneylife.presentation.addedit.AddExpenseActivity
 import java.time.LocalDate
+import java.util.Locale
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -29,11 +29,6 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: HomeViewModel by viewModels {
         HomeViewModelFactory((application as MoneyLifeApplication).container)
     }
-
-    private val addExpenseLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            viewModel.refresh()
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +53,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupActions() {
         binding.fabAdd.setOnClickListener {
-            addExpenseLauncher.launch(
+            startActivity(
                 Intent(this, AddExpenseActivity::class.java)
                     .putExtra(AddExpenseActivity.EXTRA_DATE_KEY, viewModel.selectedDateKey)
             )
@@ -93,14 +88,25 @@ class MainActivity : AppCompatActivity() {
         binding.textHistoryDate.text = state.dateLabel
         binding.textHistoryDate.contentDescription = getString(R.string.choose_date) + ": " + state.dateLabel
         val isToday = state.dateKey == DateUtils.todayKey()
+        binding.textSpendingHeader.text = if (isToday) {
+            getString(R.string.spending_header_today)
+        } else {
+            getString(
+                R.string.spending_header_date,
+                DateUtils.shortDisplayDate(state.dateKey).uppercase(Locale("id", "ID"))
+            )
+        }
         binding.buttonNextDay.isEnabled = !isToday
         binding.buttonToday.visibility = if (isToday) View.GONE else View.VISIBLE
         binding.textSpent.text = state.spentText
-        binding.textLimit.text = state.limitText
+        binding.textLimit.text = getString(R.string.limit_from_format, state.limitText)
+        binding.textLimitShort.text = getString(R.string.limit_short_format, state.limitShortText)
         binding.textRemaining.text = state.remainingText
         binding.progressDaily.setProgressCompat(state.usagePercent, true)
         binding.textUsage.text = state.usageText
         binding.textAverage.text = state.savingsText
+        binding.textSavingsLabel.text =
+            getString(R.string.savings_balance_format, DateUtils.monthLabel(state.dateKey))
         binding.textCondition.text = state.conditionText
         binding.textMakanAmount.text = state.makanText
         binding.textTransportAmount.text = state.transportText

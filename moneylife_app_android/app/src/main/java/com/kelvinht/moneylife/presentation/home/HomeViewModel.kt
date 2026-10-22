@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kelvinht.moneylife.core.format.RupiahFormatter
 import com.kelvinht.moneylife.core.util.DateUtils
+import com.kelvinht.moneylife.domain.model.CategoryBudget
 import com.kelvinht.moneylife.domain.model.DailyBudget
 import com.kelvinht.moneylife.domain.model.Expense
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
@@ -54,10 +55,6 @@ class HomeViewModel(
             initialValue = HomeUiState(dateKey = dateKey.value, dateLabel = DateUtils.displayDate(dateKey.value))
         )
 
-    init {
-        refresh()
-    }
-
     /** Advance the selected day only when the user was viewing today. */
     fun refresh() {
         val today = DateUtils.todayKey()
@@ -69,7 +66,7 @@ class HomeViewModel(
     }
 
     fun selectDate(key: String) {
-        if (key <= DateUtils.todayKey()) dateKey.value = key
+        if (DateUtils.isTodayOrPast(key)) dateKey.value = key
     }
 
     fun previousDay() {
@@ -100,7 +97,8 @@ class HomeViewModel(
             dateKey = budget.dateKey,
             dateLabel = DateUtils.displayDate(budget.dateKey),
             spentText = RupiahFormatter.format(budget.spent),
-            limitText = "Batas harian: ${RupiahFormatter.format(budget.limit)}",
+            limitText = RupiahFormatter.format(budget.limit),
+            limitShortText = RupiahFormatter.formatCompact(budget.limit),
             remainingText = "Sisa ${RupiahFormatter.format(budget.remaining)}",
             overLimitText = if (budget.isOverLimit) {
                 "Lebih ${RupiahFormatter.format(budget.overSpent)} dari batas harian"
@@ -115,9 +113,9 @@ class HomeViewModel(
                 BudgetStatus.WARNING -> "Perlu Dijaga"
                 BudgetStatus.OVER -> "Melebihi Limit"
             },
-            makanText = categoryTotal(budget.expenses, ExpenseCategory.MAKAN, "50k"),
-            transportText = categoryTotal(budget.expenses, ExpenseCategory.TRANSPORT, "30k"),
-            jajanText = categoryTotal(budget.expenses, ExpenseCategory.JAJAN, "20k"),
+            makanText = categoryTotal(budget.expenses, ExpenseCategory.MAKAN),
+            transportText = categoryTotal(budget.expenses, ExpenseCategory.TRANSPORT),
+            jajanText = categoryTotal(budget.expenses, ExpenseCategory.JAJAN),
             budgetStatus = status,
             expenses = budget.expenses.map { it.toUiModel() },
             isEmpty = budget.expenses.isEmpty()
@@ -126,12 +124,11 @@ class HomeViewModel(
 
     private fun categoryTotal(
         expenses: List<Expense>,
-        category: ExpenseCategory,
-        limitLabel: String
+        category: ExpenseCategory
     ): String {
         val total = expenses.filter { it.category == category }.sumOf { it.amount }
         val compact = if (total == 0L) "Rp 0" else RupiahFormatter.format(total)
-        return "$compact/$limitLabel"
+        return "$compact/${CategoryBudget.limitLabelFor(category)}"
     }
 
     private fun Expense.toUiModel(): ExpenseUiModel = ExpenseUiModel(

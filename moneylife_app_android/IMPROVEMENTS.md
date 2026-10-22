@@ -9,7 +9,7 @@
 | Gelombang | Isi                                                              | Status         | Branch / Commit                                           |
 | --------- | ---------------------------------------------------------------- | -------------- | --------------------------------------------------------- |
 | 1         | #1, #2, #3 (kerusakan data)                                      | ✅ **Selesai** | `fix/gelombang-1` → merge `035d663` di `dev/improvements` |
-| 2         | #4, #5, #6, #7, #8, #9, #10 (logika & konsistensi)               | ⬜ Belum       | —                                                         |
+| 2         | #4, #5, #6, #7, #8, #9, #10 (logika & konsistensi)               | ✅ **Selesai** | `fix/gelombang-2` → merge di `dev/improvements`           |
 | 3         | #20, #21, #22, #23, #24 (test ViewModel + androidTest + migrasi) | ⬜ Belum       | —                                                         |
 | 4         | #11, #12, #13 (string + state)                                   | ⬜ Belum       | —                                                         |
 | 5         | #25, #26, #27, #28, #29 (R8, dependency, CI, lint, JDK)          | ⬜ Belum       | —                                                         |
@@ -22,6 +22,18 @@
 | 1   | Rollover men-settle **setiap** hari dari `lastActiveDate` s/d `today - 1` (hari ini belum final) dalam **satu transaksi**; hari tanpa data = tabung penuh Rp 100.000 | `c259660` | 10 test `RolloverDailySavingsUseCaseTest` (gap 3 hari, gap panjang, hari berjalan, single transaction) |
 | 2   | `AddExpenseUiState` default `amountInput = ""`, `note = ""` — form tidak lagi terisi transaksi fiktif                                                                | `db4c2db` | `AddExpenseUiStateTest`                                                                                |
 | 3   | `AddExpenseUseCase` & `DeleteExpenseUseCase` menulis expense + `daily_savings` dalam satu `RoomDatabase.withTransaction` lewat port `TransactionRunner`              | `136c75b` | `HistoricalExpenseUseCaseTest` (write dalam 1 transaksi + jalur gagal)                                 |
+
+### Gelombang 2 — detail (selesai)
+
+| #   | Fix yang dikerjakan                                                                                                                                          | Commit    | Test penjaga                                              |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------- | --------------------------------------------------------- |
+| 4   | Batas harian bersumber dari satu konstanta; label memakai placeholder `%1$s`; `limit_placeholder` dihapus dan "Limit: 100k" dihitung dari `DailyBudget.limit` | `d928929` | `CalculateDailyBudgetUseCaseTest`                         |
+| 5   | Pagu kategori pindah ke domain (`CategoryBudget`), UI "Atur Limit" yang mati dihapus                                                                         | `bb6efc6` | `CategoryBudgetTest`                                      |
+| 6   | Header kartu utama punya id dan menampilkan "HARI INI" atau tanggal terpilih                                                                                | `469ba24` | `DateUtilsTest`                                           |
+| 7   | Blok "SUMBER DANA / DOMPET" dan teks sinkronisasi dompet dihapus karena fitur dompet belum ada                                                              | `372e1e8` | `:app:assembleDebug`                                      |
+| 8   | Label saldo tabungan eksplisit menyebut bulannya ("Saldo Tabungan · Okt 2026")                                                                              | `76e6bb8` | `DateUtilsTest` (`monthLabel`)                            |
+| 9   | `refresh()` hanya dipanggil dari `onResume`; `init` dan callback result dihapus                                                                             | `37a896b` | `:app:assembleDebug`                                      |
+| 10  | Perbandingan tanggal memakai `LocalDate` lewat `DateUtils.isTodayOrPast` / `isPast`                                                                          | `2e465e3` | `DateUtilsTest` (hari ini, lampau, besok)                 |
 
 ## Snapshot cepat
 
