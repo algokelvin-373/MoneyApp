@@ -66,7 +66,7 @@ class HomeViewModel(
     }
 
     fun selectDate(key: String) {
-        if (key <= DateUtils.todayKey()) dateKey.value = key
+        if (DateUtils.isTodayOrPast(key)) dateKey.value = key
     }
 
     fun previousDay() {

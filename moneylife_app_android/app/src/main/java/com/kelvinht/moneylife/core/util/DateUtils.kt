@@ -25,6 +25,14 @@ object DateUtils {
 
     fun todayKey(): String = LocalDate.now().format(dateKeyFormatter)
 
+    /** True when [dateKey] is today or any earlier day. */
+    fun isTodayOrPast(dateKey: String): Boolean =
+        !parseDate(dateKey).isAfter(LocalDate.now())
+
+    /** True only for days before today; today itself is not final yet. */
+    fun isPast(dateKey: String): Boolean =
+        parseDate(dateKey).isBefore(LocalDate.now())
+
     fun parseDate(dateKey: String): LocalDate = LocalDate.parse(dateKey, dateKeyFormatter)
 
     fun dateKey(date: LocalDate): String = date.format(dateKeyFormatter)
