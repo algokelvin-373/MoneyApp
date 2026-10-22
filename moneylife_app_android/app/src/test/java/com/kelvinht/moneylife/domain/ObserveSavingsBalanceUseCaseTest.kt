@@ -55,6 +55,8 @@ private class MonthSavingsRepository(
 
     override suspend fun saveDailySaving(dateKey: String, amount: Long) = Unit
 
+    override suspend fun saveDailySavings(savings: Map<String, Long>) = Unit
+
     override suspend fun getLastActiveDate(): String? = null
 
     override suspend fun setLastActiveDate(dateKey: String) = Unit

@@ -69,6 +69,10 @@ private class MemorySavingsRepository : SavingsRepository {
     override suspend fun saveDailySaving(dateKey: String, amount: Long) {
         saved[dateKey] = amount
     }
+
+    override suspend fun saveDailySavings(savings: Map<String, Long>) {
+        saved.putAll(savings)
+    }
     override suspend fun getLastActiveDate(): String? = null
     override suspend fun setLastActiveDate(dateKey: String) = Unit
 }
