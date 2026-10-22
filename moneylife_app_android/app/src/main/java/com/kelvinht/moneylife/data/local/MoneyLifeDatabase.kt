@@ -15,7 +15,7 @@ import com.kelvinht.moneylife.data.local.entity.ExpenseEntity
 @Database(
     entities = [ExpenseEntity::class, DailySavingEntity::class, AppStateEntity::class],
     version = 2,
-    exportSchema = false
+    exportSchema = true
 )
 abstract class MoneyLifeDatabase : RoomDatabase() {
 
@@ -40,7 +40,12 @@ abstract class MoneyLifeDatabase : RoomDatabase() {
                     .also { instance = it }
             }
 
-        private val MIGRATION_1_2 = object : Migration(1, 2) {
+        /**
+         * Migration from schema version 1 (table `expenses`) to version 2
+         * (adds `daily_savings` and `app_state`). Public so the migration can
+         * be covered by an instrumentation test.
+         */
+        val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL(
                     "CREATE TABLE IF NOT EXISTS daily_savings (" +

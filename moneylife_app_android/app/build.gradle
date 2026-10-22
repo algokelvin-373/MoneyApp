@@ -4,6 +4,12 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+// Room exports the schema of every database version into app/schemas so the
+// migrations can be validated against the real schema history.
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 android {
     namespace 'com.kelvinht.moneylife'
     compileSdk 35
@@ -35,6 +41,11 @@ android {
         viewBinding = true
         buildConfig = true
     }
+    sourceSets {
+        // The exported Room schemas are shipped as assets of the test APK so
+        // MigrationTestHelper can validate the migrations against them.
+        androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
+    }
 }
 
 dependencies {
@@ -65,6 +76,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     testImplementation libs.junit
+    testImplementation libs.kotlinx.coroutines.test
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core
+    androidTestImplementation libs.androidx.room.testing
 }

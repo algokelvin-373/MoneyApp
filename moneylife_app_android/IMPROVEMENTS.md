@@ -1,8 +1,8 @@
 # Catatan Perbaikan — `moneylife_app_android`
 
-> Branch `dev/improvements` @ `035d663` · Audit ulang: 22 Okt 2026 · **Gelombang 1 sudah selesai**
+> Branch `dev/improvements` @ `352a15a` · Audit ulang: 22 Okt 2026 · **Gelombang 1–3 sudah selesai**
 > **Scope:** hanya `moneylife_app_android/` (app native baru). Temuan untuk `money_app_android` dikeluarkan dari dokumen ini.
-> **Baseline verifikasi:** `:app:testDebugUnitTest` **BUILD SUCCESSFUL** (21 test) · `:app:assembleDebug` **BUILD SUCCESSFUL** · JDK 17 / AGP 8.5.0.
+> **Baseline verifikasi:** `:app:testDebugUnitTest` **BUILD SUCCESSFUL** (50 test) · `:app:assembleDebug` **BUILD SUCCESSFUL** · `:app:assembleDebugAndroidTest` **BUILD SUCCESSFUL** (test instrumentasi belum dieksekusi — environment tanpa device/emulator) · JDK 17 / AGP 8.5.0.
 
 ## Status pengerjaan
 
@@ -10,7 +10,7 @@
 | --------- | ---------------------------------------------------------------- | -------------- | --------------------------------------------------------- |
 | 1         | #1, #2, #3 (kerusakan data)                                      | ✅ **Selesai** | `fix/gelombang-1` → merge `035d663` di `dev/improvements` |
 | 2         | #4, #5, #6, #7, #8, #9, #10 (logika & konsistensi)               | ✅ **Selesai** | `fix/gelombang-2` → merge di `dev/improvements`           |
-| 3         | #20, #21, #22, #23, #24 (test ViewModel + androidTest + migrasi) | ⬜ Belum       | —                                                         |
+| 3         | #20, #21, #22, #23, #24 (test ViewModel + androidTest + migrasi) | ✅ **Selesai** | `fix/gelombang-3` → merge di `dev/improvements`           |
 | 4         | #11, #12, #13 (string + state)                                   | ⬜ Belum       | —                                                         |
 | 5         | #25, #26, #27, #28, #29 (R8, dependency, CI, lint, JDK)          | ⬜ Belum       | —                                                         |
 | 6         | sisanya (P2 detail, P5–P6 hygiene)                               | ⬜ Belum       | —                                                         |
@@ -35,16 +35,28 @@
 | 9   | `refresh()` hanya dipanggil dari `onResume`; `init` dan callback result dihapus                                                                             | `37a896b` | `:app:assembleDebug`                                      |
 | 10  | Perbandingan tanggal memakai `LocalDate` lewat `DateUtils.isTodayOrPast` / `isPast`                                                                          | `2e465e3` | `DateUtilsTest` (hari ini, lampau, besok)                 |
 
+### Gelombang 3 — detail (selesai)
+
+| #   | Fix yang dikerjakan                                                                                                                                                                                                 | Commit    | Test penjaga                                                                                          |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | ----------------------------------------------------------------------------------------------------- |
+| 20  | `HomeViewModelTest` (11 test: navigasi tanggal, guard masa depan, status budget, rollover lewat `refresh()`, hapus expense) dan `AddExpenseViewModelTest` (11 test: validasi nominal, quick amount + batas maksimum, reset, `selectDate`, jalur error). Test memakai `kotlinx-coroutines-test` + fake repository in-memory yang reaktif | `38eff73` | 22 test ViewModel (total unit test 21 → 50); diuji balik dengan mutasi guard tanggal → 2 test gagal  |
+| 21  | Sudah selesai bersama #1 di gelombang 1 (tidak ada pekerjaan baru di gelombang 3)                                                                                                                                    | `c259660` | `RolloverDailySavingsUseCaseTest` (gap 3 hari, gap panjang, hari berjalan)                              |
+| 22  | `AddExpenseFlowTest` (androidTest): `fabAdd` membuka form, simpan → total & daftar di Home ikut diperbarui lewat database, `EXTRA_DATE_KEY` dipakai form dan expense tersimpan pada tanggal itu; DB dibersihkan per test | `4436b4a` | 3 test instrumentasi (`:app:assembleDebugAndroidTest` BUILD SUCCESSFUL)                                |
+| 23  | `MoneyLifeDatabaseMigrationTest` (androidTest): `createDatabase(v1)` + data expense → `runMigrationsAndValidate(v2)`; data lama utuh, `daily_savings`/`app_state` terbentuk dan bisa diisi. `1.json` diekspor jujur dari definisi Room v1 (bukan tulis tangan) + `room-testing` + `schemas` sebagai assets androidTest | `f427e16` | 2 test instrumentasi; skema 1.json/2.json ikut ter-package di APK test                               |
+| 24  | `exportSchema = true` + `ksp` arg `room.schemaLocation` → `app/schemas/.../MoneyLifeDatabase/2.json` tersimpan di repo                                                                                              | `0f7f20f` | `:app:kspDebugKotlin` menghasilkan `2.json`                                                           |
+
+> Catatan #22/#23: test instrumentasi belum dieksekusi di environment ini (tidak ada device/emulator), tetapi sudah terkompilasi dan APK test memuat `assets/com.kelvinht.moneylife.data.local.MoneyLifeDatabase/{1,2}.json`.
+
 ## Snapshot cepat
 
 | Metrik            | Nilai                                                       | Catatan                                                                    |
 | ----------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------- |
-| Kotlin main       | 36 file / 1.351 LOC                                         | Clean Architecture: `presentation → domain ← data` (+ `TransactionRunner`) |
-| Unit test         | 6 file / 21 test / 496 LOC                                  | 20 test `domain` + 1 test state form; **0 test ViewModel**                 |
-| androidTest       | folder tidak ada                                            | alur antar-activity tak teruji                                             |
+| Kotlin main       | 37 file / 1.408 LOC                                         | Clean Architecture: `presentation → domain ← data` (+ `TransactionRunner`) |
+| Unit test         | 9 file test (+3 fake) / 50 test / 1.080 LOC                 | 22 test ViewModel baru, 28 test `domain`/state form; `kotlinx-coroutines-test` |
+| androidTest       | 2 file / 5 test / 278 LOC                                   | alur antar-activity + migrasi Room v1→v2 (belum dieksekusi, tanpa emulator) |
 | Layout / drawable | 3 / 21                                                      | `activity_main`, `activity_add_expense`, `item_expense`                    |
 | String resource   | 25 didefinisikan, **7 tidak terpakai**                      | 49 `android:text` literal di layout                                        |
-| Build             | Kotlin 1.9.0 · KSP · Room 2.6.1 · compileSdk 35 · minSdk 27 | `jvmTarget` masih 1.8                                                      |
+| Build             | Kotlin 1.9.0 · KSP · Room 2.6.1 · compileSdk 35 · minSdk 27 | `jvmTarget` masih 1.8 · skema Room diekspor (`app/schemas`)                |
 | Release           | `minifyEnabled false` · `versionName "1.0"`                 | R8 belum aktif                                                             |
 | CI / lint         | tidak ada `.github/` · tidak ada blok `lint {}`             | test sudah hijau tapi tidak pernah dijaga otomatis                         |
 
@@ -94,11 +106,11 @@
 
 | #   | Temuan                                                                                                          | Risiko                                                                                                                                | Fix                                                                                                                                             |
 | --- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| 20  | **0 test ViewModel** — 20 test di layer `domain` + 1 test state form, tidak ada yang menyentuh ViewModel.       | Bagian paling rawan (navigasi tanggal, guard masa depan, `refresh()`) justru tanpa pelindung.                                         | `HomeViewModelTest` (navigasi tanggal, ganti status budget, refresh), `AddExpenseViewModelTest` (validasi nominal, quick amount, reset, error). |
+| 20  | **0 test ViewModel** — 20 test di layer `domain` + 1 test state form, tidak ada yang menyentuh ViewModel.       | Bagian paling rawan (navigasi tanggal, guard masa depan, `refresh()`) justru tanpa pelindung.                                         | ✅ `38eff73`: `HomeViewModelTest` (navigasi tanggal, ganti status budget, refresh), `AddExpenseViewModelTest` (validasi nominal, quick amount, reset, error). |
 | 21  | **Kasus "hari terlewat" tidak ada test.** `RolloverDailySavingsUseCaseTest` hanya cover selisih 1 hari (11→12). | Bug #1 lolos ke produksi.                                                                                                             | ✅ **Selesai** bersama #1 (`c259660`): test lompatan 3+ hari, gap panjang, hari tanpa data, hari over limit, hari berjalan belum final.         |
-| 22  | **Tidak ada `androidTest`** — folder `app/src/androidTest` tidak ada.                                           | Alur `MainActivity` → `AddExpenseActivity` (kirim `EXTRA_DATE_KEY`, balik `RESULT_OK`) tak teruji; `resultCode` tak pernah diperiksa. | Tambah test instrumentasi minimal untuk alur tersebut.                                                                                          |
-| 23  | **Migrasi Room v1→v2 tanpa test.** `MIGRATION_1_2` membuat tabel `daily_savings` + `app_state`.                 | User yang sudah punya DB v1 tidak terlindungi; migrasi gagal = data hilang.                                                           | `MigrationTestHelper` test (butuh `room-testing` + `exportSchema = true`).                                                                      |
-| 24  | **`exportSchema = false`** — skema tidak pernah diekspor.                                                       | Riwayat skema hilang, tidak bisa divalidasi antar versi.                                                                              | Set `exportSchema = true` + `room.schemaLocation` di `build.gradle`.                                                                            |
+| 22  | **Tidak ada `androidTest`** — folder `app/src/androidTest` tidak ada.                                           | Alur `MainActivity` → `AddExpenseActivity` (kirim `EXTRA_DATE_KEY`, balik `RESULT_OK`) tak teruji; `resultCode` tak pernah diperiksa. | ✅ `4436b4a`: `AddExpenseFlowTest` — FAB → form → simpan → Home ikut berubah; `EXTRA_DATE_KEY` dipakai form. Setelah #9 data kembali lewat DB + `onResume`, bukan `resultCode`. |
+| 23  | **Migrasi Room v1→v2 tanpa test.** `MIGRATION_1_2` membuat tabel `daily_savings` + `app_state`.                 | User yang sudah punya DB v1 tidak terlindungi; migrasi gagal = data hilang.                                                           | ✅ `f427e16`: `MoneyLifeDatabaseMigrationTest` (`MigrationTestHelper`, butuh `room-testing` + `exportSchema = true`). |
+| 24  | **`exportSchema = false`** — skema tidak pernah diekspor.                                                       | Riwayat skema hilang, tidak bisa divalidasi antar versi.                                                                              | ✅ `0f7f20f`: `exportSchema = true` + `room.schemaLocation` → `app/schemas/.../{1,2}.json`. |
 
 ---
 
@@ -142,8 +154,8 @@
 | Gelombang | Isi                                                              | Estimasi   | Status                 |
 | --------- | ---------------------------------------------------------------- | ---------- | ---------------------- |
 | 1         | #1, #2, #3 (kerusakan data)                                      | 0,5–1 hari | ✅ Selesai (`035d663`) |
-| 2         | #4, #5, #6, #7, #8, #9, #10 (logika & konsistensi)               | 1–2 hari   | ⬜ Belum               |
-| 3         | #20, #21, #22, #23, #24 (test ViewModel + androidTest + migrasi) | 2–3 hari   | ⬜ Belum (#21 sudah)   |
+| 2         | #4, #5, #6, #7, #8, #9, #10 (logika & konsistensi)               | 1–2 hari   | ✅ Selesai            |
+| 3         | #20, #21, #22, #23, #24 (test ViewModel + androidTest + migrasi) | 2–3 hari   | ✅ Selesai            |
 | 4         | #11, #12, #13 (string + state)                                   | 1–2 hari   | ⬜ Belum               |
 | 5         | #25, #26, #27, #28, #29 (R8, dependency, CI, lint, JDK)          | 1–2 hari   | ⬜ Belum               |
 | 6         | sisanya (P2 detail, P5–P6 hygiene)                               | 1–2 hari   | ⬜ Belum               |
@@ -155,8 +167,9 @@
 | Arsitektur berlapis         | `presentation → domain ← data`; domain tanpa Android/Room, mudah diuji                                                |
 | DI manual                   | `AppContainer` satu tempat, tanpa framework berat                                                                     |
 | Room + KSP                  | KSP menggantikan kapt, aman di JDK 17; index `dateKey` pada `expenses`                                                |
-| Test domain                 | 21 test hijau: rollover multi-hari, atomisitas expense+savings, over-limit, tepat batas, nol pengeluaran, reset bulan |
+| Test domain                 | 50 test hijau: rollover multi-hari, atomisitas expense+savings, over-limit, tepat batas, nol pengeluaran, reset bulan, ViewModel Home/AddExpense |
 | Atomisitas data             | `TransactionRunner` (Room `withTransaction`) — expense + `daily_savings` + `lastActiveDate` selalu konsisten |
+| Riwayat skema Room          | `app/schemas/.../MoneyLifeDatabase/{1,2}.json` + `MoneyLifeDatabaseMigrationTest` — migrasi divalidasi terhadap skema asli |
 | `stateIn` + `flatMapLatest` | Alur data reaktif bersih, tanpa `LiveData`                                                                            |
 | Manifest Activity           | `exported` & `parentActivityName` sudah benar; `local.properties`/`.gradle` sudah di-ignore                           |
 
