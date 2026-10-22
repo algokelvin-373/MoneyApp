@@ -19,6 +19,7 @@ import com.kelvinht.moneylife.core.util.DateUtils
 import com.kelvinht.moneylife.databinding.ActivityMainBinding
 import com.kelvinht.moneylife.presentation.addedit.AddExpenseActivity
 import java.time.LocalDate
+import java.util.Locale
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -93,6 +94,14 @@ class MainActivity : AppCompatActivity() {
         binding.textHistoryDate.text = state.dateLabel
         binding.textHistoryDate.contentDescription = getString(R.string.choose_date) + ": " + state.dateLabel
         val isToday = state.dateKey == DateUtils.todayKey()
+        binding.textSpendingHeader.text = if (isToday) {
+            getString(R.string.spending_header_today)
+        } else {
+            getString(
+                R.string.spending_header_date,
+                DateUtils.shortDisplayDate(state.dateKey).uppercase(Locale("id", "ID"))
+            )
+        }
         binding.buttonNextDay.isEnabled = !isToday
         binding.buttonToday.visibility = if (isToday) View.GONE else View.VISIBLE
         binding.textSpent.text = state.spentText

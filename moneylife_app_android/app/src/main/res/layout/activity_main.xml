@@ -133,10 +133,11 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/textSpendingHeader"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="●  PENGELUARAN TANGGAL INI"
+                            android:text="@string/spending_header_today"
                             android:textColor="@color/textSecondary"
                             android:textSize="13sp"
                             android:textStyle="bold" />

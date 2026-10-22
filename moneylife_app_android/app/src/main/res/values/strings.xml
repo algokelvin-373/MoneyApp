@@ -8,6 +8,8 @@
     <string name="zero_rupiah">Rp 0</string>
     <string name="limit_from_format">dari %1$s</string>
     <string name="limit_short_format">Limit: %1$s</string>
+    <string name="spending_header_today">●  PENGELUARAN HARI INI</string>
+    <string name="spending_header_date">●  PENGELUARAN %1$s</string>
     <string name="empty_message">Belum ada pengeluaran hari ini</string>
     <string name="choose_date">Pilih tanggal</string>
     <string name="back_to_today">Hari Ini</string>
