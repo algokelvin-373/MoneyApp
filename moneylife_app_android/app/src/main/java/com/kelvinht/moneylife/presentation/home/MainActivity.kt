@@ -111,6 +111,8 @@ class MainActivity : AppCompatActivity() {
         binding.progressDaily.setProgressCompat(state.usagePercent, true)
         binding.textUsage.text = state.usageText
         binding.textAverage.text = state.savingsText
+        binding.textSavingsLabel.text =
+            getString(R.string.savings_balance_format, DateUtils.monthLabel(state.dateKey))
         binding.textCondition.text = state.conditionText
         binding.textMakanAmount.text = state.makanText
         binding.textTransportAmount.text = state.transportText

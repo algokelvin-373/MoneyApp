@@ -18,6 +18,8 @@ object DateUtils {
         DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy", Locale("id", "ID"))
     private val shortDisplayFormatter: DateTimeFormatter =
         DateTimeFormatter.ofPattern("d MMM yyyy", Locale("id", "ID"))
+    private val monthDisplayFormatter: DateTimeFormatter =
+        DateTimeFormatter.ofPattern("MMM yyyy", Locale("id", "ID"))
     private val timeFormatter: DateTimeFormatter =
         DateTimeFormatter.ofPattern("HH:mm", Locale("id", "ID"))
 
@@ -36,6 +38,10 @@ object DateUtils {
     /** Example: "2026-10-09" -> "9 Okt 2026" */
     fun shortDisplayDate(dateKey: String): String =
         LocalDate.parse(dateKey, dateKeyFormatter).format(shortDisplayFormatter)
+
+    /** Example: "2026-10-09" -> "Okt 2026" */
+    fun monthLabel(dateKey: String): String =
+        LocalDate.parse(dateKey, dateKeyFormatter).format(monthDisplayFormatter)
 
     fun formatTime(epochMillis: Long): String =
         Instant.ofEpochMilli(epochMillis)

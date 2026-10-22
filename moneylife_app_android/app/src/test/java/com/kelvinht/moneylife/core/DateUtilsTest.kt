@@ -16,4 +16,9 @@ class DateUtilsTest {
         val date = DateUtils.parseDate("2026-10-09")
         assertEquals("2026-10-09", DateUtils.dateKey(date))
     }
+
+    @Test
+    fun `month label uses abbreviated month and year`() {
+        assertEquals("Okt 2026", DateUtils.monthLabel("2026-10-09"))
+    }
 }
