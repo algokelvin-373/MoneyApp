@@ -3,10 +3,12 @@ package com.kelvinht.moneylife.di
 import android.content.Context
 import com.kelvinht.moneylife.data.local.MoneyLifeDatabase
 import com.kelvinht.moneylife.data.repository.ExpenseRepositoryImpl
+import com.kelvinht.moneylife.data.repository.RoomTransactionRunner
 import com.kelvinht.moneylife.data.repository.SavingsRepositoryImpl
 import com.kelvinht.moneylife.domain.model.DailyBudget
 import com.kelvinht.moneylife.domain.repository.ExpenseRepository
 import com.kelvinht.moneylife.domain.repository.SavingsRepository
+import com.kelvinht.moneylife.domain.repository.TransactionRunner
 import com.kelvinht.moneylife.domain.usecase.AddExpenseUseCase
 import com.kelvinht.moneylife.domain.usecase.CalculateDailyBudgetUseCase
 import com.kelvinht.moneylife.domain.usecase.DeleteExpenseUseCase
@@ -24,13 +26,14 @@ class AppContainer(context: Context) {
 
     private val expenseRepository: ExpenseRepository = ExpenseRepositoryImpl(database.expenseDao())
     private val savingsRepository: SavingsRepository = SavingsRepositoryImpl(database.savingsDao())
+    private val transactionRunner: TransactionRunner = RoomTransactionRunner(database)
     val dailyLimit: Long = DailyBudget.DEFAULT_DAILY_LIMIT
 
     val getDailyExpenses: GetDailyExpensesUseCase = GetDailyExpensesUseCase(expenseRepository)
     val calculateDailyBudget: CalculateDailyBudgetUseCase = CalculateDailyBudgetUseCase()
-    val addExpense: AddExpenseUseCase = AddExpenseUseCase(expenseRepository, savingsRepository, dailyLimit)
-    val deleteExpense: DeleteExpenseUseCase = DeleteExpenseUseCase(expenseRepository, savingsRepository, dailyLimit)
+    val addExpense: AddExpenseUseCase = AddExpenseUseCase(expenseRepository, savingsRepository, transactionRunner, dailyLimit)
+    val deleteExpense: DeleteExpenseUseCase = DeleteExpenseUseCase(expenseRepository, savingsRepository, transactionRunner, dailyLimit)
     val observeSavingsBalance = ObserveSavingsBalanceUseCase(savingsRepository)
-    val rolloverDailySavings = RolloverDailySavingsUseCase(expenseRepository, savingsRepository)
+    val rolloverDailySavings = RolloverDailySavingsUseCase(expenseRepository, savingsRepository, transactionRunner)
 
 }

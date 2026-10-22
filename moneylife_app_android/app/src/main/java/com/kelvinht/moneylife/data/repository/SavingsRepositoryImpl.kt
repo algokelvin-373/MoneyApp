@@ -15,6 +15,11 @@ class SavingsRepositoryImpl(
         dao.saveDailySaving(DailySavingEntity(dateKey = dateKey, amount = amount))
     }
 
+    override suspend fun saveDailySavings(savings: Map<String, Long>) {
+        if (savings.isEmpty()) return
+        dao.saveDailySavings(savings.map { (dateKey, amount) -> DailySavingEntity(dateKey, amount) })
+    }
+
     override suspend fun getLastActiveDate(): String? = dao.getState(LAST_ACTIVE_DATE)
 
     override suspend fun setLastActiveDate(dateKey: String) {
