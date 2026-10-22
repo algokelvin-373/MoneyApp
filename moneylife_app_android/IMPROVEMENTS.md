@@ -1,31 +1,50 @@
 # Catatan Perbaikan — `moneylife_app_android`
 
-> Branch `dev/moneylife` @ `6c55ea9` · Audit ulang: 22 Okt 2026
+> Branch `dev/improvements` @ `035d663` · Audit ulang: 22 Okt 2026 · **Gelombang 1 sudah selesai**
 > **Scope:** hanya `moneylife_app_android/` (app native baru). Temuan untuk `money_app_android` dikeluarkan dari dokumen ini.
-> **Baseline verifikasi:** `:app:testDebugUnitTest` **BUILD SUCCESSFUL** (13 test) · `:app:compileDebugKotlin` **BUILD SUCCESSFUL** · JDK 17 / AGP 8.5.0.
+> **Baseline verifikasi:** `:app:testDebugUnitTest` **BUILD SUCCESSFUL** (21 test) · `:app:assembleDebug` **BUILD SUCCESSFUL** · JDK 17 / AGP 8.5.0.
+
+## Status pengerjaan
+
+| Gelombang | Isi                                                              | Status         | Branch / Commit                                           |
+| --------- | ---------------------------------------------------------------- | -------------- | --------------------------------------------------------- |
+| 1         | #1, #2, #3 (kerusakan data)                                      | ✅ **Selesai** | `fix/gelombang-1` → merge `035d663` di `dev/improvements` |
+| 2         | #4, #5, #6, #7, #8, #9, #10 (logika & konsistensi)               | ⬜ Belum       | —                                                         |
+| 3         | #20, #21, #22, #23, #24 (test ViewModel + androidTest + migrasi) | ⬜ Belum       | —                                                         |
+| 4         | #11, #12, #13 (string + state)                                   | ⬜ Belum       | —                                                         |
+| 5         | #25, #26, #27, #28, #29 (R8, dependency, CI, lint, JDK)          | ⬜ Belum       | —                                                         |
+| 6         | sisanya (P2 detail, P5–P6 hygiene)                               | ⬜ Belum       | —                                                         |
+
+### Gelombang 1 — detail (selesai)
+
+| #   | Fix yang dikerjakan                                                                                                                                                  | Commit    | Test penjaga                                                                                           |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------ |
+| 1   | Rollover men-settle **setiap** hari dari `lastActiveDate` s/d `today - 1` (hari ini belum final) dalam **satu transaksi**; hari tanpa data = tabung penuh Rp 100.000 | `c259660` | 10 test `RolloverDailySavingsUseCaseTest` (gap 3 hari, gap panjang, hari berjalan, single transaction) |
+| 2   | `AddExpenseUiState` default `amountInput = ""`, `note = ""` — form tidak lagi terisi transaksi fiktif                                                                | `db4c2db` | `AddExpenseUiStateTest`                                                                                |
+| 3   | `AddExpenseUseCase` & `DeleteExpenseUseCase` menulis expense + `daily_savings` dalam satu `RoomDatabase.withTransaction` lewat port `TransactionRunner`              | `136c75b` | `HistoricalExpenseUseCaseTest` (write dalam 1 transaksi + jalur gagal)                                 |
 
 ## Snapshot cepat
 
-| Metrik            | Nilai                                                       | Catatan                                                         |
-| ----------------- | ----------------------------------------------------------- | --------------------------------------------------------------- |
-| Kotlin main       | 34 file / 1.260 LOC                                         | Clean Architecture: `presentation → domain ← data`              |
-| Unit test         | 4 file / 13 test / 322 LOC                                  | 100% di layer `domain`; **0 test ViewModel**, 0 test presentasi |
-| androidTest       | folder tidak ada                                            | alur antar-activity tak teruji                                  |
-| Layout / drawable | 3 / 21                                                      | `activity_main`, `activity_add_expense`, `item_expense`         |
-| String resource   | 25 didefinisikan, **7 tidak terpakai**                      | 49 `android:text` literal di layout                             |
-| Build             | Kotlin 1.9.0 · KSP · Room 2.6.1 · compileSdk 35 · minSdk 27 | `jvmTarget` masih 1.8                                           |
-| Release           | `minifyEnabled false` · `versionName "1.0"`                 | R8 belum aktif                                                  |
-| CI / lint         | tidak ada `.github/` · tidak ada blok `lint {}`             | test sudah hijau tapi tidak pernah dijaga otomatis              |
+| Metrik            | Nilai                                                       | Catatan                                                                    |
+| ----------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Kotlin main       | 36 file / 1.351 LOC                                         | Clean Architecture: `presentation → domain ← data` (+ `TransactionRunner`) |
+| Unit test         | 6 file / 21 test / 496 LOC                                  | 20 test `domain` + 1 test state form; **0 test ViewModel**                 |
+| androidTest       | folder tidak ada                                            | alur antar-activity tak teruji                                             |
+| Layout / drawable | 3 / 21                                                      | `activity_main`, `activity_add_expense`, `item_expense`                    |
+| String resource   | 25 didefinisikan, **7 tidak terpakai**                      | 49 `android:text` literal di layout                                        |
+| Build             | Kotlin 1.9.0 · KSP · Room 2.6.1 · compileSdk 35 · minSdk 27 | `jvmTarget` masih 1.8                                                      |
+| Release           | `minifyEnabled false` · `versionName "1.0"`                 | R8 belum aktif                                                             |
+| CI / lint         | tidak ada `.github/` · tidak ada blok `lint {}`             | test sudah hijau tapi tidak pernah dijaga otomatis                         |
 
 ---
 
 ## P0 — Kerusakan data (blocker rilis)
 
-| #   | Temuan                                                                                                                    | Dampak                                                                                                                                           | Lokasi                                                         | Fix                                                                                                                                                                                                                                              |
-| --- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1   | **Rollover tabungan kehilangan hari yang terlewat.** Hanya 1 baris `daily_savings` ditulis, untuk `lastActiveDate` saja.  | App tidak dibuka 3 hari (lastActive=20, today=23) → tanggal 21 & 22 hilang, saldo kurang Rp 200.000 (2 × Rp 100.000/hari). Kerugian tanpa error. | `RolloverDailySavingsUseCase.kt:18-23`                         | Loop **`lastActiveDate` s/d `today - 1 hari`** (hanya hari yang sudah lewat; `today` belum final): hitung `limit - spent` per hari, tulis semua dalam satu transaksi. Tetapkan aturan eksplisit untuk hari tanpa data (tabung penuh Rp 100.000). |
-| 2   | **Form "Catat Pengeluaran" terbuka dengan data dummy.** `amountInput = "45000"`, `note = "Makan siang Rendang & Es Teh"`. | Install baru → form terisi transaksi fiktif; user bisa saja menekan Simpan tanpa sadar dan menyimpan transaksi palsu.                            | `AddExpenseUiState.kt:8-9`                                     | Defaultkan `amountInput = ""`, `note = ""`.                                                                                                                                                                                                      |
-| 3   | **Simpan expense + update tabungan tidak atomik.** Dua DAO berbeda ditulis berurutan (expense → `daily_savings`).         | Crash/kill di antara keduanya → expense tersimpan, saldo tabungan basi (tidak sama dengan `limit - spent`).                                      | `AddExpenseUseCase.kt:36-39` · `DeleteExpenseUseCase.kt:17-20` | Bungkus dalam satu `RoomDatabase.withTransaction { }` (`room-ktx` sudah jadi dependency) atau buat method DAO `@Transaction`.                                                                                                                    |
+| #   | Temuan                                                                                                                    | Dampak                                                                                                                                           | Lokasi                                                         | Fix                                                                                                                                                                                                                                              | Status       |
+| --- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------ |
+| 1   | **Rollover tabungan kehilangan hari yang terlewat.** Hanya 1 baris `daily_savings` ditulis, untuk `lastActiveDate` saja.  | App tidak dibuka 3 hari (lastActive=20, today=23) → tanggal 21 & 22 hilang, saldo kurang Rp 200.000 (2 × Rp 100.000/hari). Kerugian tanpa error. | `RolloverDailySavingsUseCase.kt:18-23`                         | Loop **`lastActiveDate` s/d `today - 1 hari`** (hanya hari yang sudah lewat; `today` belum final): hitung `limit - spent` per hari, tulis semua dalam satu transaksi. Tetapkan aturan eksplisit untuk hari tanpa data (tabung penuh Rp 100.000). | ✅ `c259660` |
+| 2   | **Form "Catat Pengeluaran" terbuka dengan data dummy.** `amountInput = "45000"`, `note = "Makan siang Rendang & Es Teh"`. | Install baru → form terisi transaksi fiktif; user bisa saja menekan Simpan tanpa sadar dan menyimpan transaksi palsu.                            | `AddExpenseUiState.kt:8-9`                                     | Defaultkan `amountInput = ""`, `note = ""`.                                                                                                                                                                                                      | ✅ `db4c2db` |
+| 3   | **Simpan expense + update tabungan tidak atomik.** Dua DAO berbeda ditulis berurutan (expense → `daily_savings`).         | Crash/kill di antara keduanya → expense tersimpan, saldo tabungan basi (tidak sama dengan `limit - spent`).                                      | `AddExpenseUseCase.kt:36-39` · `DeleteExpenseUseCase.kt:17-20` | Bungkus dalam satu `RoomDatabase.withTransaction { }` (`room-ktx` sudah jadi dependency) atau buat method DAO `@Transaction`.                                                                                                                    | ✅ `136c75b` |
 
 ---
 
@@ -63,8 +82,8 @@
 
 | #   | Temuan                                                                                                          | Risiko                                                                                                                                | Fix                                                                                                                                             |
 | --- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| 20  | **0 test ViewModel** — 13 test semuanya di layer `domain`.                                                      | Bagian paling rawan (navigasi tanggal, guard masa depan, `refresh()`) justru tanpa pelindung.                                         | `HomeViewModelTest` (navigasi tanggal, ganti status budget, refresh), `AddExpenseViewModelTest` (validasi nominal, quick amount, reset, error). |
-| 21  | **Kasus "hari terlewat" tidak ada test.** `RolloverDailySavingsUseCaseTest` hanya cover selisih 1 hari (11→12). | Bug #1 lolos ke produksi.                                                                                                             | Test lompatan 3+ hari + hari tanpa data + hari over limit.                                                                                      |
+| 20  | **0 test ViewModel** — 20 test di layer `domain` + 1 test state form, tidak ada yang menyentuh ViewModel.       | Bagian paling rawan (navigasi tanggal, guard masa depan, `refresh()`) justru tanpa pelindung.                                         | `HomeViewModelTest` (navigasi tanggal, ganti status budget, refresh), `AddExpenseViewModelTest` (validasi nominal, quick amount, reset, error). |
+| 21  | **Kasus "hari terlewat" tidak ada test.** `RolloverDailySavingsUseCaseTest` hanya cover selisih 1 hari (11→12). | Bug #1 lolos ke produksi.                                                                                                             | ✅ **Selesai** bersama #1 (`c259660`): test lompatan 3+ hari, gap panjang, hari tanpa data, hari over limit, hari berjalan belum final.         |
 | 22  | **Tidak ada `androidTest`** — folder `app/src/androidTest` tidak ada.                                           | Alur `MainActivity` → `AddExpenseActivity` (kirim `EXTRA_DATE_KEY`, balik `RESULT_OK`) tak teruji; `resultCode` tak pernah diperiksa. | Tambah test instrumentasi minimal untuk alur tersebut.                                                                                          |
 | 23  | **Migrasi Room v1→v2 tanpa test.** `MIGRATION_1_2` membuat tabel `daily_savings` + `app_state`.                 | User yang sudah punya DB v1 tidak terlindungi; migrasi gagal = data hilang.                                                           | `MigrationTestHelper` test (butuh `room-testing` + `exportSchema = true`).                                                                      |
 | 24  | **`exportSchema = false`** — skema tidak pernah diekspor.                                                       | Riwayat skema hilang, tidak bisa divalidasi antar versi.                                                                              | Set `exportSchema = true` + `room.schemaLocation` di `build.gradle`.                                                                            |
@@ -108,24 +127,25 @@
 
 ## Urutan pengerjaan yang disarankan
 
-| Gelombang | Isi                                                              | Estimasi   |
-| --------- | ---------------------------------------------------------------- | ---------- |
-| 1         | #1, #2, #3 (kerusakan data)                                      | 0,5–1 hari |
-| 2         | #4, #5, #6, #7, #8, #9, #10 (logika & konsistensi)               | 1–2 hari   |
-| 3         | #20, #21, #22, #23, #24 (test ViewModel + androidTest + migrasi) | 2–3 hari   |
-| 4         | #11, #12, #13 (string + state)                                   | 1–2 hari   |
-| 5         | #25, #26, #27, #28, #29 (R8, dependency, CI, lint, JDK)          | 1–2 hari   |
-| 6         | sisanya (P2 detail, P5–P6 hygiene)                               | 1–2 hari   |
+| Gelombang | Isi                                                              | Estimasi   | Status                 |
+| --------- | ---------------------------------------------------------------- | ---------- | ---------------------- |
+| 1         | #1, #2, #3 (kerusakan data)                                      | 0,5–1 hari | ✅ Selesai (`035d663`) |
+| 2         | #4, #5, #6, #7, #8, #9, #10 (logika & konsistensi)               | 1–2 hari   | ⬜ Belum               |
+| 3         | #20, #21, #22, #23, #24 (test ViewModel + androidTest + migrasi) | 2–3 hari   | ⬜ Belum (#21 sudah)   |
+| 4         | #11, #12, #13 (string + state)                                   | 1–2 hari   | ⬜ Belum               |
+| 5         | #25, #26, #27, #28, #29 (R8, dependency, CI, lint, JDK)          | 1–2 hari   | ⬜ Belum               |
+| 6         | sisanya (P2 detail, P5–P6 hygiene)                               | 1–2 hari   | ⬜ Belum               |
 
 ## Yang sudah baik — pertahankan
 
-| Area                        | Bukti                                                                                       |
-| --------------------------- | ------------------------------------------------------------------------------------------- |
-| Arsitektur berlapis         | `presentation → domain ← data`; domain tanpa Android/Room, mudah diuji                      |
-| DI manual                   | `AppContainer` satu tempat, tanpa framework berat                                           |
-| Room + KSP                  | KSP menggantikan kapt, aman di JDK 17; index `dateKey` pada `expenses`                      |
-| Test domain                 | 13 test hijau, mencakup over-limit, tepat batas, nol pengeluaran, reset bulan               |
-| `stateIn` + `flatMapLatest` | Alur data reaktif bersih, tanpa `LiveData`                                                  |
-| Manifest Activity           | `exported` & `parentActivityName` sudah benar; `local.properties`/`.gradle` sudah di-ignore |
+| Area                        | Bukti                                                                                                                 |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Arsitektur berlapis         | `presentation → domain ← data`; domain tanpa Android/Room, mudah diuji                                                |
+| DI manual                   | `AppContainer` satu tempat, tanpa framework berat                                                                     |
+| Room + KSP                  | KSP menggantikan kapt, aman di JDK 17; index `dateKey` pada `expenses`                                                |
+| Test domain                 | 21 test hijau: rollover multi-hari, atomisitas expense+savings, over-limit, tepat batas, nol pengeluaran, reset bulan |
+| Atomisitas data             | `TransactionRunner` (Room `withTransaction`) — expense + `daily_savings` + `lastActiveDate` selalu konsisten |
+| `stateIn` + `flatMapLatest` | Alur data reaktif bersih, tanpa `LiveData`                                                                            |
+| Manifest Activity           | `exported` & `parentActivityName` sudah benar; `local.properties`/`.gradle` sudah di-ignore                           |
 
 > Catatan: `moneylife_app_android` sudah **build sukses** — tidak ada blocker kompilasi seperti pada `money_app_android`. Semua temuan di atas adalah perbaikan kualitas/ketepatan data, bukan perbaikan build.
