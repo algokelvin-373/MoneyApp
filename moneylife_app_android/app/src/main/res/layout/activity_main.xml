@@ -38,7 +38,7 @@
                     android:layout_height="48dp"
                     android:background="@drawable/bg_icon_dark"
                     android:gravity="center"
-                    android:text="$"
+                    android:text="@string/brand_mark"
                     android:textColor="@color/mintStrong"
                     android:textSize="24sp"
                     android:textStyle="bold" />
@@ -59,7 +59,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="MoneyLife"
+                            android:text="@string/app_name"
                             android:textColor="@color/colorOnPrimary"
                             android:textSize="25sp"
                             android:textStyle="bold" />
@@ -72,7 +72,7 @@
                             android:gravity="center"
                             android:paddingStart="10dp"
                             android:paddingEnd="10dp"
-                            android:text="PRO"
+                            android:text="@string/pro_badge"
                             android:textColor="@color/mintStrong"
                             android:textSize="11sp"
                             android:textStyle="bold" />
@@ -82,7 +82,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
-                        android:text="Pengatur Budget Pintar"
+                        android:text="@string/app_tagline"
                         android:textColor="#B8D5D0"
                         android:textSize="13sp" />
                 </LinearLayout>
@@ -92,7 +92,7 @@
                     android:layout_height="42dp"
                     android:background="@drawable/bg_icon_dark"
                     android:gravity="center"
-                    android:text="!"
+                    android:text="@string/info_mark"
                     android:textColor="@color/colorOnPrimary"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -103,7 +103,7 @@
                     android:layout_marginStart="10dp"
                     android:background="@drawable/bg_avatar"
                     android:gravity="center"
-                    android:text="AK"
+                    android:text="@string/avatar_initials"
                     android:textColor="@color/onSurface"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -270,7 +270,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Saldo Tabungan"
+                                android:text="@string/savings_balance_label"
                                 android:textColor="@color/textSecondary"
                                 android:textSize="11sp" />
 
@@ -299,7 +299,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Kondisi Budget"
+                                android:text="@string/budget_condition_label"
                                 android:textColor="@color/colorPrimary"
                                 android:textSize="11sp" />
 
@@ -330,7 +330,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="KATEGORI POPULER"
+                    android:text="@string/popular_categories_title"
                     android:textColor="@color/textSecondary"
                     android:textSize="13sp"
                     android:textStyle="bold" />
@@ -370,7 +370,7 @@
                                 android:layout_height="38dp"
                                 android:background="@drawable/bg_icon_orange"
                                 android:gravity="center"
-                                android:text="M"
+                                android:text="@string/category_initial_makan"
                                 android:textColor="@color/category_jajan"
                                 android:textStyle="bold" />
 
@@ -391,7 +391,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Makan"
+                            android:text="@string/category_makan"
                             android:textColor="@color/onSurface"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -431,7 +431,7 @@
                                 android:layout_height="38dp"
                                 android:background="@drawable/bg_icon_blue"
                                 android:gravity="center"
-                                android:text="T"
+                                android:text="@string/category_initial_transport"
                                 android:textColor="@color/category_transport"
                                 android:textStyle="bold" />
 
@@ -452,7 +452,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Transport"
+                            android:text="@string/category_transport"
                             android:textColor="@color/onSurface"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -492,7 +492,7 @@
                                 android:layout_height="38dp"
                                 android:background="@drawable/bg_icon_orange"
                                 android:gravity="center"
-                                android:text="J"
+                                android:text="@string/category_initial_jajan"
                                 android:textColor="@color/category_jajan"
                                 android:textStyle="bold" />
 
@@ -513,7 +513,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Jajan"
+                            android:text="@string/category_jajan"
                             android:textColor="@color/onSurface"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -540,7 +540,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Riwayat Transaksi"
+                    android:text="@string/transaction_history_title"
                     android:textColor="@color/onSurface"
                     android:textSize="21sp"
                     android:textStyle="bold" />
@@ -576,7 +576,7 @@
                     android:layout_height="48dp"
                     android:background="@drawable/bg_pill_outline"
                     android:gravity="center"
-                    android:text="‹"
+                    android:text="@string/previous_day_symbol"
                     android:contentDescription="@string/previous_day"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="28sp" />
@@ -599,7 +599,7 @@
                     android:layout_height="48dp"
                     android:background="@drawable/bg_pill_outline"
                     android:gravity="center"
-                    android:text="›"
+                    android:text="@string/next_day_symbol"
                     android:contentDescription="@string/next_day"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="28sp" />
@@ -636,7 +636,7 @@
                         android:layout_height="64dp"
                         android:background="@drawable/bg_pill_mint"
                         android:gravity="center"
-                        android:text="≡"
+                        android:text="@string/empty_state_symbol"
                         android:textColor="@color/colorPrimary"
                         android:textSize="30sp"
                         android:textStyle="bold" />
@@ -645,7 +645,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="14dp"
-                        android:text="Belum ada pengeluaran pada tanggal ini"
+                        android:text="@string/empty_state_title"
                         android:textColor="@color/onSurface"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -655,7 +655,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="7dp"
                         android:gravity="center"
-                        android:text="Pencatatan yang rajin bikin keuanganmu tetap teratur &amp; hemat!"
+                        android:text="@string/empty_state_message"
                         android:textColor="@color/navMuted"
                         android:textSize="13sp" />
 
@@ -665,7 +665,7 @@
                         android:layout_marginTop="18dp"
                         android:background="@drawable/bg_info"
                         android:gravity="center"
-                        android:text="Tap tombol di bawah untuk mencatat pengeluaran"
+                        android:text="@string/empty_state_hint"
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="12sp"
                         android:textStyle="bold" />
@@ -678,7 +678,7 @@
                 android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="-20dp"
-                android:text="+  Catat Pengeluaran"
+                android:text="@string/add_expense_button"
                 android:textAllCaps="false"
                 android:textColor="@color/colorOnPrimary"
                 android:textSize="17sp"
