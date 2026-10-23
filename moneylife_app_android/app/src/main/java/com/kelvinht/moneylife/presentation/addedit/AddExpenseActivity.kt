@@ -103,7 +103,7 @@ class AddExpenseActivity : AppCompatActivity() {
         }
         renderCategory(state.category)
         binding.textTransactionTime.text = DateUtils.displayDate(state.dateKey)
-        binding.textError.text = state.error.orEmpty()
+        binding.textError.text = state.error?.let(::getString).orEmpty()
         binding.textError.visibility = if (state.error == null) View.GONE else View.VISIBLE
 
         binding.buttonSave.isEnabled = !state.isSaving

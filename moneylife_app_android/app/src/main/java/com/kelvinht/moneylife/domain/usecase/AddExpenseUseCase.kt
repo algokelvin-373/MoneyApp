@@ -27,7 +27,7 @@ class AddExpenseUseCase(
         dateKey: String = DateUtils.todayKey()
     ): Result<Long> {
         if (amount <= 0L) {
-            return Result.failure(IllegalArgumentException("Nominal harus lebih dari 0"))
+            return Result.failure(IllegalArgumentException())
         }
 
         val expense = Expense(

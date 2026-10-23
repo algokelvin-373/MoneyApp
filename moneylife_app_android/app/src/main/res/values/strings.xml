@@ -11,6 +11,13 @@
     <string name="spending_header_today">●  PENGELUARAN HARI INI</string>
     <string name="spending_header_date">●  PENGELUARAN %1$s</string>
     <string name="savings_balance_format">Saldo Tabungan · %1$s</string>
+    <string name="remaining_format">Sisa %1$s</string>
+    <string name="usage_percent_format">%1$d%% Terpakai</string>
+    <string name="over_limit_format">Lebih %1$s dari batas harian</string>
+    <string name="category_usage_format">%1$s/%2$s</string>
+    <string name="budget_condition_safe">Sangat Aman</string>
+    <string name="budget_condition_warning">Perlu Dijaga</string>
+    <string name="budget_condition_over">Melebihi Limit</string>
     <string name="empty_message">Belum ada pengeluaran hari ini</string>
     <string name="choose_date">Pilih tanggal</string>
     <string name="back_to_today">Hari Ini</string>
@@ -32,4 +39,8 @@
     <string name="cancel">Batal</string>
     <string name="delete_confirm_title">Hapus pengeluaran?</string>
     <string name="delete_confirm_message">Data yang dihapus tidak dapat dikembalikan.</string>
+
+    <!-- Add expense errors -->
+    <string name="error_amount_required">Masukkan nominal lebih dari 0</string>
+    <string name="error_save_failed">Gagal menyimpan pengeluaran</string>
 </resources>

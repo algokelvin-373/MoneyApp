@@ -106,17 +106,20 @@ class MainActivity : AppCompatActivity() {
         binding.textLimit.text = getString(R.string.limit_from_format, RupiahFormatter.format(state.limit))
         binding.textLimitShort.text =
             getString(R.string.limit_short_format, RupiahFormatter.formatCompact(state.limit))
-        binding.textRemaining.text = "Sisa " + RupiahFormatter.format(state.remaining)
+        binding.textRemaining.text =
+            getString(R.string.remaining_format, RupiahFormatter.format(state.remaining))
         binding.progressDaily.setProgressCompat(state.usagePercent, true)
-        binding.textUsage.text = "${state.usagePercent}% Terpakai"
+        binding.textUsage.text = getString(R.string.usage_percent_format, state.usagePercent)
         binding.textAverage.text = RupiahFormatter.format(state.savingsBalance)
         binding.textSavingsLabel.text =
             getString(R.string.savings_balance_format, DateUtils.monthLabel(state.dateKey))
-        binding.textCondition.text = when (state.budgetStatus) {
-            BudgetStatus.SAFE -> "Sangat Aman"
-            BudgetStatus.WARNING -> "Perlu Dijaga"
-            BudgetStatus.OVER -> "Melebihi Limit"
-        }
+        binding.textCondition.text = getString(
+            when (state.budgetStatus) {
+                BudgetStatus.SAFE -> R.string.budget_condition_safe
+                BudgetStatus.WARNING -> R.string.budget_condition_warning
+                BudgetStatus.OVER -> R.string.budget_condition_over
+            }
+        )
         binding.textMakanAmount.text = categoryUsage(state, ExpenseCategory.MAKAN)
         binding.textTransportAmount.text = categoryUsage(state, ExpenseCategory.TRANSPORT)
         binding.textJajanAmount.text = categoryUsage(state, ExpenseCategory.JAJAN)
@@ -133,7 +136,7 @@ class MainActivity : AppCompatActivity() {
         if (state.budgetStatus == BudgetStatus.OVER) {
             binding.textOverLimit.visibility = View.VISIBLE
             binding.textOverLimit.text =
-                "Lebih ${RupiahFormatter.format(state.overSpent)} dari batas harian"
+                getString(R.string.over_limit_format, RupiahFormatter.format(state.overSpent))
         } else {
             binding.textOverLimit.visibility = View.GONE
         }
@@ -144,8 +147,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun categoryUsage(state: HomeUiState, category: ExpenseCategory): String {
         val spent = state.spentByCategory[category] ?: 0L
-        return RupiahFormatter.format(spent) + "/" +
+        return getString(
+            R.string.category_usage_format,
+            RupiahFormatter.format(spent),
             RupiahFormatter.formatCompact(CategoryBudget.limitFor(category))
+        )
     }
 
     private fun confirmDelete(item: ExpenseUiModel) {
