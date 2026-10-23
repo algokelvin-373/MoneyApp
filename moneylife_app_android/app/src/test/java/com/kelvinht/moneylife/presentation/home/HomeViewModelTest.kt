@@ -72,7 +72,8 @@ class HomeViewModelTest {
 
         assertEquals(yesterday, viewModel.uiState.value.dateKey)
         assertEquals(1, viewModel.uiState.value.expenses.size)
-        assertEquals("Rp 30.000", viewModel.uiState.value.spentText)
+        assertEquals(30_000L, viewModel.uiState.value.spent)
+        assertEquals(30_000L, viewModel.uiState.value.spentByCategory[ExpenseCategory.MAKAN])
     }
 
     @Test
@@ -139,7 +140,7 @@ class HomeViewModelTest {
 
         assertEquals(BudgetStatus.OVER, viewModel.uiState.value.budgetStatus)
         assertEquals(100, viewModel.uiState.value.usagePercent)
-        assertTrue(viewModel.uiState.value.overLimitText != null)
+        assertTrue(viewModel.uiState.value.overSpent > 0L)
     }
 
     @Test
@@ -187,7 +188,7 @@ class HomeViewModelTest {
 
         assertTrue(viewModel.uiState.value.expenses.isEmpty())
         assertTrue(viewModel.uiState.value.isEmpty)
-        assertEquals("Rp 0", viewModel.uiState.value.spentText)
+        assertEquals(0L, viewModel.uiState.value.spent)
     }
 
     private fun createViewModel(limit: Long = DAILY_LIMIT): HomeViewModel = HomeViewModel(

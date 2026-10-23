@@ -2,6 +2,7 @@ package com.kelvinht.moneylife.presentation.addedit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kelvinht.moneylife.R
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.core.util.DateUtils
 import com.kelvinht.moneylife.domain.usecase.AddExpenseUseCase
@@ -50,7 +51,7 @@ class AddExpenseViewModel(
     fun save() {
         val amount = _uiState.value.amountInput.toLongOrNull()
         if (amount == null || amount <= 0L) {
-            _uiState.update { it.copy(error = "Masukkan nominal lebih dari 0") }
+            _uiState.update { it.copy(error = R.string.error_amount_required) }
             return
         }
 
@@ -65,11 +66,11 @@ class AddExpenseViewModel(
                 dateKey = snapshot.dateKey
             ).onSuccess {
                 _uiState.update { it.copy(isSaving = false, isSaved = true) }
-            }.onFailure { throwable ->
+            }.onFailure {
                 _uiState.update {
                     it.copy(
                         isSaving = false,
-                        error = throwable.message ?: "Gagal menyimpan pengeluaran"
+                        error = R.string.error_save_failed
                     )
                 }
             }

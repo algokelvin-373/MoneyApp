@@ -1,8 +1,8 @@
 # Catatan Perbaikan — `moneylife_app_android`
 
-> Branch `dev/improvements` @ `352a15a` · Audit ulang: 22 Okt 2026 · **Gelombang 1–3 sudah selesai**
+> Branch `dev/improvements` @ `352a15a` · Audit ulang: 22 Okt 2026 · **Gelombang 1–4 sudah selesai**
 > **Scope:** hanya `moneylife_app_android/` (app native baru). Temuan untuk `money_app_android` dikeluarkan dari dokumen ini.
-> **Baseline verifikasi:** `:app:testDebugUnitTest` **BUILD SUCCESSFUL** (50 test) · `:app:assembleDebug` **BUILD SUCCESSFUL** · `:app:assembleDebugAndroidTest` **BUILD SUCCESSFUL** (test instrumentasi belum dieksekusi — environment tanpa device/emulator) · JDK 17 / AGP 8.5.0.
+> **Baseline verifikasi:** `:app:testDebugUnitTest` **BUILD SUCCESSFUL** (52 test) · `:app:assembleDebug` **BUILD SUCCESSFUL** · `:app:assembleDebugAndroidTest` **BUILD SUCCESSFUL** (test instrumentasi belum dieksekusi — environment tanpa device/emulator) · JDK 17 / AGP 8.5.0.
 
 ## Status pengerjaan
 
@@ -11,7 +11,7 @@
 | 1         | #1, #2, #3 (kerusakan data)                                      | ✅ **Selesai** | `fix/gelombang-1` → merge `035d663` di `dev/improvements` |
 | 2         | #4, #5, #6, #7, #8, #9, #10 (logika & konsistensi)               | ✅ **Selesai** | `fix/gelombang-2` → merge di `dev/improvements`           |
 | 3         | #20, #21, #22, #23, #24 (test ViewModel + androidTest + migrasi) | ✅ **Selesai** | `fix/gelombang-3` → merge di `dev/improvements`           |
-| 4         | #11, #12, #13 (string + state)                                   | ⬜ Belum       | —                                                         |
+| 4         | #11, #12, #13 (string + state)                                   | ✅ **Selesai** | `fix/gelombang-4` → merge di `dev/improvements`           |
 | 5         | #25, #26, #27, #28, #29 (R8, dependency, CI, lint, JDK)          | ⬜ Belum       | —                                                         |
 | 6         | sisanya (P2 detail, P5–P6 hygiene)                               | ⬜ Belum       | —                                                         |
 
@@ -47,15 +47,23 @@
 
 > Catatan #22/#23: test instrumentasi belum dieksekusi di environment ini (tidak ada device/emulator), tetapi sudah terkompilasi dan APK test memuat `assets/com.kelvinht.moneylife.data.local.MoneyLifeDatabase/{1,2}.json`.
 
+### Gelombang 4 — detail (selesai)
+
+| #   | Fix yang dikerjakan                                                                                                                                                                                                                  | Commit              | Test penjaga                                                                 |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------- | ---------------------------------------------------------------------------- |
+| 11  | Semua string tampilan yang sebelumnya hardcoded di Kotlin pindah ke `strings.xml`: format "Sisa", "% Terpakai", "Lebih … dari batas harian", kondisi budget, dan format kategori. Error form menjadi `@StringRes` di state, lalu di-resolve `getString()` di Activity; pesan mentah exception tidak lagi ditampilkan | `b669983`           | `:app:testDebugUnitTest`; `AddExpenseViewModelTest` (jalur error), `RupiahFormatterTest` |
+| 12  | Seluruh literal `android:text` di layout dipindah ke `strings.xml` (termasuk label kategori, badge, quick amount, empty state, tombol FAB). String mati dihapus; hints nominal/catatan sekarang memakai resource. Tidak ada string resource yang tersisa tanpa pemakai | `1616c11`           | `:app:assembleDebug`; verifikasi 0 literal `android:text` dan 0 string tak terpakai |
+| 13  | `HomeUiState` berhenti menyimpan teks siap-tampil. State kini memegang `spent`, `limit`, `remaining`, `overSpent`, `savingsBalance`, `spentByCategory`, `budgetStatus`, dan item expense mentah (`amount`, `createdAt`); seluruh formatting dilakukan di `MainActivity`/`ExpenseAdapter`. `dateLabel` juga dihitung di UI. Format compact kategori dikeluarkan dari domain | `89d88eb`, `c506b14` | `HomeViewModelTest` (nilai mentah, `spentByCategory`, `overSpent`), `RupiahFormatterTest` |
+
 ## Snapshot cepat
 
 | Metrik            | Nilai                                                       | Catatan                                                                    |
 | ----------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------- |
-| Kotlin main       | 37 file / 1.408 LOC                                         | Clean Architecture: `presentation → domain ← data` (+ `TransactionRunner`) |
-| Unit test         | 9 file test (+3 fake) / 50 test / 1.080 LOC                 | 22 test ViewModel baru, 28 test `domain`/state form; `kotlinx-coroutines-test` |
+| Kotlin main       | 37 file / 1.405 LOC                                         | Clean Architecture: `presentation → domain ← data` (+ `TransactionRunner`) |
+| Unit test         | 10 file test (+3 fake) / 52 test / 1.102 LOC                | 22 test ViewModel, 30 test `domain`/state/formatter; `kotlinx-coroutines-test` |
 | androidTest       | 2 file / 5 test / 278 LOC                                   | alur antar-activity + migrasi Room v1→v2 (belum dieksekusi, tanpa emulator) |
 | Layout / drawable | 3 / 21                                                      | `activity_main`, `activity_add_expense`, `item_expense`                    |
-| String resource   | 25 didefinisikan, **7 tidak terpakai**                      | 49 `android:text` literal di layout                                        |
+| String resource   | 62 didefinisikan, **0 tidak terpakai**                      | 0 `android:text` literal di layout                                        |
 | Build             | Kotlin 1.9.0 · KSP · Room 2.6.1 · compileSdk 35 · minSdk 27 | `jvmTarget` masih 1.8 · skema Room diekspor (`app/schemas`)                |
 | Release           | `minifyEnabled false` · `versionName "1.0"`                 | R8 belum aktif                                                             |
 | CI / lint         | tidak ada `.github/` · tidak ada blok `lint {}`             | test sudah hijau tapi tidak pernah dijaga otomatis                         |
@@ -156,7 +164,7 @@
 | 1         | #1, #2, #3 (kerusakan data)                                      | 0,5–1 hari | ✅ Selesai (`035d663`) |
 | 2         | #4, #5, #6, #7, #8, #9, #10 (logika & konsistensi)               | 1–2 hari   | ✅ Selesai            |
 | 3         | #20, #21, #22, #23, #24 (test ViewModel + androidTest + migrasi) | 2–3 hari   | ✅ Selesai            |
-| 4         | #11, #12, #13 (string + state)                                   | 1–2 hari   | ⬜ Belum               |
+| 4         | #11, #12, #13 (string + state)                                   | 1–2 hari   | ✅ Selesai            |
 | 5         | #25, #26, #27, #28, #29 (R8, dependency, CI, lint, JDK)          | 1–2 hari   | ⬜ Belum               |
 | 6         | sisanya (P2 detail, P5–P6 hygiene)                               | 1–2 hari   | ⬜ Belum               |
 
@@ -167,7 +175,7 @@
 | Arsitektur berlapis         | `presentation → domain ← data`; domain tanpa Android/Room, mudah diuji                                                |
 | DI manual                   | `AppContainer` satu tempat, tanpa framework berat                                                                     |
 | Room + KSP                  | KSP menggantikan kapt, aman di JDK 17; index `dateKey` pada `expenses`                                                |
-| Test domain                 | 50 test hijau: rollover multi-hari, atomisitas expense+savings, over-limit, tepat batas, nol pengeluaran, reset bulan, ViewModel Home/AddExpense |
+| Test domain                 | 52 test hijau: rollover multi-hari, atomisitas expense+savings, over-limit, tepat batas, nol pengeluaran, reset bulan, ViewModel Home/AddExpense, formatter rupiah |
 | Atomisitas data             | `TransactionRunner` (Room `withTransaction`) — expense + `daily_savings` + `lastActiveDate` selalu konsisten |
 | Riwayat skema Room          | `app/schemas/.../MoneyLifeDatabase/{1,2}.json` + `MoneyLifeDatabaseMigrationTest` — migrasi divalidasi terhadap skema asli |
 | `stateIn` + `flatMapLatest` | Alur data reaktif bersih, tanpa `LiveData`                                                                            |

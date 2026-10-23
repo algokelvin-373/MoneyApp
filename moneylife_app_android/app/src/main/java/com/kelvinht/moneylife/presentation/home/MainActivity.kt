@@ -14,8 +14,11 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kelvinht.moneylife.MoneyLifeApplication
 import com.kelvinht.moneylife.R
+import com.kelvinht.moneylife.core.format.RupiahFormatter
 import com.kelvinht.moneylife.core.util.DateUtils
 import com.kelvinht.moneylife.databinding.ActivityMainBinding
+import com.kelvinht.moneylife.domain.model.CategoryBudget
+import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.presentation.addedit.AddExpenseActivity
 import java.time.LocalDate
 import java.util.Locale
@@ -83,10 +86,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun render(state: HomeUiState) {
-        binding.textDate.text = state.dateLabel
-        binding.textDate.contentDescription = getString(R.string.choose_date) + ": " + state.dateLabel
-        binding.textHistoryDate.text = state.dateLabel
-        binding.textHistoryDate.contentDescription = getString(R.string.choose_date) + ": " + state.dateLabel
+        val dateLabel = DateUtils.displayDate(state.dateKey)
+        binding.textDate.text = dateLabel
+        binding.textDate.contentDescription = getString(R.string.choose_date) + ": " + dateLabel
+        binding.textHistoryDate.text = dateLabel
+        binding.textHistoryDate.contentDescription = getString(R.string.choose_date) + ": " + dateLabel
         val isToday = state.dateKey == DateUtils.todayKey()
         binding.textSpendingHeader.text = if (isToday) {
             getString(R.string.spending_header_today)
@@ -98,19 +102,27 @@ class MainActivity : AppCompatActivity() {
         }
         binding.buttonNextDay.isEnabled = !isToday
         binding.buttonToday.visibility = if (isToday) View.GONE else View.VISIBLE
-        binding.textSpent.text = state.spentText
-        binding.textLimit.text = getString(R.string.limit_from_format, state.limitText)
-        binding.textLimitShort.text = getString(R.string.limit_short_format, state.limitShortText)
-        binding.textRemaining.text = state.remainingText
+        binding.textSpent.text = RupiahFormatter.format(state.spent)
+        binding.textLimit.text = getString(R.string.limit_from_format, RupiahFormatter.format(state.limit))
+        binding.textLimitShort.text =
+            getString(R.string.limit_short_format, RupiahFormatter.formatCompact(state.limit))
+        binding.textRemaining.text =
+            getString(R.string.remaining_format, RupiahFormatter.format(state.remaining))
         binding.progressDaily.setProgressCompat(state.usagePercent, true)
-        binding.textUsage.text = state.usageText
-        binding.textAverage.text = state.savingsText
+        binding.textUsage.text = getString(R.string.usage_percent_format, state.usagePercent)
+        binding.textAverage.text = RupiahFormatter.format(state.savingsBalance)
         binding.textSavingsLabel.text =
             getString(R.string.savings_balance_format, DateUtils.monthLabel(state.dateKey))
-        binding.textCondition.text = state.conditionText
-        binding.textMakanAmount.text = state.makanText
-        binding.textTransportAmount.text = state.transportText
-        binding.textJajanAmount.text = state.jajanText
+        binding.textCondition.text = getString(
+            when (state.budgetStatus) {
+                BudgetStatus.SAFE -> R.string.budget_condition_safe
+                BudgetStatus.WARNING -> R.string.budget_condition_warning
+                BudgetStatus.OVER -> R.string.budget_condition_over
+            }
+        )
+        binding.textMakanAmount.text = categoryUsage(state, ExpenseCategory.MAKAN)
+        binding.textTransportAmount.text = categoryUsage(state, ExpenseCategory.TRANSPORT)
+        binding.textJajanAmount.text = categoryUsage(state, ExpenseCategory.JAJAN)
 
         val accentColorRes = when (state.budgetStatus) {
             BudgetStatus.SAFE -> R.color.colorSuccess
@@ -121,16 +133,25 @@ class MainActivity : AppCompatActivity() {
         binding.progressDaily.setIndicatorColor(accentColor)
         binding.textRemaining.setTextColor(accentColor)
 
-        val overLimitText = state.overLimitText
-        if (overLimitText != null) {
+        if (state.budgetStatus == BudgetStatus.OVER) {
             binding.textOverLimit.visibility = View.VISIBLE
-            binding.textOverLimit.text = overLimitText
+            binding.textOverLimit.text =
+                getString(R.string.over_limit_format, RupiahFormatter.format(state.overSpent))
         } else {
             binding.textOverLimit.visibility = View.GONE
         }
 
         binding.emptyState.visibility = if (state.isEmpty) View.VISIBLE else View.GONE
         expenseAdapter.submitList(state.expenses)
+    }
+
+    private fun categoryUsage(state: HomeUiState, category: ExpenseCategory): String {
+        val spent = state.spentByCategory[category] ?: 0L
+        return getString(
+            R.string.category_usage_format,
+            RupiahFormatter.format(spent),
+            RupiahFormatter.formatCompact(CategoryBudget.limitFor(category))
+        )
     }
 
     private fun confirmDelete(item: ExpenseUiModel) {

@@ -1,5 +1,6 @@
 package com.kelvinht.moneylife.presentation.addedit
 
+import androidx.annotation.StringRes
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.core.util.DateUtils
 
@@ -8,7 +9,7 @@ data class AddExpenseUiState(
     val amountInput: String = "",
     val note: String = "",
     val dateKey: String = DateUtils.todayKey(),
-    val error: String? = null,
+    @StringRes val error: Int? = null,
     val isSaving: Boolean = false,
     val isSaved: Boolean = false
 )

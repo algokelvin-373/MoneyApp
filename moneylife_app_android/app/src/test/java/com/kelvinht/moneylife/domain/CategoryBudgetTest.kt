@@ -13,11 +13,4 @@ class CategoryBudgetTest {
         assertEquals(30_000L, CategoryBudget.limitFor(ExpenseCategory.TRANSPORT))
         assertEquals(20_000L, CategoryBudget.limitFor(ExpenseCategory.JAJAN))
     }
-
-    @Test
-    fun `formats the category limit label compactly`() {
-        assertEquals("50k", CategoryBudget.limitLabelFor(ExpenseCategory.MAKAN))
-        assertEquals("30k", CategoryBudget.limitLabelFor(ExpenseCategory.TRANSPORT))
-        assertEquals("20k", CategoryBudget.limitLabelFor(ExpenseCategory.JAJAN))
-    }
 }
