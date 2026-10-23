@@ -1,7 +1,5 @@
 package com.kelvinht.moneylife.domain.model
 
-import com.kelvinht.moneylife.core.format.RupiahFormatter
-
 object CategoryBudget {
     const val MAKAN_LIMIT: Long = 50_000L
     const val TRANSPORT_LIMIT: Long = 30_000L
@@ -12,6 +10,4 @@ object CategoryBudget {
         ExpenseCategory.TRANSPORT -> TRANSPORT_LIMIT
         ExpenseCategory.JAJAN -> JAJAN_LIMIT
     }
-
-    fun limitLabelFor(category: ExpenseCategory): String = RupiahFormatter.formatCompact(limitFor(category))
 }
