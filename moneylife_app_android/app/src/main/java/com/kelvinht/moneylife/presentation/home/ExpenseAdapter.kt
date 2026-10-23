@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.kelvinht.moneylife.databinding.ItemExpenseBinding
+import com.kelvinht.moneylife.core.format.RupiahFormatter
+import com.kelvinht.moneylife.core.util.DateUtils
 
 class ExpenseAdapter(
     private val onDeleteClick: (ExpenseUiModel) -> Unit
@@ -39,8 +41,8 @@ class ExpenseAdapter(
             binding.textEmoji.backgroundTintList =
                 ColorStateList.valueOf(ContextCompat.getColor(context, item.style.colorRes))
             binding.textCategory.text = context.getString(item.style.labelRes)
-            binding.textAmount.text = item.amountText
-            binding.textTime.text = item.timeText
+            binding.textAmount.text = RupiahFormatter.format(item.amount)
+            binding.textTime.text = DateUtils.formatTime(item.createdAt)
 
             if (item.note.isBlank()) {
                 binding.textNote.visibility = View.GONE

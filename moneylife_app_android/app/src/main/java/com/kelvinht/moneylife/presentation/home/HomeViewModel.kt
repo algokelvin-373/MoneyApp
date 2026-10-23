@@ -2,9 +2,7 @@ package com.kelvinht.moneylife.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kelvinht.moneylife.core.format.RupiahFormatter
 import com.kelvinht.moneylife.core.util.DateUtils
-import com.kelvinht.moneylife.domain.model.CategoryBudget
 import com.kelvinht.moneylife.domain.model.DailyBudget
 import com.kelvinht.moneylife.domain.model.Expense
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
@@ -52,7 +50,7 @@ class HomeViewModel(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
-            initialValue = HomeUiState(dateKey = dateKey.value, dateLabel = DateUtils.displayDate(dateKey.value))
+            initialValue = HomeUiState(dateKey = dateKey.value)
         )
 
     /** Advance the selected day only when the user was viewing today. */
@@ -95,48 +93,25 @@ class HomeViewModel(
 
         return HomeUiState(
             dateKey = budget.dateKey,
-            dateLabel = DateUtils.displayDate(budget.dateKey),
-            spentText = RupiahFormatter.format(budget.spent),
-            limitText = RupiahFormatter.format(budget.limit),
-            limitShortText = RupiahFormatter.formatCompact(budget.limit),
-            remainingText = "Sisa ${RupiahFormatter.format(budget.remaining)}",
-            overLimitText = if (budget.isOverLimit) {
-                "Lebih ${RupiahFormatter.format(budget.overSpent)} dari batas harian"
-            } else {
-                null
-            },
+            spent = budget.spent,
+            limit = budget.limit,
+            remaining = budget.remaining,
+            overSpent = budget.overSpent,
             usagePercent = budget.usagePercent,
-            usageText = budget.usagePercent.toString() + "% Terpakai",
-            savingsText = RupiahFormatter.format(savingsBalance),
-            conditionText = when (status) {
-                BudgetStatus.SAFE -> "Sangat Aman"
-                BudgetStatus.WARNING -> "Perlu Dijaga"
-                BudgetStatus.OVER -> "Melebihi Limit"
-            },
-            makanText = categoryTotal(budget.expenses, ExpenseCategory.MAKAN),
-            transportText = categoryTotal(budget.expenses, ExpenseCategory.TRANSPORT),
-            jajanText = categoryTotal(budget.expenses, ExpenseCategory.JAJAN),
+            savingsBalance = savingsBalance,
             budgetStatus = status,
+            spentByCategory = ExpenseCategory.entries.associateWith { budget.spentByCategory(it) },
             expenses = budget.expenses.map { it.toUiModel() },
             isEmpty = budget.expenses.isEmpty()
         )
-    }
-
-    private fun categoryTotal(
-        expenses: List<Expense>,
-        category: ExpenseCategory
-    ): String {
-        val total = expenses.filter { it.category == category }.sumOf { it.amount }
-        val compact = if (total == 0L) "Rp 0" else RupiahFormatter.format(total)
-        return "$compact/${CategoryBudget.limitLabelFor(category)}"
     }
 
     private fun Expense.toUiModel(): ExpenseUiModel = ExpenseUiModel(
         id = id,
         style = category.toStyle(),
         note = note,
-        amountText = RupiahFormatter.format(amount),
-        timeText = DateUtils.formatTime(createdAt)
+        amount = amount,
+        createdAt = createdAt
     )
 
     private companion object {
