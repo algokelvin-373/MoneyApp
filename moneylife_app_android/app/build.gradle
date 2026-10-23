@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.ktlint)
 }
 
 // Room exports the schema of every database version into app/schemas so the
@@ -26,16 +27,17 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
     buildFeatures {
         viewBinding = true
@@ -46,6 +48,15 @@ android {
         // MigrationTestHelper can validate the migrations against them.
         androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
     }
+    lint {
+        abortOnError = true
+        checkReleaseBuilds = true
+    }
+}
+
+ktlint {
+    android.set(true)
+    ignoreFailures.set(false)
 }
 
 dependencies {
@@ -55,16 +66,11 @@ dependencies {
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.constraintlayout)
 
-    // Fragment + navigation between fragments / viewModels() delegate
-    implementation(libs.androidx.fragment.ktx)
-
     // RecyclerView
     implementation(libs.androidx.recyclerview)
 
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    // LiveData
-    implementation(libs.androidx.lifecycle.livedata.ktx)
 
     // Room
     implementation(libs.androidx.room.runtime)

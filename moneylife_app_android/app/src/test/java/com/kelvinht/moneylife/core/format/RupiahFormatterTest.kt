@@ -7,7 +7,6 @@ import org.junit.Test
  * Guards the rupiah formatting used by the presentation layer.
  */
 class RupiahFormatterTest {
-
     @Test
     fun `formats full rupiah values`() {
         assertEquals("Rp 0", RupiahFormatter.format(0L))

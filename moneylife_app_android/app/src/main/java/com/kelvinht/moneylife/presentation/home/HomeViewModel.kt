@@ -28,30 +28,30 @@ class HomeViewModel(
     private val deleteExpense: DeleteExpenseUseCase,
     private val observeSavingsBalance: ObserveSavingsBalanceUseCase,
     private val rolloverDailySavings: RolloverDailySavingsUseCase,
-    private val dailyLimit: Long
+    private val dailyLimit: Long,
 ) : ViewModel() {
-
     private val dateKey = MutableStateFlow(DateUtils.todayKey())
     private var lastTodayKey = dateKey.value
     val selectedDateKey: String get() = dateKey.value
 
-    val uiState: StateFlow<HomeUiState> = dateKey
-        .flatMapLatest { key ->
-            combine(
-                getDailyExpenses(key),
-                observeSavingsBalance(DateUtils.monthKeyOf(key))
-            ) { expenses, savingsBalance ->
-                toUiState(
-                    budget = calculateDailyBudget(key, expenses, dailyLimit),
-                    savingsBalance = savingsBalance
-                )
+    val uiState: StateFlow<HomeUiState> =
+        dateKey
+            .flatMapLatest { key ->
+                combine(
+                    getDailyExpenses(key),
+                    observeSavingsBalance(DateUtils.monthKeyOf(key)),
+                ) { expenses, savingsBalance ->
+                    toUiState(
+                        budget = calculateDailyBudget(key, expenses, dailyLimit),
+                        savingsBalance = savingsBalance,
+                    )
+                }
             }
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
-            initialValue = HomeUiState(dateKey = dateKey.value)
-        )
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
+                initialValue = HomeUiState(dateKey = dateKey.value),
+            )
 
     /** Advance the selected day only when the user was viewing today. */
     fun refresh() {
@@ -84,12 +84,16 @@ class HomeViewModel(
         viewModelScope.launch { deleteExpense.invoke(id) }
     }
 
-    private fun toUiState(budget: DailyBudget, savingsBalance: Long): HomeUiState {
-        val status = when {
-            budget.isOverLimit -> BudgetStatus.OVER
-            budget.usagePercent >= WARNING_THRESHOLD -> BudgetStatus.WARNING
-            else -> BudgetStatus.SAFE
-        }
+    private fun toUiState(
+        budget: DailyBudget,
+        savingsBalance: Long,
+    ): HomeUiState {
+        val status =
+            when {
+                budget.isOverLimit -> BudgetStatus.OVER
+                budget.usagePercent >= WARNING_THRESHOLD -> BudgetStatus.WARNING
+                else -> BudgetStatus.SAFE
+            }
 
         return HomeUiState(
             dateKey = budget.dateKey,
@@ -102,17 +106,18 @@ class HomeViewModel(
             budgetStatus = status,
             spentByCategory = ExpenseCategory.entries.associateWith { budget.spentByCategory(it) },
             expenses = budget.expenses.map { it.toUiModel() },
-            isEmpty = budget.expenses.isEmpty()
+            isEmpty = budget.expenses.isEmpty(),
         )
     }
 
-    private fun Expense.toUiModel(): ExpenseUiModel = ExpenseUiModel(
-        id = id,
-        style = category.toStyle(),
-        note = note,
-        amount = amount,
-        createdAt = createdAt
-    )
+    private fun Expense.toUiModel(): ExpenseUiModel =
+        ExpenseUiModel(
+            id = id,
+            style = category.toStyle(),
+            note = note,
+            amount = amount,
+            createdAt = createdAt,
+        )
 
     private companion object {
         const val STOP_TIMEOUT_MILLIS = 5_000L

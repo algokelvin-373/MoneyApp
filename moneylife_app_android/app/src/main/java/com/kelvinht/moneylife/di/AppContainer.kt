@@ -21,7 +21,6 @@ import com.kelvinht.moneylife.domain.usecase.RolloverDailySavingsUseCase
  * use cases in one place without pulling in a DI framework.
  */
 class AppContainer(context: Context) {
-
     private val database: MoneyLifeDatabase = MoneyLifeDatabase.getInstance(context)
 
     private val expenseRepository: ExpenseRepository = ExpenseRepositoryImpl(database.expenseDao())
@@ -35,5 +34,4 @@ class AppContainer(context: Context) {
     val deleteExpense: DeleteExpenseUseCase = DeleteExpenseUseCase(expenseRepository, savingsRepository, transactionRunner, dailyLimit)
     val observeSavingsBalance = ObserveSavingsBalanceUseCase(savingsRepository)
     val rolloverDailySavings = RolloverDailySavingsUseCase(expenseRepository, savingsRepository, transactionRunner)
-
 }

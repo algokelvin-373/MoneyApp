@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.map
  * the real implementation does it.
  */
 class FakeSavingsRepository : SavingsRepository {
-
     private val dailySavings = MutableStateFlow<Map<String, Long>>(emptyMap())
 
     /** The last day the app was opened, used by the rollover. */
@@ -25,7 +24,10 @@ class FakeSavingsRepository : SavingsRepository {
             savings.filterKeys { it.startsWith(monthKey) }.values.sum()
         }
 
-    override suspend fun saveDailySaving(dateKey: String, amount: Long) {
+    override suspend fun saveDailySaving(
+        dateKey: String,
+        amount: Long,
+    ) {
         dailySavings.value = dailySavings.value + (dateKey to amount)
     }
 

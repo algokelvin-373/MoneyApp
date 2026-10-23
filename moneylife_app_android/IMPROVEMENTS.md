@@ -1,8 +1,8 @@
 # Catatan Perbaikan — `moneylife_app_android`
 
-> Branch `dev/improvements` @ `352a15a` · Audit ulang: 22 Okt 2026 · **Gelombang 1–4 sudah selesai**
+> Branch `dev/improvements` · Audit ulang: 23 Okt 2026 · **Gelombang 1–5 sudah selesai**
 > **Scope:** hanya `moneylife_app_android/` (app native baru). Temuan untuk `money_app_android` dikeluarkan dari dokumen ini.
-> **Baseline verifikasi:** `:app:testDebugUnitTest` **BUILD SUCCESSFUL** (52 test) · `:app:assembleDebug` **BUILD SUCCESSFUL** · `:app:assembleDebugAndroidTest` **BUILD SUCCESSFUL** (test instrumentasi belum dieksekusi — environment tanpa device/emulator) · JDK 17 / AGP 8.5.0.
+> **Baseline verifikasi:** `:app:testDebugUnitTest` **BUILD SUCCESSFUL** (52 test) · `:app:assembleDebug` **BUILD SUCCESSFUL** · `:app:assembleRelease` **BUILD SUCCESSFUL** (R8 + shrinkResources) · `:app:lintDebug` **BUILD SUCCESSFUL** (abortOnError) · `:app:ktlintCheck` **BUILD SUCCESSFUL** · `:app:assembleDebugAndroidTest` **BUILD SUCCESSFUL** (test instrumentasi belum dieksekusi — environment tanpa device/emulator) · JDK 17 / AGP 8.5.0.
 
 ## Status pengerjaan
 
@@ -12,7 +12,7 @@
 | 2         | #4, #5, #6, #7, #8, #9, #10 (logika & konsistensi)               | ✅ **Selesai** | `fix/gelombang-2` → merge di `dev/improvements`           |
 | 3         | #20, #21, #22, #23, #24 (test ViewModel + androidTest + migrasi) | ✅ **Selesai** | `fix/gelombang-3` → merge di `dev/improvements`           |
 | 4         | #11, #12, #13 (string + state)                                   | ✅ **Selesai** | `fix/gelombang-4` → merge di `dev/improvements`           |
-| 5         | #25, #26, #27, #28, #29 (R8, dependency, CI, lint, JDK)          | ⬜ Belum       | —                                                         |
+| 5         | #25, #26, #27, #28, #29 (R8, dependency, CI, lint, JDK)          | ✅ **Selesai** | `fix/gelombang-5` → merge di `dev/improvements`           |
 | 6         | sisanya (P2 detail, P5–P6 hygiene)                               | ⬜ Belum       | —                                                         |
 
 ### Gelombang 1 — detail (selesai)
@@ -55,6 +55,16 @@
 | 12  | Seluruh literal `android:text` di layout dipindah ke `strings.xml` (termasuk label kategori, badge, quick amount, empty state, tombol FAB). String mati dihapus; hints nominal/catatan sekarang memakai resource. Tidak ada string resource yang tersisa tanpa pemakai | `1616c11`           | `:app:assembleDebug`; verifikasi 0 literal `android:text` dan 0 string tak terpakai |
 | 13  | `HomeUiState` berhenti menyimpan teks siap-tampil. State kini memegang `spent`, `limit`, `remaining`, `overSpent`, `savingsBalance`, `spentByCategory`, `budgetStatus`, dan item expense mentah (`amount`, `createdAt`); seluruh formatting dilakukan di `MainActivity`/`ExpenseAdapter`. `dateLabel` juga dihitung di UI. Format compact kategori dikeluarkan dari domain | `89d88eb`, `c506b14` | `HomeViewModelTest` (nilai mentah, `spentByCategory`, `overSpent`), `RupiahFormatterTest` |
 
+### Gelombang 5 — detail (selesai)
+
+| #   | Fix yang dikerjakan                                                                                                       | Commit   | Test penjaga                                                                   |
+| --- | ------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------ |
+| 25  | `minifyEnabled true` + `shrinkResources true` di `release`, aturan keep Room di `proguard-rules.pro`                      | `74062b4` | `:app:assembleRelease` BUILD SUCCESSFUL                                         |
+| 26  | Hapus `androidx.fragment.ktx` & `androidx.lifecycle.livedata.ktx` dari `app/build.gradle` dan `libs.versions.toml`         | `3673c26` | `:app:testDebugUnitTest` · `:app:assembleDebug` BUILD SUCCESSFUL               |
+| 27  | Tambah `.github/workflows/android.yml` minimal: `testDebugUnitTest` + `ktlintCheck` + `lintDebug` per push/PR             | `3f98498` | Konfigurasi CI (JDK 17, `working-directory: moneylife_app_android`)             |
+| 28  | Tambah ktlint (`org.jlleitschuh.gradle.ktlint`) + blok `lint { abortOnError = true }`; format kode ke gaya ktlint        | `910668e` | `:app:ktlintCheck` · `:app:lintDebug` BUILD SUCCESSFUL                        |
+| 29  | Naikkan `sourceCompatibility`/`targetCompatibility` dan `kotlinOptions.jvmTarget` ke Java 17                            | `5a9a0a1` | `:app:testDebugUnitTest` · `:app:assembleDebug` · `:app:assembleDebugAndroidTest` BUILD SUCCESSFUL |
+
 ## Snapshot cepat
 
 | Metrik            | Nilai                                                       | Catatan                                                                    |
@@ -64,9 +74,9 @@
 | androidTest       | 2 file / 5 test / 278 LOC                                   | alur antar-activity + migrasi Room v1→v2 (belum dieksekusi, tanpa emulator) |
 | Layout / drawable | 3 / 21                                                      | `activity_main`, `activity_add_expense`, `item_expense`                    |
 | String resource   | 62 didefinisikan, **0 tidak terpakai**                      | 0 `android:text` literal di layout                                        |
-| Build             | Kotlin 1.9.0 · KSP · Room 2.6.1 · compileSdk 35 · minSdk 27 | `jvmTarget` masih 1.8 · skema Room diekspor (`app/schemas`)                |
-| Release           | `minifyEnabled false` · `versionName "1.0"`                 | R8 belum aktif                                                             |
-| CI / lint         | tidak ada `.github/` · tidak ada blok `lint {}`             | test sudah hijau tapi tidak pernah dijaga otomatis                         |
+| Build             | Kotlin 1.9.0 · KSP · Room 2.6.1 · compileSdk 35 · minSdk 27 | **JDK 17 / `jvmTarget 17`** · skema Room diekspor (`app/schemas`)           |
+| Release           | `minifyEnabled true` · `shrinkResources true` · `versionName "1.0"` | R8 aktif dengan aturan keep Room                                       |
+| CI / lint         | `.github/workflows/android.yml` · `lint { abortOnError = true }` · ktlint | `:app:ktlintCheck` dan `:app:lintDebug` wajib lulus                        |
 
 ---
 
@@ -126,11 +136,11 @@
 
 | #   | Temuan                                                                                                                                                                                   | Fix                                                                                  |
 | --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| 25  | **Release tanpa R8**: `minifyEnabled false`, `proguard-rules.pro` masih template (~11 baris).                                                                                            | `minifyEnabled true` + `shrinkResources true` + aturan keep Room.                    |
-| 26  | **Dependency sia-sia**: `androidx.fragment.ktx` & `androidx.lifecycle.livedata.ktx` di `app/build.gradle`, **nol import** di seluruh `app/src/main` (app ini pure Activity + StateFlow). | Hapus 2 dependency + entri `libs.versions.toml`.                                     |
-| 27  | **Tidak ada CI** — repo tidak punya `.github/`.                                                                                                                                          | Workflow minimal: `./gradlew :app:testDebugUnitTest` + `:app:lintDebug` per push/PR. |
-| 28  | **Tidak ada lint / ktlint / detekt** — tidak ada blok `lint {}`; `kotlin.code.style=official` hanya anjuran.                                                                             | Aktifkan `lint { abortOnError = true }` + ktlint.                                    |
-| 29  | **Target JDK tertinggal**: `sourceCompatibility`/`targetCompatibility` 1.8 & `jvmTarget '1.8'`, padahal build di JDK 17 + `compileSdk 35`.                                               | Naikkan ke Java 17 (AGP 8.5 + desugaring).                                           |
+| 25  | **Release tanpa R8**: `minifyEnabled false`, `proguard-rules.pro` masih template (~11 baris).                                                                                            | ✅ `74062b4` — `minifyEnabled true` + `shrinkResources true` + aturan keep Room.                    |
+| 26  | **Dependency sia-sia**: `androidx.fragment.ktx` & `androidx.lifecycle.livedata.ktx` di `app/build.gradle`, **nol import** di seluruh `app/src/main` (app ini pure Activity + StateFlow). | ✅ `3673c26` — hapus dependency + entri `libs.versions.toml`.                                     |
+| 27  | **Tidak ada CI** — repo tidak punya `.github/`.                                                                                                                                          | ✅ `3f98498` — workflow minimal: `./gradlew :app:testDebugUnitTest` + `:app:ktlintCheck` + `:app:lintDebug` per push/PR. |
+| 28  | **Tidak ada lint / ktlint / detekt** — tidak ada blok `lint {}`; `kotlin.code.style=official` hanya anjuran.                                                                             | ✅ `910668e` — `lint { abortOnError = true }` + ktlint.                                    |
+| 29  | **Target JDK tertinggal**: `sourceCompatibility`/`targetCompatibility` 1.8 & `jvmTarget '1.8'`, padahal build di JDK 17 + `compileSdk 35`.                                               | ✅ `5a9a0a1` — naikkan ke Java 17 (AGP 8.5 + desugaring).                                           |
 | 30  | **`versionName "1.0"`**, `versionCode 1` belum ada skema.                                                                                                                                | Semver `1.0.0` + `versionCode` monoton per rilis.                                    |
 | 31  | **`android.suppressUnsupportedCompileSdk=35`** — menekan warning AGP 8.5 alih-alih menaikkan AGP.                                                                                        | AGP 8.6+ (butuh Gradle 8.7+) atau naikkan lalu hapus baris ini.                      |
 
@@ -165,7 +175,7 @@
 | 2         | #4, #5, #6, #7, #8, #9, #10 (logika & konsistensi)               | 1–2 hari   | ✅ Selesai            |
 | 3         | #20, #21, #22, #23, #24 (test ViewModel + androidTest + migrasi) | 2–3 hari   | ✅ Selesai            |
 | 4         | #11, #12, #13 (string + state)                                   | 1–2 hari   | ✅ Selesai            |
-| 5         | #25, #26, #27, #28, #29 (R8, dependency, CI, lint, JDK)          | 1–2 hari   | ⬜ Belum               |
+| 5         | #25, #26, #27, #28, #29 (R8, dependency, CI, lint, JDK)          | 1–2 hari   | ✅ Selesai            |
 | 6         | sisanya (P2 detail, P5–P6 hygiene)                               | 1–2 hari   | ⬜ Belum               |
 
 ## Yang sudah baik — pertahankan

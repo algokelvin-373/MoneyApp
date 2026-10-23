@@ -10,5 +10,5 @@ data class Expense(
     val amount: Long,
     val note: String = "",
     val dateKey: String,
-    val createdAt: Long
+    val createdAt: Long,
 )

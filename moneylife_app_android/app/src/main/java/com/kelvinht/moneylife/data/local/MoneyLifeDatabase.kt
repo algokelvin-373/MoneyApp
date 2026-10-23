@@ -6,20 +6,20 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.kelvinht.moneylife.data.local.dao.ExpenseDao
 import com.kelvinht.moneylife.data.local.dao.SavingsDao
 import com.kelvinht.moneylife.data.local.entity.AppStateEntity
 import com.kelvinht.moneylife.data.local.entity.DailySavingEntity
-import com.kelvinht.moneylife.data.local.dao.ExpenseDao
 import com.kelvinht.moneylife.data.local.entity.ExpenseEntity
 
 @Database(
     entities = [ExpenseEntity::class, DailySavingEntity::class, AppStateEntity::class],
     version = 2,
-    exportSchema = true
+    exportSchema = true,
 )
 abstract class MoneyLifeDatabase : RoomDatabase() {
-
     abstract fun expenseDao(): ExpenseDao
+
     abstract fun savingsDao(): SavingsDao
 
     companion object {
@@ -33,7 +33,7 @@ abstract class MoneyLifeDatabase : RoomDatabase() {
                 instance ?: Room.databaseBuilder(
                     context.applicationContext,
                     MoneyLifeDatabase::class.java,
-                    NAME
+                    NAME,
                 )
                     .addMigrations(MIGRATION_1_2)
                     .build()
@@ -45,19 +45,20 @@ abstract class MoneyLifeDatabase : RoomDatabase() {
          * (adds `daily_savings` and `app_state`). Public so the migration can
          * be covered by an instrumentation test.
          */
-        val MIGRATION_1_2 = object : Migration(1, 2) {
-            override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL(
-                    "CREATE TABLE IF NOT EXISTS daily_savings (" +
-                        "dateKey TEXT NOT NULL PRIMARY KEY, " +
-                        "amount INTEGER NOT NULL)"
-                )
-                db.execSQL(
-                    "CREATE TABLE IF NOT EXISTS app_state (" +
-                        "stateKey TEXT NOT NULL PRIMARY KEY, " +
-                        "value TEXT NOT NULL)"
-                )
+        val MIGRATION_1_2 =
+            object : Migration(1, 2) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL(
+                        "CREATE TABLE IF NOT EXISTS daily_savings (" +
+                            "dateKey TEXT NOT NULL PRIMARY KEY, " +
+                            "amount INTEGER NOT NULL)",
+                    )
+                    db.execSQL(
+                        "CREATE TABLE IF NOT EXISTS app_state (" +
+                            "stateKey TEXT NOT NULL PRIMARY KEY, " +
+                            "value TEXT NOT NULL)",
+                    )
+                }
             }
-        }
     }
 }

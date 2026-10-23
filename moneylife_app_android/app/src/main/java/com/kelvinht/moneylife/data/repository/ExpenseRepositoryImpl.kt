@@ -9,20 +9,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class ExpenseRepositoryImpl(
-    private val dao: ExpenseDao
+    private val dao: ExpenseDao,
 ) : ExpenseRepository {
-
     override fun observeExpensesByDate(dateKey: String): Flow<List<Expense>> =
         dao.observeByDate(dateKey).map { entities -> entities.map { it.toDomain() } }
 
-    override suspend fun getExpensesByDate(dateKey: String): List<Expense> =
-        dao.getByDate(dateKey).map { it.toDomain() }
+    override suspend fun getExpensesByDate(dateKey: String): List<Expense> = dao.getByDate(dateKey).map { it.toDomain() }
 
     override suspend fun getExpenseById(id: Long): Expense? = dao.getById(id)?.toDomain()
 
-    override suspend fun addExpense(expense: Expense): Long =
-        dao.insert(expense.toEntity())
+    override suspend fun addExpense(expense: Expense): Long = dao.insert(expense.toEntity())
 
-    override suspend fun deleteExpenseById(id: Long) =
-        dao.deleteById(id)
+    override suspend fun deleteExpenseById(id: Long) = dao.deleteById(id)
 }

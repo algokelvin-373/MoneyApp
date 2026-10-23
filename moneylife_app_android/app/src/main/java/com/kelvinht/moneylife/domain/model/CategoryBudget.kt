@@ -5,9 +5,10 @@ object CategoryBudget {
     const val TRANSPORT_LIMIT: Long = 30_000L
     const val JAJAN_LIMIT: Long = 20_000L
 
-    fun limitFor(category: ExpenseCategory): Long = when (category) {
-        ExpenseCategory.MAKAN -> MAKAN_LIMIT
-        ExpenseCategory.TRANSPORT -> TRANSPORT_LIMIT
-        ExpenseCategory.JAJAN -> JAJAN_LIMIT
-    }
+    fun limitFor(category: ExpenseCategory): Long =
+        when (category) {
+            ExpenseCategory.MAKAN -> MAKAN_LIMIT
+            ExpenseCategory.TRANSPORT -> TRANSPORT_LIMIT
+            ExpenseCategory.JAJAN -> JAJAN_LIMIT
+        }
 }

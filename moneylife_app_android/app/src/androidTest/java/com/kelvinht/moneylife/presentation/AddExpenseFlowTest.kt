@@ -38,7 +38,6 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class AddExpenseFlowTest {
-
     private val context = ApplicationProvider.getApplicationContext<Context>()
     private val database = MoneyLifeDatabase.getInstance(context)
 
@@ -88,9 +87,10 @@ class AddExpenseFlowTest {
     @Test
     fun savingOnTheDayFromTheExtra_storesTheExpenseOnThatDay() {
         val yesterday = DateUtils.dateKey(DateUtils.parseDate(DateUtils.todayKey()).minusDays(1))
-        val intent = Intent(context, AddExpenseActivity::class.java)
-            .putExtra(AddExpenseActivity.EXTRA_DATE_KEY, yesterday)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val intent =
+            Intent(context, AddExpenseActivity::class.java)
+                .putExtra(AddExpenseActivity.EXTRA_DATE_KEY, yesterday)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
         ActivityScenario.launch<AddExpenseActivity>(intent).use {
             // The date from EXTRA_DATE_KEY is the one the form works with.
@@ -116,8 +116,9 @@ class AddExpenseFlowTest {
     private fun openAddExpenseForm(scenario: ActivityScenario<MainActivity>) {
         await("tombol Catat Pengeluaran terlihat") {
             scenario.onActivity { activity ->
-                val scroll = activity.findViewById<ViewGroup>(android.R.id.content)
-                    .findNestedScrollView()
+                val scroll =
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .findNestedScrollView()
                 if (scroll != null && scroll.height > 0) {
                     scroll.fullScroll(View.FOCUS_DOWN)
                 }
@@ -127,8 +128,7 @@ class AddExpenseFlowTest {
         onView(withId(R.id.fabAdd)).perform(click())
     }
 
-    private fun storedExpenses(dateKey: String): List<ExpenseEntity> =
-        runBlocking { database.expenseDao().getByDate(dateKey) }
+    private fun storedExpenses(dateKey: String): List<ExpenseEntity> = runBlocking { database.expenseDao().getByDate(dateKey) }
 
     private fun awaitStoredExpenses(dateKey: String): List<ExpenseEntity> {
         await("pengeluaran tersimpan di $dateKey") {
@@ -144,7 +144,7 @@ class AddExpenseFlowTest {
     private fun await(
         description: String,
         timeoutMillis: Long = TIMEOUT_MILLIS,
-        assertion: () -> Unit
+        assertion: () -> Unit,
     ) {
         val deadline = System.currentTimeMillis() + timeoutMillis
         var lastFailure: Throwable? = null

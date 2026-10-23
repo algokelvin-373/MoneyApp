@@ -6,7 +6,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class CategoryBudgetTest {
-
     @Test
     fun `returns the configured limit for every category`() {
         assertEquals(50_000L, CategoryBudget.limitFor(ExpenseCategory.MAKAN))

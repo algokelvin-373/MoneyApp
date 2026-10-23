@@ -18,25 +18,26 @@ class AddExpenseUseCase(
     private val repository: ExpenseRepository,
     private val savingsRepository: SavingsRepository,
     private val transactionRunner: TransactionRunner,
-    private val dailyLimit: Long
+    private val dailyLimit: Long,
 ) {
     suspend operator fun invoke(
         category: ExpenseCategory,
         amount: Long,
         note: String,
-        dateKey: String = DateUtils.todayKey()
+        dateKey: String = DateUtils.todayKey(),
     ): Result<Long> {
         if (amount <= 0L) {
             return Result.failure(IllegalArgumentException())
         }
 
-        val expense = Expense(
-            category = category,
-            amount = amount,
-            note = note.trim(),
-            dateKey = dateKey,
-            createdAt = System.currentTimeMillis()
-        )
+        val expense =
+            Expense(
+                category = category,
+                amount = amount,
+                note = note.trim(),
+                dateKey = dateKey,
+                createdAt = System.currentTimeMillis(),
+            )
 
         return runCatching {
             transactionRunner.runInTransaction {

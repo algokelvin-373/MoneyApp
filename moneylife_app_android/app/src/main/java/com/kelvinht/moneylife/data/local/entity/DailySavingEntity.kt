@@ -6,5 +6,5 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "daily_savings")
 data class DailySavingEntity(
     @PrimaryKey val dateKey: String,
-    val amount: Long
+    val amount: Long,
 )

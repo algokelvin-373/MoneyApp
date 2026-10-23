@@ -3,8 +3,8 @@ package com.kelvinht.moneylife.presentation.addedit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kelvinht.moneylife.R
-import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.core.util.DateUtils
+import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.domain.usecase.AddExpenseUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,9 +13,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AddExpenseViewModel(
-    private val addExpense: AddExpenseUseCase
+    private val addExpense: AddExpenseUseCase,
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(AddExpenseUiState())
     val uiState: StateFlow<AddExpenseUiState> = _uiState.asStateFlow()
 
@@ -63,14 +62,14 @@ class AddExpenseViewModel(
                 category = snapshot.category,
                 amount = amount,
                 note = snapshot.note,
-                dateKey = snapshot.dateKey
+                dateKey = snapshot.dateKey,
             ).onSuccess {
                 _uiState.update { it.copy(isSaving = false, isSaved = true) }
             }.onFailure {
                 _uiState.update {
                     it.copy(
                         isSaving = false,
-                        error = R.string.error_save_failed
+                        error = R.string.error_save_failed,
                     )
                 }
             }

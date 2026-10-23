@@ -8,8 +8,7 @@ import kotlinx.coroutines.flow.Flow
  * Streams all expenses recorded for a given day, newest first.
  */
 class GetDailyExpensesUseCase(
-    private val repository: ExpenseRepository
+    private val repository: ExpenseRepository,
 ) {
-    operator fun invoke(dateKey: String): Flow<List<Expense>> =
-        repository.observeExpensesByDate(dateKey)
+    operator fun invoke(dateKey: String): Flow<List<Expense>> = repository.observeExpensesByDate(dateKey)
 }

@@ -20,29 +20,30 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class MoneyLifeDatabaseMigrationTest {
-
     @get:Rule
-    val helper: MigrationTestHelper = MigrationTestHelper(
-        InstrumentationRegistry.getInstrumentation(),
-        MoneyLifeDatabase::class.java
-    )
+    val helper: MigrationTestHelper =
+        MigrationTestHelper(
+            InstrumentationRegistry.getInstrumentation(),
+            MoneyLifeDatabase::class.java,
+        )
 
     @Test
     fun migrateFromVersion1To2_keepsTheExpensesAndCreatesTheNewTables() {
         helper.createDatabase(TEST_DATABASE, 1).apply {
             execSQL(
                 "INSERT INTO expenses (category, amount, note, dateKey, createdAt) " +
-                    "VALUES ('MAKAN', 30000, 'Kopi', '2026-10-11', 1000)"
+                    "VALUES ('MAKAN', 30000, 'Kopi', '2026-10-11', 1000)",
             )
             close()
         }
 
-        val migrated: SupportSQLiteDatabase = helper.runMigrationsAndValidate(
-            TEST_DATABASE,
-            2,
-            true,
-            MoneyLifeDatabase.MIGRATION_1_2
-        )
+        val migrated: SupportSQLiteDatabase =
+            helper.runMigrationsAndValidate(
+                TEST_DATABASE,
+                2,
+                true,
+                MoneyLifeDatabase.MIGRATION_1_2,
+            )
 
         migrated.query("SELECT amount, note FROM expenses").use { cursor ->
             assertTrue(cursor.moveToFirst())
@@ -68,12 +69,13 @@ class MoneyLifeDatabaseMigrationTest {
     fun migrateFromVersion1To2_canStoreTheSavingsAndTheAppState() {
         helper.createDatabase(TEST_DATABASE, 1).close()
 
-        val migrated: SupportSQLiteDatabase = helper.runMigrationsAndValidate(
-            TEST_DATABASE,
-            2,
-            true,
-            MoneyLifeDatabase.MIGRATION_1_2
-        )
+        val migrated: SupportSQLiteDatabase =
+            helper.runMigrationsAndValidate(
+                TEST_DATABASE,
+                2,
+                true,
+                MoneyLifeDatabase.MIGRATION_1_2,
+            )
 
         migrated.execSQL("INSERT INTO daily_savings (dateKey, amount) VALUES ('2026-10-11', 70000)")
         migrated.execSQL("INSERT INTO app_state (stateKey, value) VALUES ('last_active_date', '2026-10-11')")

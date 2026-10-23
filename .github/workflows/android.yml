@@ -1,0 +1,35 @@
+name: Android CI
+
+on:
+  push:
+    paths:
+      - 'moneylife_app_android/**'
+      - '.github/workflows/android.yml'
+  pull_request:
+    paths:
+      - 'moneylife_app_android/**'
+      - '.github/workflows/android.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: moneylife_app_android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+      - name: Unit tests
+        run: ./gradlew :app:testDebugUnitTest
+      - name: Kotlin formatting
+        run: ./gradlew :app:ktlintCheck
+      - name: Android lint
+        run: ./gradlew :app:lintDebug

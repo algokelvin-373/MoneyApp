@@ -5,22 +5,21 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.addTextChangedListener
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.material.card.MaterialCardView
 import com.kelvinht.moneylife.MoneyLifeApplication
 import com.kelvinht.moneylife.R
-import com.kelvinht.moneylife.databinding.ActivityAddExpenseBinding
-import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.core.format.RupiahFormatter
 import com.kelvinht.moneylife.core.util.DateUtils
-import com.google.android.material.card.MaterialCardView
+import com.kelvinht.moneylife.databinding.ActivityAddExpenseBinding
+import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import kotlinx.coroutines.launch
 
 class AddExpenseActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityAddExpenseBinding
 
     private val viewModel: AddExpenseViewModel by viewModels {
@@ -116,11 +115,12 @@ class AddExpenseActivity : AppCompatActivity() {
     }
 
     private fun renderCategory(selected: ExpenseCategory) {
-        val cards = listOf(
-            binding.categoryMakan to ExpenseCategory.MAKAN,
-            binding.categoryTransport to ExpenseCategory.TRANSPORT,
-            binding.categoryJajan to ExpenseCategory.JAJAN
-        )
+        val cards =
+            listOf(
+                binding.categoryMakan to ExpenseCategory.MAKAN,
+                binding.categoryTransport to ExpenseCategory.TRANSPORT,
+                binding.categoryJajan to ExpenseCategory.JAJAN,
+            )
         cards.forEach { (card, category) ->
             styleCategory(card, category == selected)
         }
@@ -129,12 +129,16 @@ class AddExpenseActivity : AppCompatActivity() {
         binding.checkJajan.visibility = if (selected == ExpenseCategory.JAJAN) View.VISIBLE else View.GONE
     }
 
-    private fun styleCategory(card: MaterialCardView, selected: Boolean) {
+    private fun styleCategory(
+        card: MaterialCardView,
+        selected: Boolean,
+    ) {
         card.strokeWidth = resources.getDimensionPixelSize(if (selected) R.dimen.selected_stroke else R.dimen.default_stroke)
-        card.strokeColor = ContextCompat.getColor(
-            this,
-            if (selected) R.color.colorPrimaryDark else R.color.cardBorder
-        )
+        card.strokeColor =
+            ContextCompat.getColor(
+                this,
+                if (selected) R.color.colorPrimaryDark else R.color.cardBorder,
+            )
     }
 
     companion object {

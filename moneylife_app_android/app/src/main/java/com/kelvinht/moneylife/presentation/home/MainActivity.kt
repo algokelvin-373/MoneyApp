@@ -20,12 +20,11 @@ import com.kelvinht.moneylife.databinding.ActivityMainBinding
 import com.kelvinht.moneylife.domain.model.CategoryBudget
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.presentation.addedit.AddExpenseActivity
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.util.Locale
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityMainBinding
     private lateinit var expenseAdapter: ExpenseAdapter
 
@@ -58,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         binding.fabAdd.setOnClickListener {
             startActivity(
                 Intent(this, AddExpenseActivity::class.java)
-                    .putExtra(AddExpenseActivity.EXTRA_DATE_KEY, viewModel.selectedDateKey)
+                    .putExtra(AddExpenseActivity.EXTRA_DATE_KEY, viewModel.selectedDateKey),
             )
         }
         binding.textDate.setOnClickListener { showDatePicker() }
@@ -92,14 +91,15 @@ class MainActivity : AppCompatActivity() {
         binding.textHistoryDate.text = dateLabel
         binding.textHistoryDate.contentDescription = getString(R.string.choose_date) + ": " + dateLabel
         val isToday = state.dateKey == DateUtils.todayKey()
-        binding.textSpendingHeader.text = if (isToday) {
-            getString(R.string.spending_header_today)
-        } else {
-            getString(
-                R.string.spending_header_date,
-                DateUtils.shortDisplayDate(state.dateKey).uppercase(Locale("id", "ID"))
-            )
-        }
+        binding.textSpendingHeader.text =
+            if (isToday) {
+                getString(R.string.spending_header_today)
+            } else {
+                getString(
+                    R.string.spending_header_date,
+                    DateUtils.shortDisplayDate(state.dateKey).uppercase(Locale("id", "ID")),
+                )
+            }
         binding.buttonNextDay.isEnabled = !isToday
         binding.buttonToday.visibility = if (isToday) View.GONE else View.VISIBLE
         binding.textSpent.text = RupiahFormatter.format(state.spent)
@@ -113,22 +113,24 @@ class MainActivity : AppCompatActivity() {
         binding.textAverage.text = RupiahFormatter.format(state.savingsBalance)
         binding.textSavingsLabel.text =
             getString(R.string.savings_balance_format, DateUtils.monthLabel(state.dateKey))
-        binding.textCondition.text = getString(
-            when (state.budgetStatus) {
-                BudgetStatus.SAFE -> R.string.budget_condition_safe
-                BudgetStatus.WARNING -> R.string.budget_condition_warning
-                BudgetStatus.OVER -> R.string.budget_condition_over
-            }
-        )
+        binding.textCondition.text =
+            getString(
+                when (state.budgetStatus) {
+                    BudgetStatus.SAFE -> R.string.budget_condition_safe
+                    BudgetStatus.WARNING -> R.string.budget_condition_warning
+                    BudgetStatus.OVER -> R.string.budget_condition_over
+                },
+            )
         binding.textMakanAmount.text = categoryUsage(state, ExpenseCategory.MAKAN)
         binding.textTransportAmount.text = categoryUsage(state, ExpenseCategory.TRANSPORT)
         binding.textJajanAmount.text = categoryUsage(state, ExpenseCategory.JAJAN)
 
-        val accentColorRes = when (state.budgetStatus) {
-            BudgetStatus.SAFE -> R.color.colorSuccess
-            BudgetStatus.WARNING -> R.color.colorWarning
-            BudgetStatus.OVER -> R.color.colorError
-        }
+        val accentColorRes =
+            when (state.budgetStatus) {
+                BudgetStatus.SAFE -> R.color.colorSuccess
+                BudgetStatus.WARNING -> R.color.colorWarning
+                BudgetStatus.OVER -> R.color.colorError
+            }
         val accentColor = ContextCompat.getColor(this, accentColorRes)
         binding.progressDaily.setIndicatorColor(accentColor)
         binding.textRemaining.setTextColor(accentColor)
@@ -145,12 +147,15 @@ class MainActivity : AppCompatActivity() {
         expenseAdapter.submitList(state.expenses)
     }
 
-    private fun categoryUsage(state: HomeUiState, category: ExpenseCategory): String {
+    private fun categoryUsage(
+        state: HomeUiState,
+        category: ExpenseCategory,
+    ): String {
         val spent = state.spentByCategory[category] ?: 0L
         return getString(
             R.string.category_usage_format,
             RupiahFormatter.format(spent),
-            RupiahFormatter.formatCompact(CategoryBudget.limitFor(category))
+            RupiahFormatter.formatCompact(CategoryBudget.limitFor(category)),
         )
     }
 

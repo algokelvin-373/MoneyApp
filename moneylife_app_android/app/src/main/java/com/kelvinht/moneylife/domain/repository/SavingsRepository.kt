@@ -5,7 +5,10 @@ import kotlinx.coroutines.flow.Flow
 interface SavingsRepository {
     fun observeBalance(monthKey: String): Flow<Long>
 
-    suspend fun saveDailySaving(dateKey: String, amount: Long)
+    suspend fun saveDailySaving(
+        dateKey: String,
+        amount: Long,
+    )
 
     /**
      * Saves the settled savings of several days at once. Used by the rollover
