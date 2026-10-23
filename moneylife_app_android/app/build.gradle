@@ -55,16 +55,11 @@ dependencies {
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.constraintlayout)
 
-    // Fragment + navigation between fragments / viewModels() delegate
-    implementation(libs.androidx.fragment.ktx)
-
     // RecyclerView
     implementation(libs.androidx.recyclerview)
 
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    // LiveData
-    implementation(libs.androidx.lifecycle.livedata.ktx)
 
     // Room
     implementation(libs.androidx.room.runtime)
