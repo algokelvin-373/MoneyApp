@@ -7,7 +7,7 @@ import com.kelvinht.moneylife.presentation.common.CategoryStyle
 enum class BudgetStatus {
     SAFE,
     WARNING,
-    OVER
+    OVER,
 }
 
 data class ExpenseUiModel(
@@ -15,7 +15,7 @@ data class ExpenseUiModel(
     val style: CategoryStyle,
     val note: String,
     val amount: Long,
-    val createdAt: Long
+    val createdAt: Long,
 )
 
 /**
@@ -34,5 +34,5 @@ data class HomeUiState(
     val budgetStatus: BudgetStatus = BudgetStatus.SAFE,
     val spentByCategory: Map<ExpenseCategory, Long> = emptyMap(),
     val expenses: List<ExpenseUiModel> = emptyList(),
-    val isEmpty: Boolean = true
+    val isEmpty: Boolean = true,
 )

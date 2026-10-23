@@ -33,7 +33,6 @@ import org.junit.Test
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
-
     private val expenseRepository = FakeExpenseRepository()
     private val savingsRepository = FakeSavingsRepository()
     private val transactionRunner = FakeTransactionRunner()
@@ -51,173 +50,188 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun initialState_showsTodayWithoutExpenses() = runTest(mainDispatcher) {
-        val viewModel = createViewModel()
-        observe(viewModel)
+    fun initialState_showsTodayWithoutExpenses() =
+        runTest(mainDispatcher) {
+            val viewModel = createViewModel()
+            observe(viewModel)
 
-        assertEquals(DateUtils.todayKey(), viewModel.uiState.value.dateKey)
-        assertTrue(viewModel.uiState.value.isEmpty)
-        assertEquals(BudgetStatus.SAFE, viewModel.uiState.value.budgetStatus)
-    }
-
-    @Test
-    fun selectDate_inThePast_showsTheExpensesOfThatDay() = runTest(mainDispatcher) {
-        val yesterday = dateKeyOfDays(-1)
-        expenseRepository.seed(expense(30_000, yesterday))
-        val viewModel = createViewModel()
-        observe(viewModel)
-
-        viewModel.selectDate(yesterday)
-        advanceUntilIdle()
-
-        assertEquals(yesterday, viewModel.uiState.value.dateKey)
-        assertEquals(1, viewModel.uiState.value.expenses.size)
-        assertEquals(30_000L, viewModel.uiState.value.spent)
-        assertEquals(30_000L, viewModel.uiState.value.spentByCategory[ExpenseCategory.MAKAN])
-    }
+            assertEquals(DateUtils.todayKey(), viewModel.uiState.value.dateKey)
+            assertTrue(viewModel.uiState.value.isEmpty)
+            assertEquals(BudgetStatus.SAFE, viewModel.uiState.value.budgetStatus)
+        }
 
     @Test
-    fun selectDate_inTheFuture_isIgnored() = runTest(mainDispatcher) {
-        val viewModel = createViewModel()
-        observe(viewModel)
+    fun selectDate_inThePast_showsTheExpensesOfThatDay() =
+        runTest(mainDispatcher) {
+            val yesterday = dateKeyOfDays(-1)
+            expenseRepository.seed(expense(30_000, yesterday))
+            val viewModel = createViewModel()
+            observe(viewModel)
 
-        viewModel.selectDate(dateKeyOfDays(1))
-        advanceUntilIdle()
+            viewModel.selectDate(yesterday)
+            advanceUntilIdle()
 
-        assertEquals(DateUtils.todayKey(), viewModel.uiState.value.dateKey)
-    }
-
-    @Test
-    fun nextDay_fromToday_isIgnored() = runTest(mainDispatcher) {
-        val viewModel = createViewModel()
-        observe(viewModel)
-
-        viewModel.nextDay()
-        advanceUntilIdle()
-
-        assertEquals(DateUtils.todayKey(), viewModel.uiState.value.dateKey)
-    }
+            assertEquals(yesterday, viewModel.uiState.value.dateKey)
+            assertEquals(1, viewModel.uiState.value.expenses.size)
+            assertEquals(30_000L, viewModel.uiState.value.spent)
+            assertEquals(30_000L, viewModel.uiState.value.spentByCategory[ExpenseCategory.MAKAN])
+        }
 
     @Test
-    fun previousDay_movesOneDayBack() = runTest(mainDispatcher) {
-        val viewModel = createViewModel()
-        observe(viewModel)
+    fun selectDate_inTheFuture_isIgnored() =
+        runTest(mainDispatcher) {
+            val viewModel = createViewModel()
+            observe(viewModel)
 
-        viewModel.previousDay()
-        advanceUntilIdle()
+            viewModel.selectDate(dateKeyOfDays(1))
+            advanceUntilIdle()
 
-        assertEquals(dateKeyOfDays(-1), viewModel.uiState.value.dateKey)
-    }
-
-    @Test
-    fun showToday_afterNavigatingBack_returnsToToday() = runTest(mainDispatcher) {
-        val viewModel = createViewModel()
-        observe(viewModel)
-
-        viewModel.previousDay()
-        advanceUntilIdle()
-        viewModel.showToday()
-        advanceUntilIdle()
-
-        assertEquals(DateUtils.todayKey(), viewModel.uiState.value.dateKey)
-    }
+            assertEquals(DateUtils.todayKey(), viewModel.uiState.value.dateKey)
+        }
 
     @Test
-    fun budgetStatus_isWarningWhenUsageReachesEightyPercent() = runTest(mainDispatcher) {
-        expenseRepository.seed(expense(80_000, DateUtils.todayKey()))
-        val viewModel = createViewModel()
-        observe(viewModel)
+    fun nextDay_fromToday_isIgnored() =
+        runTest(mainDispatcher) {
+            val viewModel = createViewModel()
+            observe(viewModel)
 
-        assertEquals(BudgetStatus.WARNING, viewModel.uiState.value.budgetStatus)
-        assertEquals(80, viewModel.uiState.value.usagePercent)
-    }
+            viewModel.nextDay()
+            advanceUntilIdle()
 
-    @Test
-    fun budgetStatus_isOverWhenSpendingExceedsTheLimit() = runTest(mainDispatcher) {
-        expenseRepository.seed(expense(150_000, DateUtils.todayKey()))
-        val viewModel = createViewModel()
-        observe(viewModel)
-
-        assertEquals(BudgetStatus.OVER, viewModel.uiState.value.budgetStatus)
-        assertEquals(100, viewModel.uiState.value.usagePercent)
-        assertTrue(viewModel.uiState.value.overSpent > 0L)
-    }
+            assertEquals(DateUtils.todayKey(), viewModel.uiState.value.dateKey)
+        }
 
     @Test
-    fun refresh_settlesEveryMissedDay() = runTest(mainDispatcher) {
-        val threeDaysAgo = dateKeyOfDays(-3)
-        savingsRepository.lastActiveDate = threeDaysAgo
-        expenseRepository.seed(expense(30_000, threeDaysAgo))
-        val viewModel = createViewModel()
-        observe(viewModel)
+    fun previousDay_movesOneDayBack() =
+        runTest(mainDispatcher) {
+            val viewModel = createViewModel()
+            observe(viewModel)
 
-        viewModel.refresh()
-        advanceUntilIdle()
+            viewModel.previousDay()
+            advanceUntilIdle()
 
-        val saved = savingsRepository.savedSavings()
-        assertEquals(70_000L, saved[threeDaysAgo])
-        assertEquals(100_000L, saved[dateKeyOfDays(-2)])
-        assertEquals(100_000L, saved[dateKeyOfDays(-1)])
-        assertEquals(DateUtils.todayKey(), savingsRepository.lastActiveDate)
-    }
+            assertEquals(dateKeyOfDays(-1), viewModel.uiState.value.dateKey)
+        }
 
     @Test
-    fun refresh_keepsTheDaySelectedByTheUser() = runTest(mainDispatcher) {
-        val yesterday = dateKeyOfDays(-1)
-        val viewModel = createViewModel()
-        observe(viewModel)
+    fun showToday_afterNavigatingBack_returnsToToday() =
+        runTest(mainDispatcher) {
+            val viewModel = createViewModel()
+            observe(viewModel)
 
-        viewModel.selectDate(yesterday)
-        advanceUntilIdle()
-        viewModel.refresh()
-        advanceUntilIdle()
+            viewModel.previousDay()
+            advanceUntilIdle()
+            viewModel.showToday()
+            advanceUntilIdle()
 
-        assertEquals(yesterday, viewModel.uiState.value.dateKey)
-    }
+            assertEquals(DateUtils.todayKey(), viewModel.uiState.value.dateKey)
+        }
 
     @Test
-    fun deleteExpense_removesTheExpenseFromTheList() = runTest(mainDispatcher) {
-        val today = DateUtils.todayKey()
-        expenseRepository.seed(expense(25_000, today))
-        val viewModel = createViewModel()
-        observe(viewModel)
-        val id = expenseRepository.current().first().id
+    fun budgetStatus_isWarningWhenUsageReachesEightyPercent() =
+        runTest(mainDispatcher) {
+            expenseRepository.seed(expense(80_000, DateUtils.todayKey()))
+            val viewModel = createViewModel()
+            observe(viewModel)
 
-        viewModel.deleteExpense(id)
-        advanceUntilIdle()
+            assertEquals(BudgetStatus.WARNING, viewModel.uiState.value.budgetStatus)
+            assertEquals(80, viewModel.uiState.value.usagePercent)
+        }
 
-        assertTrue(viewModel.uiState.value.expenses.isEmpty())
-        assertTrue(viewModel.uiState.value.isEmpty)
-        assertEquals(0L, viewModel.uiState.value.spent)
-    }
+    @Test
+    fun budgetStatus_isOverWhenSpendingExceedsTheLimit() =
+        runTest(mainDispatcher) {
+            expenseRepository.seed(expense(150_000, DateUtils.todayKey()))
+            val viewModel = createViewModel()
+            observe(viewModel)
 
-    private fun createViewModel(limit: Long = DAILY_LIMIT): HomeViewModel = HomeViewModel(
-        getDailyExpenses = GetDailyExpensesUseCase(expenseRepository),
-        calculateDailyBudget = CalculateDailyBudgetUseCase(),
-        deleteExpense = DeleteExpenseUseCase(expenseRepository, savingsRepository, transactionRunner, limit),
-        observeSavingsBalance = ObserveSavingsBalanceUseCase(savingsRepository),
-        rolloverDailySavings = RolloverDailySavingsUseCase(
-            expenseRepository,
-            savingsRepository,
-            transactionRunner
-        ),
-        dailyLimit = limit
-    )
+            assertEquals(BudgetStatus.OVER, viewModel.uiState.value.budgetStatus)
+            assertEquals(100, viewModel.uiState.value.usagePercent)
+            assertTrue(viewModel.uiState.value.overSpent > 0L)
+        }
+
+    @Test
+    fun refresh_settlesEveryMissedDay() =
+        runTest(mainDispatcher) {
+            val threeDaysAgo = dateKeyOfDays(-3)
+            savingsRepository.lastActiveDate = threeDaysAgo
+            expenseRepository.seed(expense(30_000, threeDaysAgo))
+            val viewModel = createViewModel()
+            observe(viewModel)
+
+            viewModel.refresh()
+            advanceUntilIdle()
+
+            val saved = savingsRepository.savedSavings()
+            assertEquals(70_000L, saved[threeDaysAgo])
+            assertEquals(100_000L, saved[dateKeyOfDays(-2)])
+            assertEquals(100_000L, saved[dateKeyOfDays(-1)])
+            assertEquals(DateUtils.todayKey(), savingsRepository.lastActiveDate)
+        }
+
+    @Test
+    fun refresh_keepsTheDaySelectedByTheUser() =
+        runTest(mainDispatcher) {
+            val yesterday = dateKeyOfDays(-1)
+            val viewModel = createViewModel()
+            observe(viewModel)
+
+            viewModel.selectDate(yesterday)
+            advanceUntilIdle()
+            viewModel.refresh()
+            advanceUntilIdle()
+
+            assertEquals(yesterday, viewModel.uiState.value.dateKey)
+        }
+
+    @Test
+    fun deleteExpense_removesTheExpenseFromTheList() =
+        runTest(mainDispatcher) {
+            val today = DateUtils.todayKey()
+            expenseRepository.seed(expense(25_000, today))
+            val viewModel = createViewModel()
+            observe(viewModel)
+            val id = expenseRepository.current().first().id
+
+            viewModel.deleteExpense(id)
+            advanceUntilIdle()
+
+            assertTrue(viewModel.uiState.value.expenses.isEmpty())
+            assertTrue(viewModel.uiState.value.isEmpty)
+            assertEquals(0L, viewModel.uiState.value.spent)
+        }
+
+    private fun createViewModel(limit: Long = DAILY_LIMIT): HomeViewModel =
+        HomeViewModel(
+            getDailyExpenses = GetDailyExpensesUseCase(expenseRepository),
+            calculateDailyBudget = CalculateDailyBudgetUseCase(),
+            deleteExpense = DeleteExpenseUseCase(expenseRepository, savingsRepository, transactionRunner, limit),
+            observeSavingsBalance = ObserveSavingsBalanceUseCase(savingsRepository),
+            rolloverDailySavings =
+                RolloverDailySavingsUseCase(
+                    expenseRepository,
+                    savingsRepository,
+                    transactionRunner,
+                ),
+            dailyLimit = limit,
+        )
 
     /** Keeps the state flow alive so the ViewModel keeps producing updates. */
     private fun TestScope.observe(viewModel: HomeViewModel) {
         backgroundScope.launch { viewModel.uiState.collect { } }
     }
 
-    private fun dateKeyOfDays(offset: Int): String =
-        DateUtils.dateKey(DateUtils.parseDate(DateUtils.todayKey()).plusDays(offset.toLong()))
+    private fun dateKeyOfDays(offset: Int): String = DateUtils.dateKey(DateUtils.parseDate(DateUtils.todayKey()).plusDays(offset.toLong()))
 
-    private fun expense(amount: Long, dateKey: String) = Expense(
+    private fun expense(
+        amount: Long,
+        dateKey: String,
+    ) = Expense(
         category = ExpenseCategory.MAKAN,
         amount = amount,
         note = "Uji",
         dateKey = dateKey,
-        createdAt = 0L
+        createdAt = 0L,
     )
 
     private companion object {

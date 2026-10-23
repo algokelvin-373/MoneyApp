@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.ktlint)
 }
 
 // Room exports the schema of every database version into app/schemas so the
@@ -47,6 +48,15 @@ android {
         // MigrationTestHelper can validate the migrations against them.
         androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
     }
+    lint {
+        abortOnError = true
+        checkReleaseBuilds = true
+    }
+}
+
+ktlint {
+    android.set(true)
+    ignoreFailures.set(false)
 }
 
 dependencies {

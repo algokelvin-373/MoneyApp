@@ -8,32 +8,37 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.kelvinht.moneylife.databinding.ItemExpenseBinding
 import com.kelvinht.moneylife.core.format.RupiahFormatter
 import com.kelvinht.moneylife.core.util.DateUtils
+import com.kelvinht.moneylife.databinding.ItemExpenseBinding
 
 class ExpenseAdapter(
-    private val onDeleteClick: (ExpenseUiModel) -> Unit
+    private val onDeleteClick: (ExpenseUiModel) -> Unit,
 ) : ListAdapter<ExpenseUiModel, ExpenseAdapter.ExpenseViewHolder>(DIFF_CALLBACK) {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExpenseViewHolder {
-        val binding = ItemExpenseBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): ExpenseViewHolder {
+        val binding =
+            ItemExpenseBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false,
+            )
         return ExpenseViewHolder(binding, onDeleteClick)
     }
 
-    override fun onBindViewHolder(holder: ExpenseViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: ExpenseViewHolder,
+        position: Int,
+    ) {
         holder.bind(getItem(position))
     }
 
     class ExpenseViewHolder(
         private val binding: ItemExpenseBinding,
-        private val onDeleteClick: (ExpenseUiModel) -> Unit
+        private val onDeleteClick: (ExpenseUiModel) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
-
         fun bind(item: ExpenseUiModel) {
             val context = binding.root.context
 
@@ -56,12 +61,17 @@ class ExpenseAdapter(
     }
 
     private companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ExpenseUiModel>() {
-            override fun areItemsTheSame(oldItem: ExpenseUiModel, newItem: ExpenseUiModel): Boolean =
-                oldItem.id == newItem.id
+        val DIFF_CALLBACK =
+            object : DiffUtil.ItemCallback<ExpenseUiModel>() {
+                override fun areItemsTheSame(
+                    oldItem: ExpenseUiModel,
+                    newItem: ExpenseUiModel,
+                ): Boolean = oldItem.id == newItem.id
 
-            override fun areContentsTheSame(oldItem: ExpenseUiModel, newItem: ExpenseUiModel): Boolean =
-                oldItem == newItem
-        }
+                override fun areContentsTheSame(
+                    oldItem: ExpenseUiModel,
+                    newItem: ExpenseUiModel,
+                ): Boolean = oldItem == newItem
+            }
     }
 }

@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.map
  * repository see the same reactive behaviour as the real Room implementation.
  */
 class FakeExpenseRepository : ExpenseRepository {
-
     private val expenses = MutableStateFlow<List<Expense>>(emptyList())
     private var nextId = 1L
 
@@ -40,11 +39,9 @@ class FakeExpenseRepository : ExpenseRepository {
             list.filter { it.dateKey == dateKey }.sortedByDescending { it.createdAt }
         }
 
-    override suspend fun getExpensesByDate(dateKey: String): List<Expense> =
-        expenses.value.filter { it.dateKey == dateKey }
+    override suspend fun getExpensesByDate(dateKey: String): List<Expense> = expenses.value.filter { it.dateKey == dateKey }
 
-    override suspend fun getExpenseById(id: Long): Expense? =
-        expenses.value.find { it.id == id }
+    override suspend fun getExpenseById(id: Long): Expense? = expenses.value.find { it.id == id }
 
     override suspend fun addExpense(expense: Expense): Long {
         if (failOnWrite) throw IllegalStateException("Penulisan expense gagal")

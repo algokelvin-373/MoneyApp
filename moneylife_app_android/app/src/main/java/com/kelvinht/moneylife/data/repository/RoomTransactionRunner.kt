@@ -10,8 +10,7 @@ import com.kelvinht.moneylife.domain.repository.TransactionRunner
  * writes applied.
  */
 class RoomTransactionRunner(
-    private val database: MoneyLifeDatabase
+    private val database: MoneyLifeDatabase,
 ) : TransactionRunner {
-    override suspend fun <T> runInTransaction(block: suspend () -> T): T =
-        database.withTransaction { block() }
+    override suspend fun <T> runInTransaction(block: suspend () -> T): T = database.withTransaction { block() }
 }

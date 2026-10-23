@@ -1,14 +1,13 @@
 package com.kelvinht.moneylife.core
 
 import com.kelvinht.moneylife.core.util.DateUtils
-import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.time.LocalDate
 
 class DateUtilsTest {
-
     @Test
     fun `short display date uses abbreviated month`() {
         assertEquals("9 Okt 2026", DateUtils.shortDisplayDate("2026-10-09"))

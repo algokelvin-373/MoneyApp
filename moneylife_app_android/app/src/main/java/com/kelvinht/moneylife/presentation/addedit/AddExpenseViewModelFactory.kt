@@ -5,9 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.kelvinht.moneylife.di.AppContainer
 
 class AddExpenseViewModelFactory(
-    private val container: AppContainer
+    private val container: AppContainer,
 ) : ViewModelProvider.Factory {
-
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AddExpenseViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")

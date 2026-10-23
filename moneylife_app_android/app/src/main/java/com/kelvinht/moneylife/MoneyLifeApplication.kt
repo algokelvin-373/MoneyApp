@@ -4,7 +4,6 @@ import android.app.Application
 import com.kelvinht.moneylife.di.AppContainer
 
 class MoneyLifeApplication : Application() {
-
     lateinit var container: AppContainer
         private set
 

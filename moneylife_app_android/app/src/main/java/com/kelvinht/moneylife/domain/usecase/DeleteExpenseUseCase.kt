@@ -16,7 +16,7 @@ class DeleteExpenseUseCase(
     private val repository: ExpenseRepository,
     private val savingsRepository: SavingsRepository,
     private val transactionRunner: TransactionRunner,
-    private val dailyLimit: Long
+    private val dailyLimit: Long,
 ) {
     suspend operator fun invoke(id: Long) {
         transactionRunner.runInTransaction {

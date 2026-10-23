@@ -16,9 +16,12 @@ import com.kelvinht.moneylife.domain.repository.TransactionRunner
 class RolloverDailySavingsUseCase(
     private val expenseRepository: ExpenseRepository,
     private val savingsRepository: SavingsRepository,
-    private val transactionRunner: TransactionRunner
+    private val transactionRunner: TransactionRunner,
 ) {
-    suspend operator fun invoke(todayKey: String, dailyLimit: Long) {
+    suspend operator fun invoke(
+        todayKey: String,
+        dailyLimit: Long,
+    ) {
         val lastActiveDate = savingsRepository.getLastActiveDate()
 
         if (lastActiveDate == null) {

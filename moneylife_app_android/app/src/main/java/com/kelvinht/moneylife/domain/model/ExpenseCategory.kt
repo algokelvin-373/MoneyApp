@@ -6,5 +6,5 @@ package com.kelvinht.moneylife.domain.model
 enum class ExpenseCategory {
     MAKAN,
     TRANSPORT,
-    JAJAN
+    JAJAN,
 }
