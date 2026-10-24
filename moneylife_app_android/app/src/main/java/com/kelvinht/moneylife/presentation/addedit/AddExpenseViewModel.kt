@@ -44,7 +44,15 @@ class AddExpenseViewModel(
     }
 
     fun reset() {
-        _uiState.value = AddExpenseUiState(amountInput = "", note = "", dateKey = _uiState.value.dateKey)
+        _uiState.update {
+            it.copy(
+                amountInput = "",
+                note = "",
+                error = null,
+                isSaving = false,
+                isSaved = false,
+            )
+        }
     }
 
     fun save() {

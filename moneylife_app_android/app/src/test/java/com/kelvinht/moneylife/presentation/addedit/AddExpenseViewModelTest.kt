@@ -149,10 +149,11 @@ class AddExpenseViewModelTest {
         }
 
     @Test
-    fun reset_clearsAmountAndNoteButKeepsTheDate() =
+    fun reset_clearsAmountAndNoteButKeepsTheDateAndCategory() =
         runTest(mainDispatcher) {
             val yesterday = dateKeyOfDays(-1)
             val viewModel = createViewModel()
+            viewModel.selectCategory(ExpenseCategory.JAJAN)
             viewModel.selectDate(yesterday)
             viewModel.onAmountChanged("25000")
             viewModel.onNoteChanged("Kopi")
@@ -162,6 +163,7 @@ class AddExpenseViewModelTest {
             assertEquals("", viewModel.uiState.value.amountInput)
             assertEquals("", viewModel.uiState.value.note)
             assertEquals(yesterday, viewModel.uiState.value.dateKey)
+            assertEquals(ExpenseCategory.JAJAN, viewModel.uiState.value.category)
             assertNull(viewModel.uiState.value.error)
         }
 
