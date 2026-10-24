@@ -1,5 +1,6 @@
 package com.kelvinht.moneylife.presentation.addedit
 
+import androidx.lifecycle.SavedStateHandle
 import com.kelvinht.moneylife.core.util.DateUtils
 import com.kelvinht.moneylife.domain.FakeTransactionRunner
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
@@ -188,7 +189,26 @@ class AddExpenseViewModelTest {
             assertEquals(DateUtils.todayKey(), viewModel.uiState.value.dateKey)
         }
 
-    private fun createViewModel(): AddExpenseViewModel =
+    @Test
+    fun formState_isRestoredFromSavedStateHandle() =
+        runTest(mainDispatcher) {
+            val handle = SavedStateHandle()
+            val yesterday = dateKeyOfDays(-1)
+            val first = createViewModel(handle)
+            first.selectCategory(ExpenseCategory.JAJAN)
+            first.selectDate(yesterday)
+            first.onAmountChanged("25a000")
+            first.onNoteChanged("Kopi")
+
+            val recreated = createViewModel(handle)
+
+            assertEquals(ExpenseCategory.JAJAN, recreated.uiState.value.category)
+            assertEquals(yesterday, recreated.uiState.value.dateKey)
+            assertEquals("25000", recreated.uiState.value.amountInput)
+            assertEquals("Kopi", recreated.uiState.value.note)
+        }
+
+    private fun createViewModel(handle: SavedStateHandle = SavedStateHandle()): AddExpenseViewModel =
         AddExpenseViewModel(
             addExpense =
                 AddExpenseUseCase(
@@ -197,6 +217,7 @@ class AddExpenseViewModelTest {
                     transactionRunner = transactionRunner,
                     dailyLimit = DAILY_LIMIT,
                 ),
+            savedStateHandle = handle,
         )
 
     private fun dateKeyOfDays(offset: Int): String = DateUtils.dateKey(DateUtils.parseDate(DateUtils.todayKey()).plusDays(offset.toLong()))
