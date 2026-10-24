@@ -36,6 +36,8 @@
     <string name="empty_state_hint">Tap tombol di bawah untuk mencatat pengeluaran</string>
     <string name="add_expense">Catat Pengeluaran</string>
     <string name="add_expense_button">+  Catat Pengeluaran</string>
+    <string name="navigate_back">Kembali</string>
+    <string name="reset_form">Atur ulang</string>
 
     <!-- Add expense screen -->
     <string name="category_label">KATEGORI</string>
