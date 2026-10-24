@@ -91,7 +91,8 @@ class AddExpenseActivity : AppCompatActivity() {
     }
 
     private fun render(state: AddExpenseUiState) {
-        val formattedAmount = state.amountInput.toLongOrNull()?.let(RupiahFormatter::formatDigits).orEmpty()
+        val formattedAmount =
+            state.amountInput.toLongOrNull()?.let(RupiahFormatter::formatDigits).orEmpty()
         if (binding.inputAmount.text?.toString() != formattedAmount) {
             binding.inputAmount.setText(formattedAmount)
             binding.inputAmount.setSelection(formattedAmount.length)
@@ -124,16 +125,20 @@ class AddExpenseActivity : AppCompatActivity() {
         cards.forEach { (card, category) ->
             styleCategory(card, category == selected)
         }
-        binding.checkMakan.visibility = if (selected == ExpenseCategory.MAKAN) View.VISIBLE else View.GONE
-        binding.checkTransport.visibility = if (selected == ExpenseCategory.TRANSPORT) View.VISIBLE else View.GONE
-        binding.checkJajan.visibility = if (selected == ExpenseCategory.JAJAN) View.VISIBLE else View.GONE
+        binding.checkMakan.visibility =
+            if (selected == ExpenseCategory.MAKAN) View.VISIBLE else View.GONE
+        binding.checkTransport.visibility =
+            if (selected == ExpenseCategory.TRANSPORT) View.VISIBLE else View.GONE
+        binding.checkJajan.visibility =
+            if (selected == ExpenseCategory.JAJAN) View.VISIBLE else View.GONE
     }
 
     private fun styleCategory(
         card: MaterialCardView,
         selected: Boolean,
     ) {
-        card.strokeWidth = resources.getDimensionPixelSize(if (selected) R.dimen.selected_stroke else R.dimen.default_stroke)
+        card.strokeWidth =
+            resources.getDimensionPixelSize(if (selected) R.dimen.selected_stroke else R.dimen.default_stroke)
         card.strokeColor =
             ContextCompat.getColor(
                 this,

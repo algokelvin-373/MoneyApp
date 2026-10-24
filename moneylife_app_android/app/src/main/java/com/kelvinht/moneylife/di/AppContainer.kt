@@ -30,8 +30,11 @@ class AppContainer(context: Context) {
 
     val getDailyExpenses: GetDailyExpensesUseCase = GetDailyExpensesUseCase(expenseRepository)
     val calculateDailyBudget: CalculateDailyBudgetUseCase = CalculateDailyBudgetUseCase()
-    val addExpense: AddExpenseUseCase = AddExpenseUseCase(expenseRepository, savingsRepository, transactionRunner, dailyLimit)
-    val deleteExpense: DeleteExpenseUseCase = DeleteExpenseUseCase(expenseRepository, savingsRepository, transactionRunner, dailyLimit)
+    val addExpense: AddExpenseUseCase =
+        AddExpenseUseCase(expenseRepository, savingsRepository, transactionRunner, dailyLimit)
+    val deleteExpense: DeleteExpenseUseCase =
+        DeleteExpenseUseCase(expenseRepository, savingsRepository, transactionRunner, dailyLimit)
     val observeSavingsBalance = ObserveSavingsBalanceUseCase(savingsRepository)
-    val rolloverDailySavings = RolloverDailySavingsUseCase(expenseRepository, savingsRepository, transactionRunner)
+    val rolloverDailySavings =
+        RolloverDailySavingsUseCase(expenseRepository, savingsRepository, transactionRunner)
 }
