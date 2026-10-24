@@ -84,7 +84,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
                         android:text="@string/app_tagline"
-                        android:textColor="#B8D5D0"
+                        android:textColor="@color/headerTagline"
                         android:textSize="13sp" />
                 </LinearLayout>
 
