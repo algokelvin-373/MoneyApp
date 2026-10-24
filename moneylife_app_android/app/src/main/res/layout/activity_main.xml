@@ -275,7 +275,7 @@
                                 android:textSize="11sp" />
 
                             <TextView
-                                android:id="@+id/textAverage"
+                                android:id="@+id/textSavings"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/onSurface"

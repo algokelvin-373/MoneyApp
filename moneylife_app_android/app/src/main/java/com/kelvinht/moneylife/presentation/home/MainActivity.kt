@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
             getString(R.string.remaining_format, RupiahFormatter.format(state.remaining))
         binding.progressDaily.setProgressCompat(state.usagePercent, true)
         binding.textUsage.text = getString(R.string.usage_percent_format, state.usagePercent)
-        binding.textAverage.text = RupiahFormatter.format(state.savingsBalance)
+        binding.textSavings.text = RupiahFormatter.format(state.savingsBalance)
         binding.textSavingsLabel.text =
             getString(R.string.savings_balance_format, DateUtils.monthLabel(state.dateKey))
         binding.textCondition.text =
