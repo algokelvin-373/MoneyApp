@@ -15,7 +15,7 @@ object DateUtils {
 
     private val dateKeyFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(DATE_KEY_PATTERN)
     private val displayFormatter: DateTimeFormatter =
-        DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy", Locale("id", "ID"))
+        DateTimeFormatter.ofPattern("EEEE, d MMM yyyy", Locale("id", "ID"))
     private val shortDisplayFormatter: DateTimeFormatter =
         DateTimeFormatter.ofPattern("d MMM yyyy", Locale("id", "ID"))
     private val monthDisplayFormatter: DateTimeFormatter =

@@ -14,6 +14,11 @@ class DateUtilsTest {
     }
 
     @Test
+    fun `display date uses abbreviated month like the mockup`() {
+        assertEquals("Jumat, 9 Okt 2026", DateUtils.displayDate("2026-10-09"))
+    }
+
+    @Test
     fun `parses and re-serialises the same date key`() {
         val date = DateUtils.parseDate("2026-10-09")
         assertEquals("2026-10-09", DateUtils.dateKey(date))
