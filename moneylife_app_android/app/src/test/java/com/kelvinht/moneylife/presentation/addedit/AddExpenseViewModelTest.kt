@@ -1,5 +1,6 @@
 package com.kelvinht.moneylife.presentation.addedit
 
+import androidx.lifecycle.SavedStateHandle
 import com.kelvinht.moneylife.core.util.DateUtils
 import com.kelvinht.moneylife.domain.FakeTransactionRunner
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
@@ -149,10 +150,11 @@ class AddExpenseViewModelTest {
         }
 
     @Test
-    fun reset_clearsAmountAndNoteButKeepsTheDate() =
+    fun reset_clearsAmountAndNoteButKeepsTheDateAndCategory() =
         runTest(mainDispatcher) {
             val yesterday = dateKeyOfDays(-1)
             val viewModel = createViewModel()
+            viewModel.selectCategory(ExpenseCategory.JAJAN)
             viewModel.selectDate(yesterday)
             viewModel.onAmountChanged("25000")
             viewModel.onNoteChanged("Kopi")
@@ -162,6 +164,7 @@ class AddExpenseViewModelTest {
             assertEquals("", viewModel.uiState.value.amountInput)
             assertEquals("", viewModel.uiState.value.note)
             assertEquals(yesterday, viewModel.uiState.value.dateKey)
+            assertEquals(ExpenseCategory.JAJAN, viewModel.uiState.value.category)
             assertNull(viewModel.uiState.value.error)
         }
 
@@ -186,7 +189,26 @@ class AddExpenseViewModelTest {
             assertEquals(DateUtils.todayKey(), viewModel.uiState.value.dateKey)
         }
 
-    private fun createViewModel(): AddExpenseViewModel =
+    @Test
+    fun formState_isRestoredFromSavedStateHandle() =
+        runTest(mainDispatcher) {
+            val handle = SavedStateHandle()
+            val yesterday = dateKeyOfDays(-1)
+            val first = createViewModel(handle)
+            first.selectCategory(ExpenseCategory.JAJAN)
+            first.selectDate(yesterday)
+            first.onAmountChanged("25a000")
+            first.onNoteChanged("Kopi")
+
+            val recreated = createViewModel(handle)
+
+            assertEquals(ExpenseCategory.JAJAN, recreated.uiState.value.category)
+            assertEquals(yesterday, recreated.uiState.value.dateKey)
+            assertEquals("25000", recreated.uiState.value.amountInput)
+            assertEquals("Kopi", recreated.uiState.value.note)
+        }
+
+    private fun createViewModel(handle: SavedStateHandle = SavedStateHandle()): AddExpenseViewModel =
         AddExpenseViewModel(
             addExpense =
                 AddExpenseUseCase(
@@ -195,6 +217,7 @@ class AddExpenseViewModelTest {
                     transactionRunner = transactionRunner,
                     dailyLimit = DAILY_LIMIT,
                 ),
+            savedStateHandle = handle,
         )
 
     private fun dateKeyOfDays(offset: Int): String = DateUtils.dateKey(DateUtils.parseDate(DateUtils.todayKey()).plusDays(offset.toLong()))

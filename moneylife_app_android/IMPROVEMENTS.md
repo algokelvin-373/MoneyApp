@@ -1,8 +1,8 @@
 # Catatan Perbaikan — `moneylife_app_android`
 
-> Branch `dev/improvements` · Audit ulang: 23 Okt 2026 · **Gelombang 1–5 sudah selesai**
+> Branch `dev/improvements` · Audit ulang: 24 Okt 2026 · **Gelombang 1–6 sudah selesai**
 > **Scope:** hanya `moneylife_app_android/` (app native baru). Temuan untuk `money_app_android` dikeluarkan dari dokumen ini.
-> **Baseline verifikasi:** `:app:testDebugUnitTest` **BUILD SUCCESSFUL** (52 test) · `:app:assembleDebug` **BUILD SUCCESSFUL** · `:app:assembleRelease` **BUILD SUCCESSFUL** (R8 + shrinkResources) · `:app:lintDebug` **BUILD SUCCESSFUL** (abortOnError) · `:app:ktlintCheck` **BUILD SUCCESSFUL** · `:app:assembleDebugAndroidTest` **BUILD SUCCESSFUL** (test instrumentasi belum dieksekusi — environment tanpa device/emulator) · JDK 17 / AGP 8.5.0.
+> **Baseline verifikasi:** `:app:testDebugUnitTest` **BUILD SUCCESSFUL** (54 test) · `:app:assembleDebug` **BUILD SUCCESSFUL** · `:app:assembleRelease` **BUILD SUCCESSFUL** (R8 + shrinkResources) · `:app:lintDebug` **BUILD SUCCESSFUL** (abortOnError) · `:app:ktlintCheck` **BUILD SUCCESSFUL** · `:app:assembleDebugAndroidTest` **BUILD SUCCESSFUL** (test instrumentasi belum dieksekusi — environment tanpa device/emulator) · JDK 17 / AGP 8.6.1.
 
 ## Status pengerjaan
 
@@ -13,7 +13,7 @@
 | 3         | #20, #21, #22, #23, #24 (test ViewModel + androidTest + migrasi) | ✅ **Selesai** | `fix/gelombang-3` → merge di `dev/improvements`           |
 | 4         | #11, #12, #13 (string + state)                                   | ✅ **Selesai** | `fix/gelombang-4` → merge di `dev/improvements`           |
 | 5         | #25, #26, #27, #28, #29 (R8, dependency, CI, lint, JDK)          | ✅ **Selesai** | `fix/gelombang-5` → merge di `dev/improvements`           |
-| 6         | sisanya (P2 detail, P5–P6 hygiene)                               | ⬜ Belum       | —                                                         |
+| 6         | #14–#19, #30–#38 (P2 detail, P4–P6 hygiene)                      | ✅ **Selesai** | `fix/gelombang-6` → merge di `dev/improvements`           |
 
 ### Gelombang 1 — detail (selesai)
 
@@ -65,18 +65,39 @@
 | 28  | Tambah ktlint (`org.jlleitschuh.gradle.ktlint`) + blok `lint { abortOnError = true }`; format kode ke gaya ktlint        | `910668e` | `:app:ktlintCheck` · `:app:lintDebug` BUILD SUCCESSFUL                        |
 | 29  | Naikkan `sourceCompatibility`/`targetCompatibility` dan `kotlinOptions.jvmTarget` ke Java 17                            | `5a9a0a1` | `:app:testDebugUnitTest` · `:app:assembleDebug` · `:app:assembleDebugAndroidTest` BUILD SUCCESSFUL |
 
+### Gelombang 6 — detail (selesai)
+
+| #   | Fix yang dikerjakan                                                                                                                                          | Commit     | Test penjaga                                                          |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------------------------------------------------------------- |
+| 14  | `refresh()` diserialisasi dengan `Mutex`; pembacaan/penulisan `lastTodayKey` dan rollover berada dalam satu critical section                                 | `91b2e32`  | `HomeViewModelTest` (refresh & navigasi tanggal)                      |
+| 15  | Tidak ada pekerjaan baru — pesan error generik sudah dikerjakan di gelombang 4                                                                               | `b669983`  | `AddExpenseViewModelTest` (jalur error)                               |
+| 16  | Rename id layout `textAverage` → `textSavings` dan binding di `MainActivity`                                                                                 | `aee4b07`  | `:app:assembleDebug`                                                  |
+| 17  | Format tanggal panjang memakai bulan singkat (`EEEE, d MMM yyyy`) sesuai mockup                                                                              | `b6e9dda`  | `DateUtilsTest` (`Jumat, 9 Okt 2026`)                                 |
+| 18  | `reset()` hanya mengosongkan nominal/catatan/error; kategori dan tanggal tetap                                                                               | `3e76d60`  | `AddExpenseViewModelTest` (kategori tetap `JAJAN`)                    |
+| 19  | State form disimpan di `SavedStateHandle` lewat factory `CreationExtras`; tanggal/isi form pulih setelah proses mati                                        | `f15f202`  | `AddExpenseViewModelTest` (state dipulihkan dari handle yang sama)    |
+| 30  | `versionName "1.0.0"` + skema `versionCode = major*10000 + minor*100 + patch` → `10000`                                                                      | `d3e5766`  | `:app:assembleDebug`                                                  |
+| 31  | AGP dinaikkan ke 8.6.1; baris `android.suppressUnsupportedCompileSdk=35` dihapus                                                                             | `5508510`  | `:app:testDebugUnitTest` · `assembleDebug` · `assembleRelease` · `lintDebug` |
+| 32  | PNG duplikat `moneylife_app_android/ui/*.png` dihapus; aset tetap di root `ui/moneylife`                                                                      | `5adcd0f`  | `git status` bersih                                                   |
+| 33  | Folder `%GRADLE_USER_HOME%/` dihapus dan ditambahkan ke `.gitignore`                                                                                         | `6a7a7e0`  | `git status` bersih                                                   |
+| 34  | Root `README.md` menyebut `moneylife_app_android` + perintah build/test/lint                                                                                  | `aac8e23`  | Review dokumentasi                                                    |
+| 35  | `android:allowBackup="false"` — data keuangan tidak lagi ikut backup otomatis                                                                                | `e6774b3`  | `:app:lintDebug`                                                      |
+| 36  | `contentDescription` tombol kembali/reset pindah ke `@string/navigate_back` & `@string/reset_form`                                                            | `1f29b71`  | `:app:lintDebug`                                                      |
+| 37  | Elemen dekoratif (`brand_mark`, `info_mark`, avatar, inisial kategori, emoji, empty-state symbol) diberi `importantForAccessibility="no"`                     | `bd8505d`  | `:app:lintDebug`                                                      |
+| 38  | Warna tagline `#B8D5D0` pindah ke `@color/headerTagline` di `colors.xml`                                                                                     | `bd46bf0`  | `:app:lintDebug`                                                      |
+
 ## Snapshot cepat
 
 | Metrik            | Nilai                                                       | Catatan                                                                    |
 | ----------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------- |
-| Kotlin main       | 37 file / 1.405 LOC                                         | Clean Architecture: `presentation → domain ← data` (+ `TransactionRunner`) |
-| Unit test         | 10 file test (+3 fake) / 52 test / 1.102 LOC                | 22 test ViewModel, 30 test `domain`/state/formatter; `kotlinx-coroutines-test` |
-| androidTest       | 2 file / 5 test / 278 LOC                                   | alur antar-activity + migrasi Room v1→v2 (belum dieksekusi, tanpa emulator) |
+| Kotlin main       | 37 file / 1.478 LOC                                         | Clean Architecture: `presentation → domain ← data` (+ `TransactionRunner`) |
+| Unit test         | 10 file test (+3 fake) / 54 test / 1.197 LOC                | 22 test ViewModel, 32 test `domain`/state/formatter; `kotlinx-coroutines-test` |
+| androidTest       | 2 file / 5 test / 280 LOC                                   | alur antar-activity + migrasi Room v1→v2 (belum dieksekusi, tanpa emulator) |
 | Layout / drawable | 3 / 21                                                      | `activity_main`, `activity_add_expense`, `item_expense`                    |
-| String resource   | 62 didefinisikan, **0 tidak terpakai**                      | 0 `android:text` literal di layout                                        |
-| Build             | Kotlin 1.9.0 · KSP · Room 2.6.1 · compileSdk 35 · minSdk 27 | **JDK 17 / `jvmTarget 17`** · skema Room diekspor (`app/schemas`)           |
-| Release           | `minifyEnabled true` · `shrinkResources true` · `versionName "1.0"` | R8 aktif dengan aturan keep Room                                       |
+| String resource   | 64 didefinisikan, **0 tidak terpakai**                      | 0 `android:text` literal di layout                                        |
+| Build             | Kotlin 1.9.0 · KSP · Room 2.6.1 · compileSdk 35 · minSdk 27 | **JDK 17 / `jvmTarget 17`** · **AGP 8.6.1** · skema Room diekspor (`app/schemas`) |
+| Release           | `minifyEnabled true` · `shrinkResources true` · `versionName "1.0.0"` / `versionCode 10000` | R8 aktif dengan aturan keep Room                                       |
 | CI / lint         | `.github/workflows/android.yml` · `lint { abortOnError = true }` · ktlint | `:app:ktlintCheck` dan `:app:lintDebug` wajib lulus                        |
+| Privasi           | `allowBackup="false"`                                       | Data keuangan tidak ikut backup otomatis                                  |
 
 ---
 
@@ -111,12 +132,12 @@
 | 11  | **String Indonesia ter-hardcode di Kotlin** (tidak lokalizable, tidak bisa diuji).                                                                                                            | `HomeViewModel.kt:103-120` (`"Batas harian: "`, `"Sisa "`, `"% Terpakai"`, `"Sangat Aman"`, `"Perlu Dijaga"`, `"Melebihi Limit"`, `"lebih dari batas harian"`) · `HomeUiState.kt:26-32` (`"Rp 0"`, `"Rp 0/50k"`, …) · `AddExpenseViewModel.kt:53,72` · `AddExpenseUseCase.kt:24` | Pindahkan ke `strings.xml` + `stringResource()` / `getString()` di layer UI.                                                                         |
 | 12  | **`strings.xml` jadi file mati: 7 dari 25 string tak pernah dipakai** (`today_spending`, `today_history`, `zero_rupiah`, `limit_placeholder`, `empty_emoji`, `empty_message`, `add_expense`). | `res/values/strings.xml`                                                                                                                                                                                                                                                         | Pindahkan 49 literal `android:text` dari layout ke `strings.xml`, lalu hapus string yang memang tidak dipakai.                                       |
 | 13  | **`HomeUiState` menyimpan string siap-tampil, bukan data.** `spentText`, `conditionText`, `makanText`, `usageText` sudah diformat di ViewModel.                                               | `HomeUiState.kt`                                                                                                                                                                                                                                                                 | State pegang nilai mentah (`spent: Long`, `condition: BudgetStatus`, `spentByCategory: Map<ExpenseCategory, Long>`); formatting di layer presentasi. |
-| 14  | **`lastTodayKey` bisa race.** `var` biasa dibaca & ditulis di dalam `viewModelScope.launch` tanpa thread-safety; `refresh()` dipanggil dari init/onResume/result callback.                    | `HomeViewModel.kt:36,62-68`                                                                                                                                                                                                                                                      | Jadikan bagian dari `StateFlow`, atau jalankan bagian kritis di dispatcher single-shot / `Mutex`.                                                    |
-| 15  | **Pesan error mentah exception ditampilkan ke user** (`throwable.message`), bisa jadi "SQLiteConstraintException: …".                                                                         | `AddExpenseViewModel.kt:72`                                                                                                                                                                                                                                                      | Pesan generik ke user + log internal.                                                                                                                |
-| 16  | **`textAverage` menampilkan saldo tabungan** — id layout bilang "average", isinya saldo; label di bawahnya "Saldo Tabungan".                                                                  | `MainActivity.kt:103` · `activity_main.xml:270`                                                                                                                                                                                                                                  | Rename id → `textSavings` (update layout + binding).                                                                                                 |
-| 17  | **Format tanggal beda dengan mockup**: `"EEEE, d MMMM yyyy"` → "Jumat, 9 Oktober 2026"; mockup & README tulis "Jumat, 9 Okt 2026".                                                            | `DateUtils.kt:18`                                                                                                                                                                                                                                                                | Pakai `MMM`, atau samakan mockup.                                                                                                                    |
-| 18  | **`reset()` juga mereset kategori ke MAKAN.**                                                                                                                                                 | `AddExpenseViewModel.reset()`                                                                                                                                                                                                                                                    | Pakai `copy(amountInput = "", note = "")`.                                                                                                           |
-| 19  | **State form hilang saat proses mati.** `if (savedInstanceState == null)` → `EXTRA_DATE_KEY` tidak dipakai lagi setelah restore, jadi tanggal kembali ke hari ini.                            | `AddExpenseActivity.kt:35-37`                                                                                                                                                                                                                                                    | Simpan tanggal/isi form di `SavedStateHandle`.                                                                                                       |
+| 14  | **`lastTodayKey` bisa race.** `var` biasa dibaca & ditulis di dalam `viewModelScope.launch` tanpa thread-safety; `refresh()` dipanggil dari init/onResume/result callback.                    | `HomeViewModel.kt:36,62-68`                                                                                                                                                                                                                                                      | ✅ `91b2e32` — critical section dibungkus `Mutex`.                                                                                                  |
+| 15  | **Pesan error mentah exception ditampilkan ke user** (`throwable.message`), bisa jadi "SQLiteConstraintException: …".                                                                         | `AddExpenseViewModel.kt:72`                                                                                                                                                                                                                                                      | ✅ `b669983` — sudah selesai di gelombang 4: pesan generik `@StringRes`.                                                                            |
+| 16  | **`textAverage` menampilkan saldo tabungan** — id layout bilang "average", isinya saldo; label di bawahnya "Saldo Tabungan".                                                                  | `MainActivity.kt:103` · `activity_main.xml:270`                                                                                                                                                                                                                                  | ✅ `aee4b07` — rename id → `textSavings`.                                                                                                           |
+| 17  | **Format tanggal beda dengan mockup**: `"EEEE, d MMMM yyyy"` → "Jumat, 9 Oktober 2026"; mockup & README tulis "Jumat, 9 Okt 2026".                                                            | `DateUtils.kt:18`                                                                                                                                                                                                                                                                | ✅ `b6e9dda` — pakai `MMM`.                                                                                                                          |
+| 18  | **`reset()` juga mereset kategori ke MAKAN.**                                                                                                                                                 | `AddExpenseViewModel.reset()`                                                                                                                                                                                                                                                    | ✅ `3e76d60` — `copy` hanya mengosongkan nominal/catatan.                                                                                           |
+| 19  | **State form hilang saat proses mati.** `if (savedInstanceState == null)` → `EXTRA_DATE_KEY` tidak dipakai lagi setelah restore, jadi tanggal kembali ke hari ini.                            | `AddExpenseActivity.kt:35-37`                                                                                                                                                                                                                                                    | ✅ `f15f202` — kategori, nominal, catatan, tanggal disimpan di `SavedStateHandle`.                                                                  |
 
 ---
 
@@ -141,8 +162,8 @@
 | 27  | **Tidak ada CI** — repo tidak punya `.github/`.                                                                                                                                          | ✅ `3f98498` — workflow minimal: `./gradlew :app:testDebugUnitTest` + `:app:ktlintCheck` + `:app:lintDebug` per push/PR. |
 | 28  | **Tidak ada lint / ktlint / detekt** — tidak ada blok `lint {}`; `kotlin.code.style=official` hanya anjuran.                                                                             | ✅ `910668e` — `lint { abortOnError = true }` + ktlint.                                    |
 | 29  | **Target JDK tertinggal**: `sourceCompatibility`/`targetCompatibility` 1.8 & `jvmTarget '1.8'`, padahal build di JDK 17 + `compileSdk 35`.                                               | ✅ `5a9a0a1` — naikkan ke Java 17 (AGP 8.5 + desugaring).                                           |
-| 30  | **`versionName "1.0"`**, `versionCode 1` belum ada skema.                                                                                                                                | Semver `1.0.0` + `versionCode` monoton per rilis.                                    |
-| 31  | **`android.suppressUnsupportedCompileSdk=35`** — menekan warning AGP 8.5 alih-alih menaikkan AGP.                                                                                        | AGP 8.6+ (butuh Gradle 8.7+) atau naikkan lalu hapus baris ini.                      |
+| 30  | **`versionName "1.0"`**, `versionCode 1` belum ada skema.                                                                                                                                | ✅ `d3e5766` — semver `1.0.0` + `versionCode = major*10000 + minor*100 + patch` (`10000`). |
+| 31  | **`android.suppressUnsupportedCompileSdk=35`** — menekan warning AGP 8.5 alih-alih menaikkan AGP.                                                                                        | ✅ `5508510` — AGP 8.6.1 (Gradle 8.7) + baris suppress dihapus.                           |
 
 ---
 
@@ -150,9 +171,9 @@
 
 | #   | Temuan                                                                                                                                                                                        | Fix                                                                      |
 | --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| 32  | **Aset PNG duplikat ±1,18 MB** — `moneylife_app_android/ui/*.png` identik byte dengan `ui/moneylife/*.png` (md5 cocok: `Halaman_Utama.png` 651.271 B, `Halaman_Add_Transaksi.png` 533.548 B). | Simpan di satu lokasi saja (repositori root), hapus duplikat dari modul. |
-| 33  | **Folder `%GRADLE_USER_HOME%/` di working tree** — hasil ekspansi env var yang gagal; kosong. Tidak ter-track git (folder kosong), tapi tetap perlu dihapus & di-ignore.                      | Hapus folder, tambahkan pola ke `.gitignore`.                            |
-| 34  | **Root `README.md` belum menyebut `moneylife_app_android`** — repo hanya mendokumentasikan `money_app_android`.                                                                               | Tambah daftar modul Gradle + cara build di root README.                  |
+| 32  | **Aset PNG duplikat ±1,18 MB** — `moneylife_app_android/ui/*.png` identik byte dengan `ui/moneylife/*.png` (md5 cocok: `Halaman_Utama.png` 651.271 B, `Halaman_Add_Transaksi.png` 533.548 B). | ✅ `5adcd0f` — hapus duplikat dari modul; aset tetap di root `ui/moneylife`. |
+| 33  | **Folder `%GRADLE_USER_HOME%/` di working tree** — hasil ekspansi env var yang gagal; kosong. Tidak ter-track git (folder kosong), tapi tetap perlu dihapus & di-ignore.                      | ✅ `6a7a7e0` — folder dihapus + pola `%GRADLE_USER_HOME%/` di `.gitignore`.  |
+| 34  | **Root `README.md` belum menyebut `moneylife_app_android`** — repo hanya mendokumentasikan `money_app_android`.                                                                               | ✅ `aac8e23` — daftar modul + perintah build/test/lint di root README.       |
 
 ---
 
@@ -160,10 +181,10 @@
 
 | #   | Temuan                                                                                                                                                               | Fix                                                                                            |
 | --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| 35  | **Backup data keuangan aktif tanpa filter**: `android:allowBackup="true"`, dan tidak ada `dataExtractionRules`/`fullBackupContent`.                                  | `allowBackup="false"`, atau tambahkan `dataExtractionRules` yang mengecualikan `moneylife.db`. |
-| 36  | **`contentDescription` hardcoded**: `"Kembali"` dan `"Atur ulang"` literal di layout.                                                                                | Pindah ke `@string/*` (seperti `activity_main.xml` yang sudah rapi).                           |
-| 37  | **Elemen dekoratif terbaca TalkBack**: emoji kategori `textEmoji` (44dp, tanpa `contentDescription`), ikon `"≡"`, `"‹"`, `"›"`, `"●"`, `"M"/"T"/"J"`, avatar `"AK"`. | `android:importantForAccessibility="no"` untuk elemen purely dekoratif.                        |
-| 38  | **Warna hardcoded di layout**: `#B8D5D0` (header "Pengatur Budget Pintar") di luar `colors.xml`.                                                                     | Pindahkan ke `colors.xml`.                                                                     |
+| 35  | **Backup data keuangan aktif tanpa filter**: `android:allowBackup="true"`, dan tidak ada `dataExtractionRules`/`fullBackupContent`.                                  | ✅ `e6774b3` — `allowBackup="false"`.                                                          |
+| 36  | **`contentDescription` hardcoded**: `"Kembali"` dan `"Atur ulang"` literal di layout.                                                                                | ✅ `1f29b71` — pindah ke `@string/navigate_back` & `@string/reset_form`.                       |
+| 37  | **Elemen dekoratif terbaca TalkBack**: emoji kategori `textEmoji` (44dp, tanpa `contentDescription`), ikon `"≡"`, `"‹"`, `"›"`, `"●"`, `"M"/"T"/"J"`, avatar `"AK"`. | ✅ `bd8505d` — `importantForAccessibility="no"` untuk elemen purely dekoratif.                 |
+| 38  | **Warna hardcoded di layout**: `#B8D5D0` (header "Pengatur Budget Pintar") di luar `colors.xml`.                                                                     | ✅ `bd46bf0` — pindah ke `@color/headerTagline`.                                               |
 
 ---
 
@@ -176,7 +197,7 @@
 | 3         | #20, #21, #22, #23, #24 (test ViewModel + androidTest + migrasi) | 2–3 hari   | ✅ Selesai            |
 | 4         | #11, #12, #13 (string + state)                                   | 1–2 hari   | ✅ Selesai            |
 | 5         | #25, #26, #27, #28, #29 (R8, dependency, CI, lint, JDK)          | 1–2 hari   | ✅ Selesai            |
-| 6         | sisanya (P2 detail, P5–P6 hygiene)                               | 1–2 hari   | ⬜ Belum               |
+| 6         | #14–#19, #30–#38 (P2 detail, P4–P6 hygiene)                      | 1–2 hari   | ✅ Selesai (`fix/gelombang-6`) |
 
 ## Yang sudah baik — pertahankan
 
@@ -185,7 +206,7 @@
 | Arsitektur berlapis         | `presentation → domain ← data`; domain tanpa Android/Room, mudah diuji                                                |
 | DI manual                   | `AppContainer` satu tempat, tanpa framework berat                                                                     |
 | Room + KSP                  | KSP menggantikan kapt, aman di JDK 17; index `dateKey` pada `expenses`                                                |
-| Test domain                 | 52 test hijau: rollover multi-hari, atomisitas expense+savings, over-limit, tepat batas, nol pengeluaran, reset bulan, ViewModel Home/AddExpense, formatter rupiah |
+| Test domain                 | 54 test hijau: rollover multi-hari, atomisitas expense+savings, over-limit, tepat batas, nol pengeluaran, reset bulan, ViewModel Home/AddExpense, formatter rupiah |
 | Atomisitas data             | `TransactionRunner` (Room `withTransaction`) — expense + `daily_savings` + `lastActiveDate` selalu konsisten |
 | Riwayat skema Room          | `app/schemas/.../MoneyLifeDatabase/{1,2}.json` + `MoneyLifeDatabaseMigrationTest` — migrasi divalidasi terhadap skema asli |
 | `stateIn` + `flatMapLatest` | Alur data reaktif bersih, tanpa `LiveData`                                                                            |

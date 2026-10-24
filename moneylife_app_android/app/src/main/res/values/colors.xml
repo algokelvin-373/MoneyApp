@@ -21,6 +21,7 @@
     <color name="softOrange">#FFF5DC</color>
     <color name="softRed">#FFF0F2</color>
     <color name="navMuted">#94A6BE</color>
+    <color name="headerTagline">#B8D5D0</color>
 
     <color name="category_makan">#16A34A</color>
     <color name="category_transport">#2563EB</color>

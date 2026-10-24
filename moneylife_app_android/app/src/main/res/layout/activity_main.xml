@@ -38,6 +38,7 @@
                     android:layout_height="48dp"
                     android:background="@drawable/bg_icon_dark"
                     android:gravity="center"
+                    android:importantForAccessibility="no"
                     android:text="@string/brand_mark"
                     android:textColor="@color/mintStrong"
                     android:textSize="24sp"
@@ -83,7 +84,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
                         android:text="@string/app_tagline"
-                        android:textColor="#B8D5D0"
+                        android:textColor="@color/headerTagline"
                         android:textSize="13sp" />
                 </LinearLayout>
 
@@ -92,6 +93,7 @@
                     android:layout_height="42dp"
                     android:background="@drawable/bg_icon_dark"
                     android:gravity="center"
+                    android:importantForAccessibility="no"
                     android:text="@string/info_mark"
                     android:textColor="@color/colorOnPrimary"
                     android:textSize="20sp"
@@ -103,6 +105,7 @@
                     android:layout_marginStart="10dp"
                     android:background="@drawable/bg_avatar"
                     android:gravity="center"
+                    android:importantForAccessibility="no"
                     android:text="@string/avatar_initials"
                     android:textColor="@color/onSurface"
                     android:textSize="15sp"
@@ -275,7 +278,7 @@
                                 android:textSize="11sp" />
 
                             <TextView
-                                android:id="@+id/textAverage"
+                                android:id="@+id/textSavings"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/onSurface"
@@ -370,6 +373,7 @@
                                 android:layout_height="38dp"
                                 android:background="@drawable/bg_icon_orange"
                                 android:gravity="center"
+                                android:importantForAccessibility="no"
                                 android:text="@string/category_initial_makan"
                                 android:textColor="@color/category_jajan"
                                 android:textStyle="bold" />
@@ -431,6 +435,7 @@
                                 android:layout_height="38dp"
                                 android:background="@drawable/bg_icon_blue"
                                 android:gravity="center"
+                                android:importantForAccessibility="no"
                                 android:text="@string/category_initial_transport"
                                 android:textColor="@color/category_transport"
                                 android:textStyle="bold" />
@@ -492,6 +497,7 @@
                                 android:layout_height="38dp"
                                 android:background="@drawable/bg_icon_orange"
                                 android:gravity="center"
+                                android:importantForAccessibility="no"
                                 android:text="@string/category_initial_jajan"
                                 android:textColor="@color/category_jajan"
                                 android:textStyle="bold" />
@@ -636,6 +642,7 @@
                         android:layout_height="64dp"
                         android:background="@drawable/bg_pill_mint"
                         android:gravity="center"
+                        android:importantForAccessibility="no"
                         android:text="@string/empty_state_symbol"
                         android:textColor="@color/colorPrimary"
                         android:textSize="30sp"

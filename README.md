@@ -5,7 +5,8 @@ Personal Financial Literacy & Expense Management Platform.
 This repository contains:
 
 - `money_app_android/`: Android native Kotlin app.
-- Backend Go REST API outside `money_app_android/`.
+- `moneylife_app_android/`: native Android Kotlin app (MoneyLife) with local Room storage and offline-first expense tracking.
+- Backend Go REST API outside the Android modules.
 
 ## Backend
 
@@ -46,6 +47,21 @@ Emulator backend base URL defaults to:
 
 ```text
 http://10.0.2.2:8080/api/v1/
+```
+
+## MoneyLife native app (`moneylife_app_android`)
+
+`moneylife_app_android` is a separate Gradle project for the native MoneyLife
+app. It stores expenses locally in Room, uses JDK 17, and ships a minified
+release build with R8 and resource shrinking.
+
+Build and test:
+
+```bash
+cd moneylife_app_android
+./gradlew.bat :app:assembleDebug
+./gradlew.bat :app:testDebugUnitTest
+./gradlew.bat :app:lintDebug
 ```
 
 ## Verification

@@ -20,6 +20,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModel(
@@ -32,6 +34,7 @@ class HomeViewModel(
 ) : ViewModel() {
     private val dateKey = MutableStateFlow(DateUtils.todayKey())
     private var lastTodayKey = dateKey.value
+    private val refreshMutex = Mutex()
     val selectedDateKey: String get() = dateKey.value
 
     val uiState: StateFlow<HomeUiState> =
@@ -55,11 +58,15 @@ class HomeViewModel(
 
     /** Advance the selected day only when the user was viewing today. */
     fun refresh() {
-        val today = DateUtils.todayKey()
         viewModelScope.launch {
-            rolloverDailySavings(today, dailyLimit)
-            if (dateKey.value == lastTodayKey) dateKey.value = today
-            lastTodayKey = today
+            // Serialize refreshes so two quick onResume/save flows cannot race
+            // on lastTodayKey and roll over the same day twice.
+            refreshMutex.withLock {
+                val today = DateUtils.todayKey()
+                rolloverDailySavings(today, dailyLimit)
+                if (dateKey.value == lastTodayKey) dateKey.value = today
+                lastTodayKey = today
+            }
         }
     }
 
