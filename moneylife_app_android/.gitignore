@@ -8,3 +8,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Folder artefak dari ekspansi env var yang gagal
+%GRADLE_USER_HOME%/
