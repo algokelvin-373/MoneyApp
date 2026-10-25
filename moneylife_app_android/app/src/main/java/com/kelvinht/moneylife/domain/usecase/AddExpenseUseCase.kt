@@ -44,7 +44,10 @@ class AddExpenseUseCase(
                 val id = repository.addExpense(expense)
                 if (DateUtils.isPast(dateKey)) {
                     val spent = repository.getExpensesByDate(dateKey).sumOf { it.amount }
-                    savingsRepository.saveDailySaving(dateKey, (dailyLimit - spent).coerceAtLeast(0L))
+                    savingsRepository.saveDailySaving(
+                        dateKey,
+                        (dailyLimit - spent).coerceAtLeast(0L),
+                    )
                 }
                 id
             }

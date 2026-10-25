@@ -89,7 +89,8 @@ class MainActivity : AppCompatActivity() {
         binding.textDate.text = dateLabel
         binding.textDate.contentDescription = getString(R.string.choose_date) + ": " + dateLabel
         binding.textHistoryDate.text = dateLabel
-        binding.textHistoryDate.contentDescription = getString(R.string.choose_date) + ": " + dateLabel
+        binding.textHistoryDate.contentDescription =
+            getString(R.string.choose_date) + ": " + dateLabel
         val isToday = state.dateKey == DateUtils.todayKey()
         binding.textSpendingHeader.text =
             if (isToday) {
@@ -103,7 +104,8 @@ class MainActivity : AppCompatActivity() {
         binding.buttonNextDay.isEnabled = !isToday
         binding.buttonToday.visibility = if (isToday) View.GONE else View.VISIBLE
         binding.textSpent.text = RupiahFormatter.format(state.spent)
-        binding.textLimit.text = getString(R.string.limit_from_format, RupiahFormatter.format(state.limit))
+        binding.textLimit.text =
+            getString(R.string.limit_from_format, RupiahFormatter.format(state.limit))
         binding.textLimitShort.text =
             getString(R.string.limit_short_format, RupiahFormatter.formatCompact(state.limit))
         binding.textRemaining.text =
