@@ -102,6 +102,6 @@ Jalankan unit test domain:
 
 ## Catatan
 
-- `minSdk 27`, `targetSdk 35`, Kotlin 1.9, Room 2.6.1, Material 3.
+- `minSdk 27`, `targetSdk 36`, Kotlin 1.9, Room 2.6.1, Material 3.
 - Sumber daya `local.properties` menunjuk ke Android SDK lokal dan tidak
   disertakan ke version control.

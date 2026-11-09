@@ -13,12 +13,12 @@ ksp {
 
 android {
     namespace 'com.kelvinht.moneylife'
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.kelvinht.moneylife"
         minSdk 27
-        targetSdk 35
+        targetSdk 36
         // versionCode = major * 10000 + minor * 100 + patch, so semver 1.0.0 -> 10000.
         versionCode 10000
         versionName "1.0.0"
