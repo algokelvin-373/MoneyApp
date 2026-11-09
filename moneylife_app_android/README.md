@@ -94,6 +94,21 @@ cd moneylife_app_android
 
 APK debug: `app/build/outputs/apk/debug/app-debug.apk`.
 
+### Signed release
+
+Release signing memakai file properti eksternal agar keystore dan password tidak
+masuk Git. Salin `signing.properties.example` ke lokasi aman, isi nilai sebenarnya,
+lalu set environment variable `MONEYLIFE_SIGNING_PROPERTIES` ke path file tersebut.
+
+```powershell
+$env:MONEYLIFE_SIGNING_PROPERTIES = "D:\secure\moneylife-signing.properties"
+.\gradlew.bat :app:bundleRelease
+```
+
+Signed AAB tersedia di `app/build/outputs/bundle/release/app-release.aab`. Simpan
+upload key dan file propertinya di password manager/backup terenkripsi; kehilangan
+upload key akan menghambat proses update aplikasi.
+
 Jalankan unit test domain:
 
 ```bash

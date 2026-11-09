@@ -1,0 +1,5 @@
+# Copy this file to a secure location outside Git and replace every placeholder.
+storeFile=C:/secure/path/moneylife-upload.jks
+storePassword=replace-with-a-strong-password
+keyAlias=moneylife-upload
+keyPassword=replace-with-a-strong-password

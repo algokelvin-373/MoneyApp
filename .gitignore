@@ -8,3 +8,10 @@
 # Local secrets and workspace-only artifacts
 API Key*.txt
 .dump/
+.vault/
+
+# Android release signing credentials
+*.jks
+*.keystore
+keystore.properties
+signing.properties

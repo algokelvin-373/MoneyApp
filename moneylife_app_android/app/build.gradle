@@ -5,6 +5,21 @@ plugins {
     alias(libs.plugins.ktlint)
 }
 
+def releaseSigningProperties = new Properties()
+def releaseSigningPropertiesPath = providers.environmentVariable("MONEYLIFE_SIGNING_PROPERTIES").orNull
+if (releaseSigningPropertiesPath != null) {
+    def releaseSigningPropertiesFile = file(releaseSigningPropertiesPath)
+    if (!releaseSigningPropertiesFile.isFile()) {
+        throw new GradleException("MONEYLIFE_SIGNING_PROPERTIES does not point to a readable file")
+    }
+    releaseSigningPropertiesFile.withInputStream { releaseSigningProperties.load(it) }
+    ["storeFile", "storePassword", "keyAlias", "keyPassword"].each { propertyName ->
+        if (!releaseSigningProperties.getProperty(propertyName)) {
+            throw new GradleException("Missing release signing property: ${propertyName}")
+        }
+    }
+}
+
 // Room exports the schema of every database version into app/schemas so the
 // migrations can be validated against the real schema history.
 ksp {
@@ -26,10 +41,23 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        if (!releaseSigningProperties.isEmpty()) {
+            release {
+                storeFile file(releaseSigningProperties.getProperty("storeFile"))
+                storePassword releaseSigningProperties.getProperty("storePassword")
+                keyAlias releaseSigningProperties.getProperty("keyAlias")
+                keyPassword releaseSigningProperties.getProperty("keyPassword")
+            }
+        }
+    }
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
+            if (signingConfigs.findByName("release") != null) {
+                signingConfig signingConfigs.release
+            }
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
