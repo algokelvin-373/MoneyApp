@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:background="@color/colorPrimaryDark"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingEnd="20dp">
+
+        <ImageButton
+            android:id="@+id/buttonBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/navigate_back"
+            android:padding="12dp"
+            android:src="@drawable/ic_back_moneylife"
+            app:tint="@color/colorOnPrimary" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:text="@string/privacy_policy"
+            android:textColor="@color/colorOnPrimary"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="24dp"
+            android:paddingTop="24dp"
+            android:paddingEnd="24dp"
+            android:paddingBottom="32dp">
+
+            <TextView
+                style="@style/PrivacyBodyText"
+                android:text="@string/privacy_last_updated"
+                android:textColor="@color/textSecondary" />
+
+            <TextView
+                style="@style/PrivacyBodyText"
+                android:layout_marginTop="16dp"
+                android:text="@string/privacy_intro" />
+
+            <TextView style="@style/PrivacySectionTitle" android:text="@string/privacy_data_title" />
+            <TextView style="@style/PrivacyBodyText" android:text="@string/privacy_data_body" />
+
+            <TextView style="@style/PrivacySectionTitle" android:text="@string/privacy_collection_title" />
+            <TextView style="@style/PrivacyBodyText" android:text="@string/privacy_collection_body" />
+
+            <TextView style="@style/PrivacySectionTitle" android:text="@string/privacy_retention_title" />
+            <TextView style="@style/PrivacyBodyText" android:text="@string/privacy_retention_body" />
+
+            <TextView style="@style/PrivacySectionTitle" android:text="@string/privacy_security_title" />
+            <TextView style="@style/PrivacyBodyText" android:text="@string/privacy_security_body" />
+
+            <TextView style="@style/PrivacySectionTitle" android:text="@string/privacy_children_title" />
+            <TextView style="@style/PrivacyBodyText" android:text="@string/privacy_children_body" />
+
+            <TextView style="@style/PrivacySectionTitle" android:text="@string/privacy_changes_title" />
+            <TextView style="@style/PrivacyBodyText" android:text="@string/privacy_changes_body" />
+
+            <TextView style="@style/PrivacySectionTitle" android:text="@string/privacy_contact_title" />
+            <TextView style="@style/PrivacyBodyText" android:text="@string/privacy_contact_body" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonOpenOnline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:minHeight="48dp"
+                android:text="@string/privacy_open_online"
+                android:textAllCaps="false"
+                app:cornerRadius="16dp" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

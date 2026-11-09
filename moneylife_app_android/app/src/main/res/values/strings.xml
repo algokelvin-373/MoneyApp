@@ -39,6 +39,27 @@
     <string name="navigate_back">Kembali</string>
     <string name="reset_form">Atur ulang</string>
 
+    <!-- Privacy policy -->
+    <string name="privacy_policy">Kebijakan Privasi</string>
+    <string name="privacy_last_updated">Terakhir diperbarui: 9 November 2026</string>
+    <string name="privacy_intro">MoneyLife menghormati privasi Anda. Kebijakan ini menjelaskan data yang diproses aplikasi MoneyLife versi 1.0.0 dan cara Anda mengendalikannya.</string>
+    <string name="privacy_data_title">Data yang diproses</string>
+    <string name="privacy_data_body">MoneyLife memproses catatan pengeluaran, nominal, kategori, tanggal, catatan opsional, dan saldo tabungan yang Anda masukkan. Seluruh data disimpan hanya di database lokal pada perangkat Anda.</string>
+    <string name="privacy_collection_title">Pengumpulan dan pembagian data</string>
+    <string name="privacy_collection_body">MoneyLife tidak membuat akun, tidak memiliki izin internet, tidak memakai iklan atau analitik, serta tidak mengirim, mengumpulkan, menjual, atau membagikan data Anda kepada pengembang maupun pihak ketiga.</string>
+    <string name="privacy_retention_title">Penyimpanan dan penghapusan</string>
+    <string name="privacy_retention_body">Data disimpan sampai Anda menghapus transaksi atau menghapus instalasi aplikasi. Menghapus instalasi akan menghapus seluruh data MoneyLife. Backup otomatis dinonaktifkan, sehingga data tidak dipulihkan otomatis setelah aplikasi dihapus.</string>
+    <string name="privacy_security_title">Keamanan</string>
+    <string name="privacy_security_body">Data dilindungi oleh sandbox aplikasi Android. Jaga keamanan perangkat, PIN, dan akun sistem operasi Anda. MoneyLife tidak menyediakan sinkronisasi cloud atau pemulihan data pada versi ini.</string>
+    <string name="privacy_children_title">Anak-anak</string>
+    <string name="privacy_children_body">MoneyLife tidak ditujukan khusus untuk anak-anak dan tidak mengumpulkan data pribadi anak maupun pengguna lain.</string>
+    <string name="privacy_changes_title">Perubahan kebijakan</string>
+    <string name="privacy_changes_body">Jika perilaku data aplikasi berubah, kebijakan ini dan deklarasi Data Safety akan diperbarui sebelum versi baru dirilis.</string>
+    <string name="privacy_contact_title">Kontak</string>
+    <string name="privacy_contact_body">Untuk pertanyaan privasi, gunakan halaman Issues repository MoneyApp di GitHub.</string>
+    <string name="privacy_open_online">Buka kebijakan online</string>
+    <string name="privacy_policy_url" translatable="false">https://raw.githubusercontent.com/algokelvin-373/MoneyApp/dev/improvements/moneylife_app_android/PRIVACY_POLICY.md</string>
+
     <!-- Add expense screen -->
     <string name="category_label">KATEGORI</string>
     <string name="category_makan">Makan</string>

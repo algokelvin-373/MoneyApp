@@ -20,6 +20,7 @@ import com.kelvinht.moneylife.databinding.ActivityMainBinding
 import com.kelvinht.moneylife.domain.model.CategoryBudget
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.presentation.addedit.AddExpenseActivity
+import com.kelvinht.moneylife.presentation.privacy.PrivacyPolicyActivity
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.util.Locale
@@ -65,6 +66,9 @@ class MainActivity : AppCompatActivity() {
         binding.buttonPreviousDay.setOnClickListener { viewModel.previousDay() }
         binding.buttonNextDay.setOnClickListener { viewModel.nextDay() }
         binding.buttonToday.setOnClickListener { viewModel.showToday() }
+        binding.buttonPrivacy.setOnClickListener {
+            startActivity(Intent(this, PrivacyPolicyActivity::class.java))
+        }
     }
 
     private fun showDatePicker() {
