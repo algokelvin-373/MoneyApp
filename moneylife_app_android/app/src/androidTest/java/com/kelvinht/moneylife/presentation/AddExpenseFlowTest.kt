@@ -9,7 +9,9 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.replaceText
+import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -66,9 +68,9 @@ class AddExpenseFlowTest {
         ActivityScenario.launch(MainActivity::class.java).use { scenario ->
             openAddExpenseForm(scenario)
 
-            onView(withId(R.id.inputAmount)).perform(replaceText("25000"))
-            onView(withId(R.id.inputNote)).perform(replaceText("Kopi susu"))
-            onView(withId(R.id.buttonSave)).perform(click())
+            onView(withId(R.id.inputAmount)).perform(replaceText("25000"), closeSoftKeyboard())
+            onView(withId(R.id.inputNote)).perform(scrollTo(), replaceText("Kopi susu"), closeSoftKeyboard())
+            onView(withId(R.id.buttonSave)).perform(scrollTo(), click())
 
             // The home screen reads the data back from the database, so the new
             // expense and the new total show up without an explicit result.
@@ -99,8 +101,8 @@ class AddExpenseFlowTest {
                     .check(matches(withText(DateUtils.displayDate(yesterday))))
             }
 
-            onView(withId(R.id.inputAmount)).perform(replaceText("15000"))
-            onView(withId(R.id.buttonSave)).perform(click())
+            onView(withId(R.id.inputAmount)).perform(replaceText("15000"), closeSoftKeyboard())
+            onView(withId(R.id.buttonSave)).perform(scrollTo(), click())
         }
 
         val stored = awaitStoredExpenses(yesterday)
