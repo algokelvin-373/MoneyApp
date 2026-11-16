@@ -70,7 +70,7 @@ class AddExpenseFlowTest {
 
             onView(withId(R.id.inputAmount)).perform(replaceText("25000"), closeSoftKeyboard())
             onView(withId(R.id.inputNote)).perform(scrollTo(), replaceText("Kopi susu"), closeSoftKeyboard())
-            onView(withId(R.id.buttonSave)).perform(scrollTo(), click())
+            onView(withId(R.id.buttonSave)).perform(click())
 
             // The home screen reads the data back from the database, so the new
             // expense and the new total show up without an explicit result.
@@ -102,7 +102,7 @@ class AddExpenseFlowTest {
             }
 
             onView(withId(R.id.inputAmount)).perform(replaceText("15000"), closeSoftKeyboard())
-            onView(withId(R.id.buttonSave)).perform(scrollTo(), click())
+            onView(withId(R.id.buttonSave)).perform(click())
         }
 
         val stored = awaitStoredExpenses(yesterday)
