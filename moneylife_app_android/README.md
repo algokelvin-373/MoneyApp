@@ -115,6 +115,31 @@ Jalankan unit test domain:
 ./gradlew.bat :app:testDebugUnitTest
 ```
 
+## CI
+
+Workflow `.github/workflows/android.yml` berjalan pada push/PR yang menyentuh
+`moneylife_app_android/**` dan bisa dijalankan manual:
+
+- **verify** — unit test, ktlint, `lintDebug`, `lintRelease`,
+  `assembleDebugAndroidTest`, dan `bundleRelease` (R8 + `shrinkResources`).
+  AAB dan checksum SHA-256 diunggah sebagai artifact; laporan lint/test disimpan.
+- **instrumentation** — emulator API 27 dan API 36 menjalankan
+  `connectedDebugAndroidTest` (5 test). Job ini adalah release gate, bukan
+  opsional.
+
+Release signing di CI bersifat opsional dan hanya aktif jika repository secrets
+berikut diisi. Tidak ada keystore atau password di dalam repo:
+
+| Secret                     | Isi                                      |
+| -------------------------- | ---------------------------------------- |
+| `MONEYLIFE_KEYSTORE_BASE64`| isi file `.jks` yang di-encode base64    |
+| `MONEYLIFE_STORE_PASSWORD` | password keystore                        |
+| `MONEYLIFE_KEY_ALIAS`      | alias key                                |
+| `MONEYLIFE_KEY_PASSWORD`   | password key                             |
+
+Tanpa secrets, CI tetap membangun AAB unsigned untuk memverifikasi R8. Dengan
+secrets, CI juga menjalankan `jarsigner -verify` pada AAB hasil build.
+
 ## Privasi
 
 MoneyLife tidak memiliki akun, iklan, analytics, maupun izin internet. Seluruh
