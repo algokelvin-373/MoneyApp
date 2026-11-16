@@ -112,8 +112,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # API 27 does not publish a google_apis x86_64 system image.
           - api-level: 27
-            target: google_apis
+            target: default
           - api-level: 36
             target: google_apis
     defaults:
