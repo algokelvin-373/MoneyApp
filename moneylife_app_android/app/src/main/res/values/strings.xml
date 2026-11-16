@@ -41,7 +41,7 @@
 
     <!-- Privacy policy -->
     <string name="privacy_policy">Kebijakan Privasi</string>
-    <string name="privacy_last_updated">Terakhir diperbarui: 9 November 2026</string>
+    <string name="privacy_last_updated">Terakhir diperbarui: 16 November 2026</string>
     <string name="privacy_intro">MoneyLife menghormati privasi Anda. Kebijakan ini menjelaskan data yang diproses aplikasi MoneyLife versi 1.0.0 dan cara Anda mengendalikannya.</string>
     <string name="privacy_data_title">Data yang diproses</string>
     <string name="privacy_data_body">MoneyLife memproses catatan pengeluaran, nominal, kategori, tanggal, catatan opsional, dan saldo tabungan yang Anda masukkan. Seluruh data disimpan hanya di database lokal pada perangkat Anda.</string>
@@ -56,9 +56,9 @@
     <string name="privacy_changes_title">Perubahan kebijakan</string>
     <string name="privacy_changes_body">Jika perilaku data aplikasi berubah, kebijakan ini dan deklarasi Data Safety akan diperbarui sebelum versi baru dirilis.</string>
     <string name="privacy_contact_title">Kontak</string>
-    <string name="privacy_contact_body">Untuk pertanyaan privasi, gunakan halaman Issues repository MoneyApp di GitHub.</string>
+    <string name="privacy_contact_body">Untuk pertanyaan privasi, hubungi pengembang melalui github.com/algokelvin-373.</string>
     <string name="privacy_open_online">Buka kebijakan online</string>
-    <string name="privacy_policy_url" translatable="false">https://raw.githubusercontent.com/algokelvin-373/MoneyApp/dev/improvements/moneylife_app_android/PRIVACY_POLICY.md</string>
+    <string name="privacy_policy_url" translatable="false">https://algokelvin-373.github.io/MoneyApp/</string>
 
     <!-- Add expense screen -->
     <string name="category_label">KATEGORI</string>

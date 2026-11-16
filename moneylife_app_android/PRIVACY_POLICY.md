@@ -1,6 +1,8 @@
 # Kebijakan Privasi MoneyLife
 
-Terakhir diperbarui: 9 November 2026
+Terakhir diperbarui: 16 November 2026
+
+Versi publik: <https://algokelvin-373.github.io/MoneyApp/>
 
 MoneyLife menghormati privasi Anda. Kebijakan ini berlaku untuk aplikasi
 MoneyLife versi 1.0.0 dengan package `com.kelvinht.moneylife`.
@@ -41,5 +43,5 @@ diperbarui sebelum versi baru dirilis.
 
 ## Kontak
 
-Untuk pertanyaan privasi, buka
-[GitHub Issues MoneyApp](https://github.com/algokelvin-373/MoneyApp/issues).
+Untuk pertanyaan privasi, hubungi pengembang melalui
+[github.com/algokelvin-373](https://github.com/algokelvin-373).

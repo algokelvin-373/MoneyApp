@@ -115,6 +115,20 @@ Jalankan unit test domain:
 ./gradlew.bat :app:testDebugUnitTest
 ```
 
+## Privasi
+
+MoneyLife tidak memiliki akun, iklan, analytics, maupun izin internet. Seluruh
+data disimpan lokal di perangkat; `android:allowBackup="false"` mematikan backup
+otomatis.
+
+- Kebijakan publik: <https://algokelvin-373.github.io/MoneyApp/>
+- Sumber halaman: `docs/privacy-policy/index.html` (dideploy oleh
+  `.github/workflows/pages.yml`)
+- Dokumen internal: `PRIVACY_POLICY.md` dan `docs/DATA_SAFETY_V1.0.0.md`
+
+Halaman publik hanya memuat privacy policy; dokumen internal dan source code
+tidak ikut dipublikasikan.
+
 ## Catatan
 
 - `minSdk 27`, `targetSdk 36`, Kotlin 1.9, Room 2.6.1, Material 3.

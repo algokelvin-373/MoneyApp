@@ -32,11 +32,27 @@ Verifikasi ulang terhadap source code dan seluruh SDK sebelum setiap rilis.
 - Tidak ada SDK analytics, ads, crash reporting, authentication, atau cloud.
 - Privacy policy tersedia penuh di dalam aplikasi dan di `PRIVACY_POLICY.md`.
 
-## URL privacy policy
+## URL privacy policy (publik)
 
-Gunakan URL berikut setelah commit ini tersedia di remote:
+`https://algokelvin-373.github.io/MoneyApp/`
 
-`https://raw.githubusercontent.com/algokelvin-373/MoneyApp/dev/improvements/moneylife_app_android/PRIVACY_POLICY.md`
+- Sumber halaman: `moneylife_app_android/docs/privacy-policy/index.html`.
+- Deploy: `.github/workflows/pages.yml` (GitHub Pages). Artifact hanya memuat
+  folder `docs/privacy-policy`, sehingga dokumen internal dan source code tidak
+  ikut dipublikasikan.
+- Repo `MoneyApp` bersifat private, jadi URL `raw.githubusercontent.com` tidak
+  dapat dipakai (selalu 404 untuk pengguna tanpa login).
+- Karena repo private, GitHub Pages harus diaktifkan oleh pemilik repo di
+  **Settings → Pages → Source: GitHub Actions** (memerlukan GitHub Pro).
+- Verifikasi wajib: buka URL pada jendela private/incognito **tanpa login**,
+  pastikan HTTP 200, sertifikat HTTPS valid, dan isinya sama dengan
+  `PRIVACY_POLICY.md` serta kebijakan di dalam aplikasi.
+- String aplikasi `privacy_policy_url` harus tetap sama dengan URL di atas.
 
-Sebelum production release, gunakan URL dari branch/tag permanen atau situs
-publik yang tidak akan dihapus.
+## Langkah submit di Play Console
+
+1. **App content → Privacy policy**: tempel URL publik di atas, lalu simpan.
+2. **App content → Data safety**: jawab formulir memakai ringkasan di dokumen
+   ini (tidak ada data dikumpulkan/dibagikan, tidak ada akun, tidak ada iklan,
+   tidak ada analytics), lalu submit.
+3. Simpan tangkapan layar konfirmasi dan tanggal submit sebagai bukti release.
