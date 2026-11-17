@@ -24,6 +24,7 @@
             android:layout_height="44dp"
             android:background="@drawable/bg_category_dot"
             android:gravity="center"
+            android:importantForAccessibility="no"
             android:textSize="20sp"
             tools:text="🍚" />
 

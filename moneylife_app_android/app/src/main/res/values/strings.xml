@@ -3,25 +3,83 @@
     <string name="app_name">MoneyLife</string>
 
     <!-- Home screen -->
-    <string name="today_spending">Pengeluaran Hari Ini</string>
-    <string name="today_history">Riwayat Hari Ini</string>
-    <string name="zero_rupiah">Rp 0</string>
-    <string name="limit_placeholder">dari Rp 100.000</string>
-    <string name="empty_emoji">🗒️</string>
-    <string name="empty_message">Belum ada pengeluaran hari ini</string>
+    <string name="brand_mark" translatable="false">$</string>
+    <string name="app_tagline">Pengatur Budget Pintar</string>
+    <string name="pro_badge" translatable="false">PRO</string>
+    <string name="info_mark" translatable="false">!</string>
+    <string name="avatar_initials" translatable="false">AK</string>
+    <string name="limit_from_format">dari %1$s</string>
+    <string name="limit_short_format">Limit: %1$s</string>
+    <string name="spending_header_today">●  PENGELUARAN HARI INI</string>
+    <string name="spending_header_date">●  PENGELUARAN %1$s</string>
+    <string name="remaining_format">Sisa %1$s</string>
+    <string name="usage_percent_format">%1$d%% Terpakai</string>
+    <string name="over_limit_format">Lebih %1$s dari batas harian</string>
+    <string name="budget_condition_safe">Sangat Aman</string>
+    <string name="budget_condition_warning">Perlu Dijaga</string>
+    <string name="budget_condition_over">Melebihi Limit</string>
+    <string name="savings_balance_format">Saldo Tabungan · %1$s</string>
+    <string name="savings_balance_label">Saldo Tabungan</string>
+    <string name="budget_condition_label">Kondisi Budget</string>
+    <string name="popular_categories_title">KATEGORI POPULER</string>
+    <string name="category_usage_format">%1$s/%2$s</string>
     <string name="choose_date">Pilih tanggal</string>
     <string name="back_to_today">Hari Ini</string>
     <string name="previous_day">Hari sebelumnya</string>
     <string name="next_day">Hari berikutnya</string>
+    <string name="previous_day_symbol" translatable="false">‹</string>
+    <string name="next_day_symbol" translatable="false">›</string>
+    <string name="transaction_history_title">Riwayat Transaksi</string>
+    <string name="empty_state_symbol" translatable="false">≡</string>
+    <string name="empty_state_title">Belum ada pengeluaran pada tanggal ini</string>
+    <string name="empty_state_message">Pencatatan yang rajin bikin keuanganmu tetap teratur &amp; hemat!</string>
+    <string name="empty_state_hint">Tap tombol di bawah untuk mencatat pengeluaran</string>
     <string name="add_expense">Catat Pengeluaran</string>
+    <string name="add_expense_button">+  Catat Pengeluaran</string>
+    <string name="navigate_back">Kembali</string>
+    <string name="reset_form">Atur ulang</string>
+
+    <!-- Privacy policy -->
+    <string name="privacy_policy">Kebijakan Privasi</string>
+    <string name="privacy_last_updated">Terakhir diperbarui: 16 November 2026</string>
+    <string name="privacy_intro">MoneyLife menghormati privasi Anda. Kebijakan ini menjelaskan data yang diproses aplikasi MoneyLife versi 1.0.0 dan cara Anda mengendalikannya.</string>
+    <string name="privacy_data_title">Data yang diproses</string>
+    <string name="privacy_data_body">MoneyLife memproses catatan pengeluaran, nominal, kategori, tanggal, catatan opsional, dan saldo tabungan yang Anda masukkan. Seluruh data disimpan hanya di database lokal pada perangkat Anda.</string>
+    <string name="privacy_collection_title">Pengumpulan dan pembagian data</string>
+    <string name="privacy_collection_body">MoneyLife tidak membuat akun, tidak memiliki izin internet, tidak memakai iklan atau analitik, serta tidak mengirim, mengumpulkan, menjual, atau membagikan data Anda kepada pengembang maupun pihak ketiga.</string>
+    <string name="privacy_retention_title">Penyimpanan dan penghapusan</string>
+    <string name="privacy_retention_body">Data disimpan sampai Anda menghapus transaksi atau menghapus instalasi aplikasi. Menghapus instalasi akan menghapus seluruh data MoneyLife. Backup otomatis dinonaktifkan, sehingga data tidak dipulihkan otomatis setelah aplikasi dihapus.</string>
+    <string name="privacy_security_title">Keamanan</string>
+    <string name="privacy_security_body">Data dilindungi oleh sandbox aplikasi Android. Jaga keamanan perangkat, PIN, dan akun sistem operasi Anda. MoneyLife tidak menyediakan sinkronisasi cloud atau pemulihan data pada versi ini.</string>
+    <string name="privacy_children_title">Anak-anak</string>
+    <string name="privacy_children_body">MoneyLife tidak ditujukan khusus untuk anak-anak dan tidak mengumpulkan data pribadi anak maupun pengguna lain.</string>
+    <string name="privacy_changes_title">Perubahan kebijakan</string>
+    <string name="privacy_changes_body">Jika perilaku data aplikasi berubah, kebijakan ini dan deklarasi Data Safety akan diperbarui sebelum versi baru dirilis.</string>
+    <string name="privacy_contact_title">Kontak</string>
+    <string name="privacy_contact_body">Untuk pertanyaan privasi, hubungi pengembang melalui github.com/algokelvin-373.</string>
+    <string name="privacy_open_online">Buka kebijakan online</string>
+    <string name="privacy_policy_url" translatable="false">https://algokelvin-373.github.io/MoneyApp/</string>
 
     <!-- Add expense screen -->
-    <string name="category_label">Kategori</string>
+    <string name="category_label">KATEGORI</string>
     <string name="category_makan">Makan</string>
     <string name="category_transport">Transport</string>
     <string name="category_jajan">Jajan</string>
+    <string name="category_initial_makan" translatable="false">M</string>
+    <string name="category_initial_transport" translatable="false">T</string>
+    <string name="category_initial_jajan" translatable="false">J</string>
+    <string name="amount_label">NOMINAL PENGELUARAN</string>
     <string name="amount_hint">Nominal</string>
     <string name="currency_prefix">Rp</string>
+    <string name="fintech_mode_badge">● Fintech Mode</string>
+    <string name="quick_add_label">Tambah Cepat:</string>
+    <string name="quick_add_10k">+10rb</string>
+    <string name="quick_add_20k">+20rb</string>
+    <string name="quick_add_50k">+50rb</string>
+    <string name="quick_add_100k">+100rb</string>
+    <string name="transaction_date_label">TANGGAL TRANSAKSI</string>
+    <string name="change_date">Ubah</string>
+    <string name="note_label">CATATAN (OPSIONAL)</string>
     <string name="note_hint">Catatan (opsional)</string>
     <string name="save">Simpan Pengeluaran ✓</string>
     <string name="saving">Menyimpan…</string>
@@ -29,4 +87,8 @@
     <string name="cancel">Batal</string>
     <string name="delete_confirm_title">Hapus pengeluaran?</string>
     <string name="delete_confirm_message">Data yang dihapus tidak dapat dikembalikan.</string>
+
+    <!-- Add expense errors -->
+    <string name="error_amount_required">Masukkan nominal lebih dari 0</string>
+    <string name="error_save_failed">Gagal menyimpan pengeluaran</string>
 </resources>

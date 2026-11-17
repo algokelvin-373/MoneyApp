@@ -94,14 +94,68 @@ cd moneylife_app_android
 
 APK debug: `app/build/outputs/apk/debug/app-debug.apk`.
 
+### Signed release
+
+Release signing memakai file properti eksternal agar keystore dan password tidak
+masuk Git. Salin `signing.properties.example` ke lokasi aman, isi nilai sebenarnya,
+lalu set environment variable `MONEYLIFE_SIGNING_PROPERTIES` ke path file tersebut.
+
+```powershell
+$env:MONEYLIFE_SIGNING_PROPERTIES = "D:\secure\moneylife-signing.properties"
+.\gradlew.bat :app:bundleRelease
+```
+
+Signed AAB tersedia di `app/build/outputs/bundle/release/app-release.aab`. Simpan
+upload key dan file propertinya di password manager/backup terenkripsi; kehilangan
+upload key akan menghambat proses update aplikasi.
+
 Jalankan unit test domain:
 
 ```bash
 ./gradlew.bat :app:testDebugUnitTest
 ```
 
+## CI
+
+Workflow `.github/workflows/android.yml` berjalan pada push/PR yang menyentuh
+`moneylife_app_android/**` dan bisa dijalankan manual:
+
+- **verify** — unit test, ktlint, `lintDebug`, `lintRelease`,
+  `assembleDebugAndroidTest`, dan `bundleRelease` (R8 + `shrinkResources`).
+  AAB dan checksum SHA-256 diunggah sebagai artifact; laporan lint/test disimpan.
+- **instrumentation** — emulator API 27 dan API 36 menjalankan
+  `connectedDebugAndroidTest` (5 test). Job ini adalah release gate, bukan
+  opsional.
+
+Release signing di CI bersifat opsional dan hanya aktif jika repository secrets
+berikut diisi. Tidak ada keystore atau password di dalam repo:
+
+| Secret                     | Isi                                      |
+| -------------------------- | ---------------------------------------- |
+| `MONEYLIFE_KEYSTORE_BASE64`| isi file `.jks` yang di-encode base64    |
+| `MONEYLIFE_STORE_PASSWORD` | password keystore                        |
+| `MONEYLIFE_KEY_ALIAS`      | alias key                                |
+| `MONEYLIFE_KEY_PASSWORD`   | password key                             |
+
+Tanpa secrets, CI tetap membangun AAB unsigned untuk memverifikasi R8. Dengan
+secrets, CI juga menjalankan `jarsigner -verify` pada AAB hasil build.
+
+## Privasi
+
+MoneyLife tidak memiliki akun, iklan, analytics, maupun izin internet. Seluruh
+data disimpan lokal di perangkat; `android:allowBackup="false"` mematikan backup
+otomatis.
+
+- Kebijakan publik: <https://algokelvin-373.github.io/MoneyApp/>
+- Sumber halaman: `docs/privacy-policy/index.html` (dideploy oleh
+  `.github/workflows/pages.yml`)
+- Dokumen internal: `PRIVACY_POLICY.md` dan `docs/DATA_SAFETY_V1.0.0.md`
+
+Halaman publik hanya memuat privacy policy; dokumen internal dan source code
+tidak ikut dipublikasikan.
+
 ## Catatan
 
-- `minSdk 27`, `targetSdk 35`, Kotlin 1.9, Room 2.6.1, Material 3.
+- `minSdk 27`, `targetSdk 36`, Kotlin 1.9, Room 2.6.1, Material 3.
 - Sumber daya `local.properties` menunjuk ke Android SDK lokal dan tidak
   disertakan ke version control.

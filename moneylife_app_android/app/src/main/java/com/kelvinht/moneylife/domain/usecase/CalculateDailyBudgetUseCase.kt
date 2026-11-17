@@ -10,6 +10,6 @@ class CalculateDailyBudgetUseCase {
     operator fun invoke(
         dateKey: String,
         expenses: List<Expense>,
-        limit: Long = DailyBudget.DEFAULT_DAILY_LIMIT
+        limit: Long = DailyBudget.DEFAULT_DAILY_LIMIT,
     ): DailyBudget = DailyBudget(dateKey = dateKey, limit = limit, expenses = expenses)
 }

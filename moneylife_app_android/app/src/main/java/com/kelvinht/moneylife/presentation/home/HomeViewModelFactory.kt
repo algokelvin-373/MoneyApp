@@ -5,9 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.kelvinht.moneylife.di.AppContainer
 
 class HomeViewModelFactory(
-    private val container: AppContainer
+    private val container: AppContainer,
 ) : ViewModelProvider.Factory {
-
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
@@ -17,7 +16,7 @@ class HomeViewModelFactory(
                 deleteExpense = container.deleteExpense,
                 observeSavingsBalance = container.observeSavingsBalance,
                 rolloverDailySavings = container.rolloverDailySavings,
-                dailyLimit = container.dailyLimit
+                dailyLimit = container.dailyLimit,
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

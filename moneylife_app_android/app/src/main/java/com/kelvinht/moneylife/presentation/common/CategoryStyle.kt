@@ -12,15 +12,16 @@ import com.kelvinht.moneylife.domain.model.ExpenseCategory
 enum class CategoryStyle(
     @StringRes val labelRes: Int,
     val emoji: String,
-    @ColorRes val colorRes: Int
+    @ColorRes val colorRes: Int,
 ) {
     MAKAN(R.string.category_makan, "\uD83C\uDF5A", R.color.category_makan),
     TRANSPORT(R.string.category_transport, "\uD83D\uDE8C", R.color.category_transport),
-    JAJAN(R.string.category_jajan, "\uD83C\uDF6C", R.color.category_jajan)
+    JAJAN(R.string.category_jajan, "\uD83C\uDF6C", R.color.category_jajan),
 }
 
-fun ExpenseCategory.toStyle(): CategoryStyle = when (this) {
-    ExpenseCategory.MAKAN -> CategoryStyle.MAKAN
-    ExpenseCategory.TRANSPORT -> CategoryStyle.TRANSPORT
-    ExpenseCategory.JAJAN -> CategoryStyle.JAJAN
-}
+fun ExpenseCategory.toStyle(): CategoryStyle =
+    when (this) {
+        ExpenseCategory.MAKAN -> CategoryStyle.MAKAN
+        ExpenseCategory.TRANSPORT -> CategoryStyle.TRANSPORT
+        ExpenseCategory.JAJAN -> CategoryStyle.JAJAN
+    }

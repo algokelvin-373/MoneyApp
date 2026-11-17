@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ExpenseDao {
-
     @Query("SELECT * FROM expenses WHERE dateKey = :dateKey ORDER BY createdAt DESC")
     fun observeByDate(dateKey: String): Flow<List<ExpenseEntity>>
 

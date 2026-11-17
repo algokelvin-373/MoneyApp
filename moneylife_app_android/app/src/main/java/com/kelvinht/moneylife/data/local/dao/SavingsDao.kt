@@ -16,6 +16,9 @@ interface SavingsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveDailySaving(entity: DailySavingEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveDailySavings(entities: List<DailySavingEntity>)
+
     @Query("SELECT value FROM app_state WHERE stateKey = :key LIMIT 1")
     suspend fun getState(key: String): String?
 

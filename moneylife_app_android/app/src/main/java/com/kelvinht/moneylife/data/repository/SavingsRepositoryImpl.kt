@@ -7,12 +7,27 @@ import com.kelvinht.moneylife.domain.repository.SavingsRepository
 import kotlinx.coroutines.flow.Flow
 
 class SavingsRepositoryImpl(
-    private val dao: SavingsDao
+    private val dao: SavingsDao,
 ) : SavingsRepository {
     override fun observeBalance(monthKey: String): Flow<Long> = dao.observeBalance(monthKey)
 
-    override suspend fun saveDailySaving(dateKey: String, amount: Long) {
+    override suspend fun saveDailySaving(
+        dateKey: String,
+        amount: Long,
+    ) {
         dao.saveDailySaving(DailySavingEntity(dateKey = dateKey, amount = amount))
+    }
+
+    override suspend fun saveDailySavings(savings: Map<String, Long>) {
+        if (savings.isEmpty()) return
+        dao.saveDailySavings(
+            savings.map { (dateKey, amount) ->
+                DailySavingEntity(
+                    dateKey,
+                    amount,
+                )
+            },
+        )
     }
 
     override suspend fun getLastActiveDate(): String? = dao.getState(LAST_ACTIVE_DATE)

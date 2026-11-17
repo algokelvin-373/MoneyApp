@@ -5,22 +5,21 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.addTextChangedListener
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.material.card.MaterialCardView
 import com.kelvinht.moneylife.MoneyLifeApplication
 import com.kelvinht.moneylife.R
-import com.kelvinht.moneylife.databinding.ActivityAddExpenseBinding
-import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.core.format.RupiahFormatter
 import com.kelvinht.moneylife.core.util.DateUtils
-import com.google.android.material.card.MaterialCardView
+import com.kelvinht.moneylife.databinding.ActivityAddExpenseBinding
+import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import kotlinx.coroutines.launch
 
 class AddExpenseActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityAddExpenseBinding
 
     private val viewModel: AddExpenseViewModel by viewModels {
@@ -92,7 +91,8 @@ class AddExpenseActivity : AppCompatActivity() {
     }
 
     private fun render(state: AddExpenseUiState) {
-        val formattedAmount = state.amountInput.toLongOrNull()?.let(RupiahFormatter::formatDigits).orEmpty()
+        val formattedAmount =
+            state.amountInput.toLongOrNull()?.let(RupiahFormatter::formatDigits).orEmpty()
         if (binding.inputAmount.text?.toString() != formattedAmount) {
             binding.inputAmount.setText(formattedAmount)
             binding.inputAmount.setSelection(formattedAmount.length)
@@ -103,7 +103,7 @@ class AddExpenseActivity : AppCompatActivity() {
         }
         renderCategory(state.category)
         binding.textTransactionTime.text = DateUtils.displayDate(state.dateKey)
-        binding.textError.text = state.error.orEmpty()
+        binding.textError.text = state.error?.let(::getString).orEmpty()
         binding.textError.visibility = if (state.error == null) View.GONE else View.VISIBLE
 
         binding.buttonSave.isEnabled = !state.isSaving
@@ -116,25 +116,34 @@ class AddExpenseActivity : AppCompatActivity() {
     }
 
     private fun renderCategory(selected: ExpenseCategory) {
-        val cards = listOf(
-            binding.categoryMakan to ExpenseCategory.MAKAN,
-            binding.categoryTransport to ExpenseCategory.TRANSPORT,
-            binding.categoryJajan to ExpenseCategory.JAJAN
-        )
+        val cards =
+            listOf(
+                binding.categoryMakan to ExpenseCategory.MAKAN,
+                binding.categoryTransport to ExpenseCategory.TRANSPORT,
+                binding.categoryJajan to ExpenseCategory.JAJAN,
+            )
         cards.forEach { (card, category) ->
             styleCategory(card, category == selected)
         }
-        binding.checkMakan.visibility = if (selected == ExpenseCategory.MAKAN) View.VISIBLE else View.GONE
-        binding.checkTransport.visibility = if (selected == ExpenseCategory.TRANSPORT) View.VISIBLE else View.GONE
-        binding.checkJajan.visibility = if (selected == ExpenseCategory.JAJAN) View.VISIBLE else View.GONE
+        binding.checkMakan.visibility =
+            if (selected == ExpenseCategory.MAKAN) View.VISIBLE else View.GONE
+        binding.checkTransport.visibility =
+            if (selected == ExpenseCategory.TRANSPORT) View.VISIBLE else View.GONE
+        binding.checkJajan.visibility =
+            if (selected == ExpenseCategory.JAJAN) View.VISIBLE else View.GONE
     }
 
-    private fun styleCategory(card: MaterialCardView, selected: Boolean) {
-        card.strokeWidth = resources.getDimensionPixelSize(if (selected) R.dimen.selected_stroke else R.dimen.default_stroke)
-        card.strokeColor = ContextCompat.getColor(
-            this,
-            if (selected) R.color.colorPrimaryDark else R.color.cardBorder
-        )
+    private fun styleCategory(
+        card: MaterialCardView,
+        selected: Boolean,
+    ) {
+        card.strokeWidth =
+            resources.getDimensionPixelSize(if (selected) R.dimen.selected_stroke else R.dimen.default_stroke)
+        card.strokeColor =
+            ContextCompat.getColor(
+                this,
+                if (selected) R.color.colorPrimaryDark else R.color.cardBorder,
+            )
     }
 
     companion object {
