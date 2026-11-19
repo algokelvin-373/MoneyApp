@@ -1,8 +1,8 @@
 # MoneyLife (Android)
 
 Aplikasi Android Native (Kotlin, XML Views) untuk mencatat pengeluaran harian
-**Makan**, **Transport**, dan **Jajan** dengan batas pengeluaran **Rp 100.000
-per hari**.
+**Makan**, **Transport**, dan **Jajan** dengan batas pengeluaran harian yang
+dapat dipilih **Rp 50.000** atau **Rp 100.000**.
 
 Tidak menggunakan Jetpack Compose. Arsitektur: **Clean Architecture + MVVM +
 Repository Pattern** dengan **Room** sebagai database lokal.
@@ -11,14 +11,18 @@ Repository Pattern** dengan **Room** sebagai database lokal.
 
 - Catat pengeluaran pada hari ini atau tanggal sebelumnya (kategori: Makan,
   Transport, Jajan). Ketuk tanggal transaksi atau tombol **Ubah** saat mengisi.
+- Pilih batas harian **Rp 50.000** atau **Rp 100.000**. Perubahan hanya dapat
+  dilakukan untuk hari ini; tanggal lampau memakai batas yang tersimpan saat
+  hari itu berjalan.
 - Pilih tanggal pada beranda, atau gunakan panah hari sebelumnya/berikutnya,
   untuk melihat ringkasan dan riwayat pengeluaran pada tanggal tersebut.
 - Progress bar batas harian yang berubah warna: hijau (aman), oranye
   (mendekati batas, >= 80%), merah (melebihi batas).
-- Peringatan nominal jika pengeluaran melebihi batas Rp 100.000/hari.
+- Peringatan nominal jika pengeluaran melebihi batas harian yang berlaku.
 - Riwayat pengeluaran menurut tanggal (terbaru di atas) + hapus dengan konfirmasi.
 - Sisa batas harian otomatis menjadi tabungan saat berganti hari; jika
-  pengeluaran melebihi batas Rp 100.000, tabungan hari itu bernilai 0.
+  pengeluaran melebihi batas yang berlaku pada hari itu, tabungan hari itu
+  bernilai 0.
 - Saldo tabungan per bulan ditampilkan di beranda dan tersimpan permanen
   secara lokal dengan Room. Saldo otomatis kembali ke Rp 0 saat memasuki
   bulan baru.
@@ -37,15 +41,14 @@ app/src/main/java/com/kelvinht/moneylife/
 │   └── util/DateUtils.kt          # Helper tanggal (date key harian)
 ├── domain/                        # Lapisan domain (tanpa Android)
 │   ├── model/                     # Expense, ExpenseCategory, DailyBudget
-│   ├── repository/                # ExpenseRepository (kontrak)
-│   └── usecase/                   # AddExpense, GetDailyExpenses,
-│                                  # CalculateDailyBudget, DeleteExpense
+│   ├── repository/                # Expense, Savings, DailyLimit, TransactionRunner
+│   └── usecase/                   # Expense, budget, rollover, daily limit
 ├── data/                          # Lapisan data (implementasi)
-│   ├── local/entity/              # ExpenseEntity (Room)
-│   ├── local/dao/                 # ExpenseDao
+│   ├── local/entity/              # ExpenseEntity, DailySavingEntity, AppStateEntity
+│   ├── local/dao/                 # ExpenseDao, SavingsDao
 │   ├── local/MoneyLifeDatabase.kt # RoomDatabase
 │   ├── mapper/ExpenseMapper.kt    # Entity <-> Domain
-│   └── repository/                # ExpenseRepositoryImpl
+│   └── repository/                # implementasi repository + RoomTransactionRunner
 └── presentation/                  # Lapisan presentasi (MVVM)
     ├── common/CategoryStyle.kt    # Label/emoji/warna kategori
     ├── home/                      # MainActivity, HomeViewModel, adapter
@@ -57,15 +60,25 @@ bergantung pada Android/Room, sehingga mudah diuji.
 
 ## Logika Batas Harian
 
+Batas harian yang didukung adalah **Rp 50.000** dan **Rp 100.000**; default
+**Rp 100.000**. Nilai batas disimpan di `app_state` dengan kunci `daily_limit`,
+dan setiap tanggal memiliki snapshot `daily_limit_<tanggal>`.
+
+- Tanggal hari ini: batas dapat diubah dan snapshot hari ini diperbarui.
+- Tanggal lampau: batas terkunci pada snapshot tanggal tersebut.
+- Jika snapshot tanggal belum ada, dipakai batas default.
+
 Semua perhitungan ada di domain model `DailyBudget`:
 
+- `limit`: batas yang berlaku pada tanggal tersebut.
 - `spent`: total pengeluaran hari itu.
 - `remaining`: sisa batas (minimal 0).
 - `overSpent`: kelebihan di atas batas.
 - `isOverLimit`: `spent > limit`.
 - `usagePercent`: 0..100 untuk progress bar.
 
-Batas default: `DailyBudget.DEFAULT_DAILY_LIMIT = 100_000L`.
+Konstanta yang tersedia: `DailyBudget.DAILY_LIMIT_50K`,
+`DailyBudget.DAILY_LIMIT_100K`, dan `DailyBudget.DEFAULT_DAILY_LIMIT`.
 
 ## Logika Tabungan (Rollover)
 
@@ -73,17 +86,20 @@ Setiap kali aplikasi dibuka (`HomeViewModel.refresh`), `RolloverDailySavingsUseC
 membandingkan tanggal aktif terakhir dengan tanggal hari ini:
 
 - Jika tanggal belum pernah tercatat, hanya mencatat tanggal aktif hari ini.
-- Jika sudah berganti hari, sisa batas hari sebelumnya dihitung sebagai
-  `limit - total pengeluaran` lalu disimpan ke tabel `daily_savings` sebagai
-  tabungan harian.
-- Jika pengeluaran hari itu **lebih dari Rp 100.000 (batas)**, tabungan hari itu
-  bernilai **0** (`coerceAtLeast(0L)`).
+- Jika sudah berganti hari, setiap hari yang terlewat dihitung dengan batas
+  tanggal tersebut: `limit - total pengeluaran`. Hasilnya disimpan ke tabel
+  `daily_savings` sebagai tabungan harian.
+- Rollover menyelesaikan semua hari dari `lastActiveDate` sampai `today - 1`
+  dan menyimpan snapshot batas masing-masing agar perubahan batas hari ini
+  tidak mengubah riwayat.
+- Jika pengeluaran hari itu **lebih dari batas yang berlaku pada hari itu**,
+  tabungan hari itu bernilai **0** (`coerceAtLeast(0L)`).
 - Saldo tabungan di beranda adalah penjumlahan tabungan harian pada bulan
   yang sedang dilihat (`SavingsDao.observeBalance`), sehingga otomatis
   bernilai 0 saat memasuki bulan baru. Tabungan bulan sebelumnya tetap
   tersimpan dan bisa dilihat dengan membuka tanggal pada bulan tersebut.
 - Perubahan pada pengeluaran tanggal lampau langsung menghitung ulang tabungan
-  tanggal tersebut.
+  tanggal tersebut memakai batas yang berlaku pada tanggal itu.
 
 ## Build
 
@@ -172,7 +188,8 @@ otomatis.
 - Kebijakan publik: <https://algokelvin-373.github.io/MoneyApp/>
 - Sumber halaman: `docs/privacy-policy/index.html` (dideploy oleh
   `.github/workflows/pages.yml`)
-- Dokumen internal: `PRIVACY_POLICY.md` dan `docs/DATA_SAFETY_V1.0.0.md`
+- Dokumen internal: `PRIVACY_POLICY.md` dan `docs/DATA_SAFETY.md`
+- Riwayat perubahan: `CHANGELOG.md`
 
 Halaman publik hanya memuat privacy policy; dokumen internal dan source code
 tidak ikut dipublikasikan.
