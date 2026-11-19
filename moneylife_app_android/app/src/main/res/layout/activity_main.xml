@@ -733,7 +733,7 @@
                 android:layout_width="300dp"
                 android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="-20dp"
+                android:layout_marginTop="24dp"
                 android:text="@string/add_expense_button"
                 android:textAllCaps="false"
                 android:textColor="@color/colorOnPrimary"
