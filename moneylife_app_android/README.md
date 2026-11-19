@@ -109,6 +109,28 @@ Signed AAB tersedia di `app/build/outputs/bundle/release/app-release.aab`. Simpa
 upload key dan file propertinya di password manager/backup terenkripsi; kehilangan
 upload key akan menghambat proses update aplikasi.
 
+### Staging
+
+Build `staging` memakai konfigurasi mirip release (R8 + resource shrinking),
+tetapi memakai application ID `com.kelvinht.moneylife.staging` dan label
+**MoneyLife Staging**, sehingga bisa dipasang berdampingan dengan versi
+production.
+
+```powershell
+.\gradlew.bat :app:assembleStaging
+.\gradlew.bat :app:bundleStaging
+```
+
+Output:
+
+- APK: `app/build/outputs/apk/staging/app-staging.apk`
+- AAB: `app/build/outputs/bundle/staging/app-staging.aab`
+
+Jika `MONEYLIFE_SIGNING_PROPERTIES` diisi, staging memakai upload key release.
+Jika tidak, build staging memakai debug key agar tetap bisa dipasang untuk QA
+lokal; AAB yang akan diunggah ke Play Console tetap harus dibangun dengan
+signing release.
+
 Jalankan unit test domain:
 
 ```bash
@@ -121,8 +143,9 @@ Workflow `.github/workflows/android.yml` berjalan pada push/PR yang menyentuh
 `moneylife_app_android/**` dan bisa dijalankan manual:
 
 - **verify** — unit test, ktlint, `lintDebug`, `lintRelease`,
-  `assembleDebugAndroidTest`, dan `bundleRelease` (R8 + `shrinkResources`).
-  AAB dan checksum SHA-256 diunggah sebagai artifact; laporan lint/test disimpan.
+  `assembleDebugAndroidTest`, `bundleRelease`, dan `bundleStaging`
+  (R8 + `shrinkResources`). AAB release dan checksum SHA-256 diunggah sebagai
+  artifact; laporan lint/test disimpan.
 - **instrumentation** — emulator API 27 dan API 36 menjalankan
   `connectedDebugAndroidTest` (5 test). Job ini adalah release gate, bukan
   opsional.

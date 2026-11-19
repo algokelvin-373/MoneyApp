@@ -60,6 +60,16 @@ android {
             }
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        // Release-like build for internal testing. The applicationId suffix
+        // keeps staging installable alongside the production app, while the
+        // shared release signing config keeps the uploaded artifact signed.
+        staging {
+            initWith release
+            applicationIdSuffix ".staging"
+            versionNameSuffix "-staging"
+            resValue "string", "app_name", "MoneyLife Staging"
+            signingConfig signingConfigs.findByName("release") ?: signingConfigs.debug
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17

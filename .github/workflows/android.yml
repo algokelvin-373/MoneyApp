@@ -70,6 +70,8 @@ jobs:
         run: ./gradlew :app:assembleDebugAndroidTest
       - name: Build release bundle
         run: ./gradlew :app:bundleRelease
+      - name: Build staging bundle
+        run: ./gradlew :app:bundleStaging
       - name: Verify signed release bundle
         if: env.MONEYLIFE_SIGNING_PROPERTIES != ''
         run: jarsigner -verify app/build/outputs/bundle/release/app-release.aab
