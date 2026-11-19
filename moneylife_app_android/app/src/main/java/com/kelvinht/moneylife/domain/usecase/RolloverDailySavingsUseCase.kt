@@ -21,6 +21,17 @@ class RolloverDailySavingsUseCase(
     suspend operator fun invoke(
         todayKey: String,
         dailyLimit: Long,
+    ) = invoke(todayKey, limitForDate = { dailyLimit }, snapshotDailyLimit = {})
+
+    /**
+     * [limitForDate] resolves the limit that was active on each settled day.
+     * [snapshotDailyLimit] locks that day's limit so later changes to today's
+     * limit cannot rewrite history.
+     */
+    suspend operator fun invoke(
+        todayKey: String,
+        limitForDate: suspend (String) -> Long,
+        snapshotDailyLimit: suspend (String) -> Unit,
     ) {
         val lastActiveDate = savingsRepository.getLastActiveDate()
 
@@ -44,7 +55,9 @@ class RolloverDailySavingsUseCase(
                 val spent = expenseRepository.getExpensesByDate(dateKey).sumOf { it.amount }
                 // A day without any spending means the whole daily limit was
                 // saved, a day over the limit saves nothing.
+                val dailyLimit = limitForDate(dateKey)
                 savings[dateKey] = (dailyLimit - spent).coerceAtLeast(0L)
+                snapshotDailyLimit(dateKey)
                 day = day.plusDays(1)
             }
 

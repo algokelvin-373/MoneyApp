@@ -12,6 +12,7 @@ import com.kelvinht.moneylife.domain.usecase.ObserveDailyLimitUseCase
 import com.kelvinht.moneylife.domain.usecase.ObserveSavingsBalanceUseCase
 import com.kelvinht.moneylife.domain.usecase.RolloverDailySavingsUseCase
 import com.kelvinht.moneylife.domain.usecase.SetDailyLimitUseCase
+import com.kelvinht.moneylife.domain.usecase.SnapshotDailyLimitUseCase
 import com.kelvinht.moneylife.testing.FakeDailyLimitRepository
 import com.kelvinht.moneylife.testing.FakeExpenseRepository
 import com.kelvinht.moneylife.testing.FakeSavingsRepository
@@ -246,6 +247,31 @@ class HomeViewModelTest {
             assertEquals(50_000L, savingsRepository.savedSavings()[yesterday])
         }
 
+    @Test
+    fun pastDay_keepsItsLimitAndIgnoresChanges() =
+        runTest(mainDispatcher) {
+            val yesterday = dateKeyOfDays(-1)
+            savingsRepository.lastActiveDate = yesterday
+            val viewModel = createViewModel()
+            observe(viewModel)
+
+            // Opening the app settles and locks yesterday at the old limit.
+            viewModel.refresh()
+            advanceUntilIdle()
+
+            viewModel.selectDailyLimit(50_000L)
+            advanceUntilIdle()
+            viewModel.selectDate(yesterday)
+            advanceUntilIdle()
+
+            assertEquals(100_000L, viewModel.uiState.value.limit)
+
+            viewModel.selectDailyLimit(50_000L)
+            advanceUntilIdle()
+
+            assertEquals(100_000L, viewModel.uiState.value.limit)
+        }
+
     private fun createViewModel(limitRepository: FakeDailyLimitRepository = dailyLimitRepository): HomeViewModel =
         HomeViewModel(
             getDailyExpenses = GetDailyExpensesUseCase(expenseRepository),
@@ -261,6 +287,7 @@ class HomeViewModelTest {
             getDailyLimit = GetDailyLimitUseCase(limitRepository),
             observeDailyLimit = ObserveDailyLimitUseCase(limitRepository),
             setDailyLimit = SetDailyLimitUseCase(limitRepository),
+            snapshotDailyLimit = SnapshotDailyLimitUseCase(limitRepository),
         )
 
     /** Keeps the state flow alive so the ViewModel keeps producing updates. */

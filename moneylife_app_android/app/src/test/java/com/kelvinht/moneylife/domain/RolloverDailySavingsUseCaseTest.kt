@@ -149,6 +149,26 @@ class RolloverDailySavingsUseCaseTest {
             assertEquals(1, transactionRunner.transactions)
         }
 
+    @Test
+    fun perDayLimits_areUsedAndSnapshottedForMissedDays() =
+        runBlocking {
+            val expenses = FakeExpenseRepository(mapOf("2026-10-20" to listOf(expense(30_000, "2026-10-20"))))
+            val savings = FakeSavingsRepository(initialDate = "2026-10-20")
+            val useCase = RolloverDailySavingsUseCase(expenses, savings, FakeTransactionRunner())
+            val limits = mapOf("2026-10-20" to 50_000L, "2026-10-21" to 80_000L)
+            val snapshots = mutableListOf<String>()
+
+            useCase(
+                "2026-10-22",
+                limitForDate = { dateKey -> limits.getValue(dateKey) },
+                snapshotDailyLimit = { dateKey -> snapshots.add(dateKey) },
+            )
+
+            assertEquals(20_000L, savings.saved["2026-10-20"])
+            assertEquals(80_000L, savings.saved["2026-10-21"])
+            assertEquals(listOf("2026-10-20", "2026-10-21"), snapshots)
+        }
+
     private fun expense(
         amount: Long,
         dateKey: String,

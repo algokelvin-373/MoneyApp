@@ -19,6 +19,7 @@ class HomeViewModelFactory(
                 getDailyLimit = container.getDailyLimit,
                 observeDailyLimit = container.observeDailyLimit,
                 setDailyLimit = container.setDailyLimit,
+                snapshotDailyLimit = container.snapshotDailyLimit,
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

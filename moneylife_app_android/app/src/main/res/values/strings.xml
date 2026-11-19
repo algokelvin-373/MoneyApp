@@ -10,6 +10,7 @@
     <string name="avatar_initials" translatable="false">AK</string>
     <string name="limit_from_format">dari %1$s</string>
     <string name="limit_short_format">Limit: %1$s</string>
+    <string name="limit_short_locked_format">Limit: %1$s · terkunci</string>
     <string name="daily_limit_option_50k">50rb</string>
     <string name="daily_limit_option_100k">100rb</string>
     <string name="daily_limit_50k_description">Pilih batas limit 50 ribu</string>

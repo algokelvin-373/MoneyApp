@@ -40,7 +40,7 @@ class DeleteExpenseUseCase(
             repository.deleteExpenseById(id)
             if (DateUtils.isPast(expense.dateKey)) {
                 val spent = repository.getExpensesByDate(expense.dateKey).sumOf { it.amount }
-                val dailyLimit = dailyLimitProvider.current()
+                val dailyLimit = dailyLimitProvider.forDate(expense.dateKey)
                 savingsRepository.saveDailySaving(
                     expense.dateKey,
                     (dailyLimit - spent).coerceAtLeast(0L),

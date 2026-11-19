@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 class ObserveDailyLimitUseCase(
     private val repository: DailyLimitRepository,
 ) {
-    operator fun invoke(): Flow<Long> = repository.observeDailyLimit()
+    operator fun invoke(dateKey: String): Flow<Long> = repository.observeDailyLimit(dateKey)
 }

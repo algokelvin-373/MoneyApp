@@ -27,4 +27,7 @@ interface SavingsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveState(entity: AppStateEntity)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun saveStateIfAbsent(entity: AppStateEntity)
 }

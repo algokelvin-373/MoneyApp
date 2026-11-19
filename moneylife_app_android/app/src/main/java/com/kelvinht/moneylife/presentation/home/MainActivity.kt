@@ -119,8 +119,11 @@ class MainActivity : AppCompatActivity() {
         binding.textLimit.text =
             getString(R.string.limit_from_format, RupiahFormatter.format(state.limit))
         binding.textLimitShort.text =
-            getString(R.string.limit_short_format, RupiahFormatter.formatCompact(state.limit))
-        renderLimitOptions(state.limit)
+            getString(
+                if (isToday) R.string.limit_short_format else R.string.limit_short_locked_format,
+                RupiahFormatter.formatCompact(state.limit),
+            )
+        renderLimitOptions(state.limit, enabled = isToday)
         binding.textRemaining.text =
             getString(R.string.remaining_format, RupiahFormatter.format(state.remaining))
         binding.progressDaily.setProgressCompat(state.usagePercent, true)
@@ -162,16 +165,30 @@ class MainActivity : AppCompatActivity() {
         expenseAdapter.submitList(state.expenses)
     }
 
-    private fun renderLimitOptions(limit: Long) {
-        updateLimitOption(binding.buttonLimit50, selected = limit == DailyBudget.DAILY_LIMIT_50K)
-        updateLimitOption(binding.buttonLimit100, selected = limit == DailyBudget.DAILY_LIMIT_100K)
+    private fun renderLimitOptions(
+        limit: Long,
+        enabled: Boolean,
+    ) {
+        updateLimitOption(
+            binding.buttonLimit50,
+            selected = limit == DailyBudget.DAILY_LIMIT_50K,
+            enabled = enabled,
+        )
+        updateLimitOption(
+            binding.buttonLimit100,
+            selected = limit == DailyBudget.DAILY_LIMIT_100K,
+            enabled = enabled,
+        )
     }
 
     private fun updateLimitOption(
         option: TextView,
         selected: Boolean,
+        enabled: Boolean,
     ) {
         option.isSelected = selected
+        option.isEnabled = enabled
+        option.alpha = if (enabled) 1f else DISABLED_LIMIT_ALPHA
         option.setBackgroundResource(
             if (selected) R.drawable.bg_limit_option else android.R.color.transparent,
         )
@@ -202,5 +219,9 @@ class MainActivity : AppCompatActivity() {
             .setNegativeButton(R.string.cancel, null)
             .setPositiveButton(R.string.delete) { _, _ -> viewModel.deleteExpense(item.id) }
             .show()
+    }
+
+    private companion object {
+        const val DISABLED_LIMIT_ALPHA = 0.45f
     }
 }

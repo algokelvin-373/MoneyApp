@@ -14,6 +14,7 @@ import com.kelvinht.moneylife.domain.usecase.ObserveDailyLimitUseCase
 import com.kelvinht.moneylife.domain.usecase.ObserveSavingsBalanceUseCase
 import com.kelvinht.moneylife.domain.usecase.RolloverDailySavingsUseCase
 import com.kelvinht.moneylife.domain.usecase.SetDailyLimitUseCase
+import com.kelvinht.moneylife.domain.usecase.SnapshotDailyLimitUseCase
 import com.kelvinht.moneylife.presentation.common.toStyle
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,6 +37,7 @@ class HomeViewModel(
     private val getDailyLimit: GetDailyLimitUseCase,
     private val observeDailyLimit: ObserveDailyLimitUseCase,
     private val setDailyLimit: SetDailyLimitUseCase,
+    private val snapshotDailyLimit: SnapshotDailyLimitUseCase,
 ) : ViewModel() {
     private val dateKey = MutableStateFlow(DateUtils.todayKey())
     private var lastTodayKey = dateKey.value
@@ -48,7 +50,7 @@ class HomeViewModel(
                 combine(
                     getDailyExpenses(key),
                     observeSavingsBalance(DateUtils.monthKeyOf(key)),
-                    observeDailyLimit(),
+                    observeDailyLimit(key),
                 ) { expenses, savingsBalance, dailyLimit ->
                     toUiState(
                         budget = calculateDailyBudget(key, expenses, dailyLimit),
@@ -69,7 +71,12 @@ class HomeViewModel(
             // on lastTodayKey and roll over the same day twice.
             refreshMutex.withLock {
                 val today = DateUtils.todayKey()
-                rolloverDailySavings(today, getDailyLimit())
+                rolloverDailySavings(
+                    today,
+                    limitForDate = { dateKey -> getDailyLimit(dateKey) },
+                    snapshotDailyLimit = { dateKey -> snapshotDailyLimit(dateKey) },
+                )
+                snapshotDailyLimit(today)
                 if (dateKey.value == lastTodayKey) dateKey.value = today
                 lastTodayKey = today
             }
@@ -94,7 +101,9 @@ class HomeViewModel(
     }
 
     fun selectDailyLimit(limit: Long) {
-        viewModelScope.launch { setDailyLimit(limit) }
+        val key = dateKey.value
+        if (key != DateUtils.todayKey()) return
+        viewModelScope.launch { setDailyLimit(key, limit) }
     }
 
     fun deleteExpense(id: Long) {

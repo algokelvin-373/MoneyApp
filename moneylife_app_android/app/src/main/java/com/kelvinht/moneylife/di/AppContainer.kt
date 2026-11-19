@@ -20,6 +20,7 @@ import com.kelvinht.moneylife.domain.usecase.ObserveDailyLimitUseCase
 import com.kelvinht.moneylife.domain.usecase.ObserveSavingsBalanceUseCase
 import com.kelvinht.moneylife.domain.usecase.RolloverDailySavingsUseCase
 import com.kelvinht.moneylife.domain.usecase.SetDailyLimitUseCase
+import com.kelvinht.moneylife.domain.usecase.SnapshotDailyLimitUseCase
 
 /**
  * Simple manual dependency container. Keeps construction of the data layer and
@@ -38,8 +39,11 @@ class AppContainer(context: Context) {
     val observeDailyLimit: ObserveDailyLimitUseCase =
         ObserveDailyLimitUseCase(dailyLimitRepository)
     val setDailyLimit: SetDailyLimitUseCase = SetDailyLimitUseCase(dailyLimitRepository)
+    val snapshotDailyLimit: SnapshotDailyLimitUseCase =
+        SnapshotDailyLimitUseCase(dailyLimitRepository)
 
-    private val dailyLimitProvider = DailyLimitProvider { getDailyLimit() }
+    private val dailyLimitProvider =
+        DailyLimitProvider { dateKey -> getDailyLimit(dateKey) }
 
     val getDailyExpenses: GetDailyExpensesUseCase = GetDailyExpensesUseCase(expenseRepository)
     val calculateDailyBudget: CalculateDailyBudgetUseCase = CalculateDailyBudgetUseCase()
