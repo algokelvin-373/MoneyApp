@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="default_stroke">1dp</dimen>
+    <dimen name="selected_stroke">3dp</dimen>
+</resources>

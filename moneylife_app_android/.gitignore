@@ -1,0 +1,19 @@
+*.iml
+.gradle
+/local.properties
+.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Folder artefak dari ekspansi env var yang gagal
+%GRADLE_USER_HOME%/
+
+# Release signing credentials must stay outside Git.
+*.jks
+*.keystore
+keystore.properties
+signing.properties

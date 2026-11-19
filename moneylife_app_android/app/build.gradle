@@ -1,0 +1,118 @@
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.ktlint)
+}
+
+def releaseSigningProperties = new Properties()
+def releaseSigningPropertiesPath = providers.environmentVariable("MONEYLIFE_SIGNING_PROPERTIES").orNull
+if (releaseSigningPropertiesPath != null) {
+    def releaseSigningPropertiesFile = file(releaseSigningPropertiesPath)
+    if (!releaseSigningPropertiesFile.isFile()) {
+        throw new GradleException("MONEYLIFE_SIGNING_PROPERTIES does not point to a readable file")
+    }
+    releaseSigningPropertiesFile.withInputStream { releaseSigningProperties.load(it) }
+    ["storeFile", "storePassword", "keyAlias", "keyPassword"].each { propertyName ->
+        if (!releaseSigningProperties.getProperty(propertyName)) {
+            throw new GradleException("Missing release signing property: ${propertyName}")
+        }
+    }
+}
+
+// Room exports the schema of every database version into app/schemas so the
+// migrations can be validated against the real schema history.
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
+android {
+    namespace 'com.kelvinht.moneylife'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId "com.kelvinht.moneylife"
+        minSdk 27
+        targetSdk 36
+        // versionCode = major * 10000 + minor * 100 + patch, so semver 1.0.0 -> 10000.
+        versionCode 10000
+        versionName "1.0.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        if (!releaseSigningProperties.isEmpty()) {
+            release {
+                storeFile file(releaseSigningProperties.getProperty("storeFile"))
+                storePassword releaseSigningProperties.getProperty("storePassword")
+                keyAlias releaseSigningProperties.getProperty("keyAlias")
+                keyPassword releaseSigningProperties.getProperty("keyPassword")
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            if (signingConfigs.findByName("release") != null) {
+                signingConfig signingConfigs.release
+            }
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
+    }
+    sourceSets {
+        // The exported Room schemas are shipped as assets of the test APK so
+        // MigrationTestHelper can validate the migrations against them.
+        androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
+    }
+    lint {
+        abortOnError = true
+        checkReleaseBuilds = true
+    }
+}
+
+ktlint {
+    android.set(true)
+    ignoreFailures.set(false)
+}
+
+dependencies {
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.constraintlayout)
+
+    // RecyclerView
+    implementation(libs.androidx.recyclerview)
+
+    // ViewModel
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+
+    // Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
+    // Coroutines
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+
+    testImplementation libs.junit
+    testImplementation libs.kotlinx.coroutines.test
+    androidTestImplementation libs.androidx.junit
+    androidTestImplementation libs.androidx.espresso.core
+    androidTestImplementation libs.androidx.room.testing
+}

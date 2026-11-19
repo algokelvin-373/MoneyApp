@@ -1,10 +1,17 @@
-*.iml
-.gradle
-/local.properties
-.idea
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
-local.properties
+# Local build caches and temporary binaries
+.cache/
+.tmp/
+
+# Runtime logs
+*.log
+
+# Local secrets and workspace-only artifacts
+API Key*.txt
+.dump/
+.vault/
+
+# Android release signing credentials
+*.jks
+*.keystore
+keystore.properties
+signing.properties
