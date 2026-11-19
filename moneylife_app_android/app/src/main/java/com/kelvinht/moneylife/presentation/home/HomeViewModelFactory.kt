@@ -16,7 +16,9 @@ class HomeViewModelFactory(
                 deleteExpense = container.deleteExpense,
                 observeSavingsBalance = container.observeSavingsBalance,
                 rolloverDailySavings = container.rolloverDailySavings,
-                dailyLimit = container.dailyLimit,
+                getDailyLimit = container.getDailyLimit,
+                observeDailyLimit = container.observeDailyLimit,
+                setDailyLimit = container.setDailyLimit,
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

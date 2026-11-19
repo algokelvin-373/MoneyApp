@@ -7,8 +7,12 @@ import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.domain.usecase.CalculateDailyBudgetUseCase
 import com.kelvinht.moneylife.domain.usecase.DeleteExpenseUseCase
 import com.kelvinht.moneylife.domain.usecase.GetDailyExpensesUseCase
+import com.kelvinht.moneylife.domain.usecase.GetDailyLimitUseCase
+import com.kelvinht.moneylife.domain.usecase.ObserveDailyLimitUseCase
 import com.kelvinht.moneylife.domain.usecase.ObserveSavingsBalanceUseCase
 import com.kelvinht.moneylife.domain.usecase.RolloverDailySavingsUseCase
+import com.kelvinht.moneylife.domain.usecase.SetDailyLimitUseCase
+import com.kelvinht.moneylife.testing.FakeDailyLimitRepository
 import com.kelvinht.moneylife.testing.FakeExpenseRepository
 import com.kelvinht.moneylife.testing.FakeSavingsRepository
 import kotlinx.coroutines.Dispatchers
@@ -35,6 +39,7 @@ import org.junit.Test
 class HomeViewModelTest {
     private val expenseRepository = FakeExpenseRepository()
     private val savingsRepository = FakeSavingsRepository()
+    private val dailyLimitRepository = FakeDailyLimitRepository()
     private val transactionRunner = FakeTransactionRunner()
     private lateinit var mainDispatcher: TestDispatcher
 
@@ -201,11 +206,51 @@ class HomeViewModelTest {
             assertEquals(0L, viewModel.uiState.value.spent)
         }
 
-    private fun createViewModel(limit: Long = DAILY_LIMIT): HomeViewModel =
+    @Test
+    fun selectDailyLimit_updatesTheBudgetImmediately() =
+        runTest(mainDispatcher) {
+            expenseRepository.seed(expense(40_000, DateUtils.todayKey()))
+            val viewModel = createViewModel()
+            observe(viewModel)
+
+            viewModel.selectDailyLimit(50_000L)
+            advanceUntilIdle()
+
+            assertEquals(50_000L, viewModel.uiState.value.limit)
+            assertEquals(10_000L, viewModel.uiState.value.remaining)
+            assertEquals(80, viewModel.uiState.value.usagePercent)
+            assertEquals(BudgetStatus.WARNING, viewModel.uiState.value.budgetStatus)
+        }
+
+    @Test
+    fun startsWithThePersistedDailyLimit() =
+        runTest(mainDispatcher) {
+            val limitRepository = FakeDailyLimitRepository(50_000L)
+            val viewModel = createViewModel(limitRepository)
+            observe(viewModel)
+
+            assertEquals(50_000L, viewModel.uiState.value.limit)
+        }
+
+    @Test
+    fun refresh_settlesMissedDaysWithTheSelectedLimit() =
+        runTest(mainDispatcher) {
+            val yesterday = dateKeyOfDays(-1)
+            savingsRepository.lastActiveDate = yesterday
+            val viewModel = createViewModel(FakeDailyLimitRepository(50_000L))
+            observe(viewModel)
+
+            viewModel.refresh()
+            advanceUntilIdle()
+
+            assertEquals(50_000L, savingsRepository.savedSavings()[yesterday])
+        }
+
+    private fun createViewModel(limitRepository: FakeDailyLimitRepository = dailyLimitRepository): HomeViewModel =
         HomeViewModel(
             getDailyExpenses = GetDailyExpensesUseCase(expenseRepository),
             calculateDailyBudget = CalculateDailyBudgetUseCase(),
-            deleteExpense = DeleteExpenseUseCase(expenseRepository, savingsRepository, transactionRunner, limit),
+            deleteExpense = DeleteExpenseUseCase(expenseRepository, savingsRepository, transactionRunner, DAILY_LIMIT),
             observeSavingsBalance = ObserveSavingsBalanceUseCase(savingsRepository),
             rolloverDailySavings =
                 RolloverDailySavingsUseCase(
@@ -213,7 +258,9 @@ class HomeViewModelTest {
                     savingsRepository,
                     transactionRunner,
                 ),
-            dailyLimit = limit,
+            getDailyLimit = GetDailyLimitUseCase(limitRepository),
+            observeDailyLimit = ObserveDailyLimitUseCase(limitRepository),
+            setDailyLimit = SetDailyLimitUseCase(limitRepository),
         )
 
     /** Keeps the state flow alive so the ViewModel keeps producing updates. */

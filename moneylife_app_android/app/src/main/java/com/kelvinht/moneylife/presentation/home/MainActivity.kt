@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +19,7 @@ import com.kelvinht.moneylife.core.format.RupiahFormatter
 import com.kelvinht.moneylife.core.util.DateUtils
 import com.kelvinht.moneylife.databinding.ActivityMainBinding
 import com.kelvinht.moneylife.domain.model.CategoryBudget
+import com.kelvinht.moneylife.domain.model.DailyBudget
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.presentation.addedit.AddExpenseActivity
 import com.kelvinht.moneylife.presentation.privacy.PrivacyPolicyActivity
@@ -66,6 +68,12 @@ class MainActivity : AppCompatActivity() {
         binding.buttonPreviousDay.setOnClickListener { viewModel.previousDay() }
         binding.buttonNextDay.setOnClickListener { viewModel.nextDay() }
         binding.buttonToday.setOnClickListener { viewModel.showToday() }
+        binding.buttonLimit50.setOnClickListener {
+            viewModel.selectDailyLimit(DailyBudget.DAILY_LIMIT_50K)
+        }
+        binding.buttonLimit100.setOnClickListener {
+            viewModel.selectDailyLimit(DailyBudget.DAILY_LIMIT_100K)
+        }
         binding.buttonPrivacy.setOnClickListener {
             startActivity(Intent(this, PrivacyPolicyActivity::class.java))
         }
@@ -112,6 +120,7 @@ class MainActivity : AppCompatActivity() {
             getString(R.string.limit_from_format, RupiahFormatter.format(state.limit))
         binding.textLimitShort.text =
             getString(R.string.limit_short_format, RupiahFormatter.formatCompact(state.limit))
+        renderLimitOptions(state.limit)
         binding.textRemaining.text =
             getString(R.string.remaining_format, RupiahFormatter.format(state.remaining))
         binding.progressDaily.setProgressCompat(state.usagePercent, true)
@@ -151,6 +160,27 @@ class MainActivity : AppCompatActivity() {
 
         binding.emptyState.visibility = if (state.isEmpty) View.VISIBLE else View.GONE
         expenseAdapter.submitList(state.expenses)
+    }
+
+    private fun renderLimitOptions(limit: Long) {
+        updateLimitOption(binding.buttonLimit50, selected = limit == DailyBudget.DAILY_LIMIT_50K)
+        updateLimitOption(binding.buttonLimit100, selected = limit == DailyBudget.DAILY_LIMIT_100K)
+    }
+
+    private fun updateLimitOption(
+        option: TextView,
+        selected: Boolean,
+    ) {
+        option.isSelected = selected
+        option.setBackgroundResource(
+            if (selected) R.drawable.bg_limit_option else android.R.color.transparent,
+        )
+        option.setTextColor(
+            ContextCompat.getColor(
+                this,
+                if (selected) R.color.colorPrimaryDark else R.color.textSecondary,
+            ),
+        )
     }
 
     private fun categoryUsage(

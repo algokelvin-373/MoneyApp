@@ -3,6 +3,7 @@ package com.kelvinht.moneylife.domain.usecase
 import com.kelvinht.moneylife.core.util.DateUtils
 import com.kelvinht.moneylife.domain.model.Expense
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
+import com.kelvinht.moneylife.domain.repository.DailyLimitProvider
 import com.kelvinht.moneylife.domain.repository.ExpenseRepository
 import com.kelvinht.moneylife.domain.repository.SavingsRepository
 import com.kelvinht.moneylife.domain.repository.TransactionRunner
@@ -18,8 +19,20 @@ class AddExpenseUseCase(
     private val repository: ExpenseRepository,
     private val savingsRepository: SavingsRepository,
     private val transactionRunner: TransactionRunner,
-    private val dailyLimit: Long,
+    private val dailyLimitProvider: DailyLimitProvider,
 ) {
+    constructor(
+        repository: ExpenseRepository,
+        savingsRepository: SavingsRepository,
+        transactionRunner: TransactionRunner,
+        dailyLimit: Long,
+    ) : this(
+        repository,
+        savingsRepository,
+        transactionRunner,
+        DailyLimitProvider { dailyLimit },
+    )
+
     suspend operator fun invoke(
         category: ExpenseCategory,
         amount: Long,
@@ -44,6 +57,7 @@ class AddExpenseUseCase(
                 val id = repository.addExpense(expense)
                 if (DateUtils.isPast(dateKey)) {
                     val spent = repository.getExpensesByDate(dateKey).sumOf { it.amount }
+                    val dailyLimit = dailyLimitProvider.current()
                     savingsRepository.saveDailySaving(
                         dateKey,
                         (dailyLimit - spent).coerceAtLeast(0L),

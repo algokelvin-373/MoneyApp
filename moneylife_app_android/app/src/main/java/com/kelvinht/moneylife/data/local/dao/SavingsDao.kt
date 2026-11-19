@@ -22,6 +22,9 @@ interface SavingsDao {
     @Query("SELECT value FROM app_state WHERE stateKey = :key LIMIT 1")
     suspend fun getState(key: String): String?
 
+    @Query("SELECT value FROM app_state WHERE stateKey = :key LIMIT 1")
+    fun observeState(key: String): Flow<String?>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveState(entity: AppStateEntity)
 }

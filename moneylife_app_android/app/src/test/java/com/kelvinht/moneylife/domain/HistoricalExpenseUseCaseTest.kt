@@ -3,6 +3,7 @@ package com.kelvinht.moneylife.domain
 import com.kelvinht.moneylife.core.util.DateUtils
 import com.kelvinht.moneylife.domain.model.Expense
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
+import com.kelvinht.moneylife.domain.repository.DailyLimitProvider
 import com.kelvinht.moneylife.domain.repository.ExpenseRepository
 import com.kelvinht.moneylife.domain.repository.SavingsRepository
 import com.kelvinht.moneylife.domain.usecase.AddExpenseUseCase
@@ -31,6 +32,29 @@ class HistoricalExpenseUseCaseTest {
             delete(id)
             assertEquals(null, expenses.getExpenseById(id))
             assertEquals(100_000L, savings.saved["2020-01-01"])
+        }
+
+    @Test
+    fun pastExpenseUsesTheCurrentlySelectedLimit() =
+        runBlocking {
+            val transactionRunner = FakeTransactionRunner()
+            val expenses = MemoryExpenseRepository(transactionRunner)
+            val savings = MemorySavingsRepository(transactionRunner)
+            var selectedLimit = 100_000L
+            val add =
+                AddExpenseUseCase(
+                    expenses,
+                    savings,
+                    transactionRunner,
+                    DailyLimitProvider { selectedLimit },
+                )
+
+            add(ExpenseCategory.MAKAN, 30_000L, "Kemarin", "2020-01-01").getOrThrow()
+            assertEquals(70_000L, savings.saved["2020-01-01"])
+
+            selectedLimit = 50_000L
+            add(ExpenseCategory.MAKAN, 10_000L, "Kemarin", "2020-01-01").getOrThrow()
+            assertEquals(10_000L, savings.saved["2020-01-01"])
         }
 
     @Test

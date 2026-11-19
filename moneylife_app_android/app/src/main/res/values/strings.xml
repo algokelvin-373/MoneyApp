@@ -10,6 +10,10 @@
     <string name="avatar_initials" translatable="false">AK</string>
     <string name="limit_from_format">dari %1$s</string>
     <string name="limit_short_format">Limit: %1$s</string>
+    <string name="daily_limit_option_50k">50rb</string>
+    <string name="daily_limit_option_100k">100rb</string>
+    <string name="daily_limit_50k_description">Pilih batas limit 50 ribu</string>
+    <string name="daily_limit_100k_description">Pilih batas limit 100 ribu</string>
     <string name="spending_header_today">●  PENGELUARAN HARI INI</string>
     <string name="spending_header_date">●  PENGELUARAN %1$s</string>
     <string name="remaining_format">Sisa %1$s</string>
