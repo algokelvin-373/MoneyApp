@@ -190,6 +190,7 @@ otomatis.
   `.github/workflows/pages.yml`)
 - Dokumen internal: `PRIVACY_POLICY.md` dan `docs/DATA_SAFETY.md`
 - Riwayat perubahan: `CHANGELOG.md`
+- Checklist rilis: `docs/RELEASE_CHECKLIST_v1.0.0.md`
 
 Halaman publik hanya memuat privacy policy; dokumen internal dan source code
 tidak ikut dipublikasikan.

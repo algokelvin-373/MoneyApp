@@ -4,13 +4,23 @@ Semua perubahan penting pada MoneyLife Android dicatat di sini. Format mengikuti
 [Keep a Changelog](https://keepachangelog.com/id/1.1.0/) dan versi mengikuti
 [Semantic Versioning](https://semver.org/lang/id/).
 
-## [Unreleased]
+> Status: **release candidate `1.0.0`** disiapkan 21 November 2026. Tanggal final
+> mengikuti tag setelah R7/R8/R10 selesai. Lihat
+> `docs/RELEASE_CHECKLIST_v1.0.0.md`.
+
+## [1.0.0] - 2026-11-21 (release candidate)
 
 ### Added
 
+- Aplikasi pencatatan pengeluaran harian untuk kategori Makan, Transport, dan
+  Jajan.
 - Pilihan batas harian **Rp 50.000** atau **Rp 100.000**.
 - Penyimpanan snapshot batas harian per tanggal; tanggal lampau terkunci pada
   batas yang berlaku saat hari itu berjalan.
+- Ringkasan pengeluaran, progress batas harian, dan riwayat per tanggal.
+- Rollover sisa batas harian menjadi saldo tabungan bulanan.
+- Penyimpanan lokal dengan Room dan dukungan migrasi database.
+- Privacy policy publik dan deklarasi Data Safety.
 - Build variant `staging` dengan application ID
   `com.kelvinht.moneylife.staging`, label **MoneyLife Staging**, dan konfigurasi
   R8 yang mengikuti release.
@@ -30,15 +40,9 @@ Semua perubahan penting pada MoneyLife Android dicatat di sini. Format mengikuti
 - Jarak tombol **Catat Pengeluaran** dari daftar pengeluaran diperbaiki.
 - Resource view yang tidak terpakai dihapus.
 
-## [1.0.0] - 2026-11-16
+### Release gates
 
-### Added
-
-- Aplikasi pencatatan pengeluaran harian untuk kategori Makan, Transport, dan
-  Jajan.
-- Ringkasan pengeluaran, progress batas harian, dan riwayat per tanggal.
-- Rollover sisa batas harian menjadi saldo tabungan bulanan.
-- Penyimpanan lokal dengan Room dan dukungan migrasi database.
-- Privacy policy publik dan deklarasi Data Safety.
-- CI untuk unit test, ktlint, lint, instrumentation test API 27/API 36, dan
-  release bundle dengan R8.
+- CI menjalankan unit test, ktlint, lint debug/release, instrumentation test API
+  27/API 36, `bundleRelease`, dan `bundleStaging`.
+- Smoke test perangkat fisik (R7), Play Console (R8), aksesibilitas (R10), dan
+  tag final (R11) masih terbuka.
