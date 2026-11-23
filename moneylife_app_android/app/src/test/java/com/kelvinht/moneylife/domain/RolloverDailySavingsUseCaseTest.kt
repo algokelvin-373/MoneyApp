@@ -88,6 +88,21 @@ class RolloverDailySavingsUseCaseTest {
         }
 
     @Test
+    fun clockCorrectedBackwards_reanchorsAFutureActiveDate() =
+        runBlocking {
+            // The device clock was ahead (1 Dec) when the database was written
+            // and has since been corrected to an earlier day. The rollover must
+            // recover instead of staying frozen until December.
+            val savings = FakeSavingsRepository(initialDate = "2026-12-01")
+            val useCase = RolloverDailySavingsUseCase(FakeExpenseRepository(), savings, FakeTransactionRunner())
+
+            useCase("2026-11-23", DAILY_LIMIT)
+
+            assertEquals("2026-11-23", savings.activeDate)
+            assertTrue(savings.saved.isEmpty())
+        }
+
+    @Test
     fun missedDays_areSettledOneByOne() =
         runBlocking {
             // App was last opened on the 20th and is opened again on the 23rd:

@@ -42,6 +42,13 @@ class RolloverDailySavingsUseCase(
 
         val lastActive = DateUtils.parseDate(lastActiveDate)
         val today = DateUtils.parseDate(todayKey)
+        if (lastActive.isAfter(today)) {
+            // The device clock was set ahead (for example while testing) and has
+            // since been corrected backwards. Re-anchor instead of blocking the
+            // rollover until the stored future date is reached again.
+            savingsRepository.setLastActiveDate(todayKey)
+            return
+        }
         if (!lastActive.isBefore(today)) return
 
         transactionRunner.runInTransaction {

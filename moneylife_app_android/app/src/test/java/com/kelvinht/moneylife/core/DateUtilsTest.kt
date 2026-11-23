@@ -3,6 +3,7 @@ package com.kelvinht.moneylife.core
 import com.kelvinht.moneylife.core.util.DateUtils
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDate
@@ -43,5 +44,17 @@ class DateUtilsTest {
         assertTrue(DateUtils.isPast(DateUtils.dateKey(today.minusDays(1))))
         assertFalse(DateUtils.isPast(DateUtils.dateKey(today)))
         assertFalse(DateUtils.isPast(DateUtils.dateKey(today.plusDays(1))))
+    }
+
+    @Test
+    fun `malformed date keys are rejected instead of throwing`() {
+        val today = LocalDate.now()
+        assertFalse(DateUtils.isTodayOrPast(""))
+        assertFalse(DateUtils.isTodayOrPast("bukan-tanggal"))
+        assertFalse(DateUtils.isFuture(""))
+        assertFalse(DateUtils.isFuture("2026-13-40"))
+        assertFalse(DateUtils.isPast("bukan-tanggal"))
+        assertNull(DateUtils.parseDateOrNull(""))
+        assertEquals(today, DateUtils.parseDateOrNull(DateUtils.dateKey(today)))
     }
 }
