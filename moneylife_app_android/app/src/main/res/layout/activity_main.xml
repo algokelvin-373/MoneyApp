@@ -448,11 +448,6 @@
                             android:textSize="14sp"
                             android:textStyle="bold" />
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="6dp"
-                            android:layout_marginTop="8dp"
-                            android:background="@color/track" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -510,11 +505,6 @@
                             android:textSize="14sp"
                             android:textStyle="bold" />
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="6dp"
-                            android:layout_marginTop="8dp"
-                            android:background="@color/track" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -572,11 +562,6 @@
                             android:textSize="14sp"
                             android:textStyle="bold" />
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="6dp"
-                            android:layout_marginTop="8dp"
-                            android:background="@color/track" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
