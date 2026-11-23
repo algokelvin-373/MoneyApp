@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 
 class AddExpenseActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddExpenseBinding
+    private lateinit var categoryOptions: List<CategoryOption>
 
     private val viewModel: AddExpenseViewModel by viewModels {
         AddExpenseViewModelFactory((application as MoneyLifeApplication).container)
@@ -45,17 +46,33 @@ class AddExpenseActivity : AppCompatActivity() {
     }
 
     private fun setupCategorySelector() {
-        binding.categoryMakan.setOnClickListener { viewModel.selectCategory(ExpenseCategory.MAKAN) }
-        binding.categoryTransport.setOnClickListener { viewModel.selectCategory(ExpenseCategory.TRANSPORT) }
-        binding.categoryJajan.setOnClickListener { viewModel.selectCategory(ExpenseCategory.JAJAN) }
-        binding.categoryKebutuhanLain.setOnClickListener {
-            viewModel.selectCategory(ExpenseCategory.KEBUTUHAN_LAIN)
-        }
-        binding.categoryKebutuhanOrangTua.setOnClickListener {
-            viewModel.selectCategory(ExpenseCategory.KEBUTUHAN_ORANG_TUA)
-        }
-        binding.categoryTopUpCoinsTiktok.setOnClickListener {
-            viewModel.selectCategory(ExpenseCategory.TOP_UP_COINS_TIKTOK)
+        categoryOptions =
+            listOf(
+                CategoryOption(ExpenseCategory.MAKAN, binding.categoryMakan, binding.checkMakan),
+                CategoryOption(
+                    ExpenseCategory.TRANSPORT,
+                    binding.categoryTransport,
+                    binding.checkTransport,
+                ),
+                CategoryOption(ExpenseCategory.JAJAN, binding.categoryJajan, binding.checkJajan),
+                CategoryOption(
+                    ExpenseCategory.KEBUTUHAN_LAIN,
+                    binding.categoryKebutuhanLain,
+                    binding.checkKebutuhanLain,
+                ),
+                CategoryOption(
+                    ExpenseCategory.KEBUTUHAN_ORANG_TUA,
+                    binding.categoryKebutuhanOrangTua,
+                    binding.checkKebutuhanOrangTua,
+                ),
+                CategoryOption(
+                    ExpenseCategory.TOP_UP_COINS_TIKTOK,
+                    binding.categoryTopUpCoinsTiktok,
+                    binding.checkTopUpCoinsTiktok,
+                ),
+            )
+        categoryOptions.forEach { option ->
+            option.card.setOnClickListener { viewModel.selectCategory(option.category) }
         }
     }
 
@@ -111,31 +128,18 @@ class AddExpenseActivity : AppCompatActivity() {
     }
 
     private fun renderCategory(selected: ExpenseCategory) {
-        val cards =
-            listOf(
-                binding.categoryMakan to ExpenseCategory.MAKAN,
-                binding.categoryTransport to ExpenseCategory.TRANSPORT,
-                binding.categoryJajan to ExpenseCategory.JAJAN,
-                binding.categoryKebutuhanLain to ExpenseCategory.KEBUTUHAN_LAIN,
-                binding.categoryKebutuhanOrangTua to ExpenseCategory.KEBUTUHAN_ORANG_TUA,
-                binding.categoryTopUpCoinsTiktok to ExpenseCategory.TOP_UP_COINS_TIKTOK,
-            )
-        cards.forEach { (card, category) ->
-            styleCategory(card, category == selected)
+        categoryOptions.forEach { option ->
+            val isSelected = option.category == selected
+            styleCategory(option.card, isSelected)
+            option.checkmark.visibility = if (isSelected) View.VISIBLE else View.GONE
         }
-        binding.checkMakan.visibility =
-            if (selected == ExpenseCategory.MAKAN) View.VISIBLE else View.GONE
-        binding.checkTransport.visibility =
-            if (selected == ExpenseCategory.TRANSPORT) View.VISIBLE else View.GONE
-        binding.checkJajan.visibility =
-            if (selected == ExpenseCategory.JAJAN) View.VISIBLE else View.GONE
-        binding.checkKebutuhanLain.visibility =
-            if (selected == ExpenseCategory.KEBUTUHAN_LAIN) View.VISIBLE else View.GONE
-        binding.checkKebutuhanOrangTua.visibility =
-            if (selected == ExpenseCategory.KEBUTUHAN_ORANG_TUA) View.VISIBLE else View.GONE
-        binding.checkTopUpCoinsTiktok.visibility =
-            if (selected == ExpenseCategory.TOP_UP_COINS_TIKTOK) View.VISIBLE else View.GONE
     }
+
+    private data class CategoryOption(
+        val category: ExpenseCategory,
+        val card: MaterialCardView,
+        val checkmark: View,
+    )
 
     private fun styleCategory(
         card: MaterialCardView,
