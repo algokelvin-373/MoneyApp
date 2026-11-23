@@ -21,7 +21,6 @@ import com.kelvinht.moneylife.R
 import com.kelvinht.moneylife.core.format.RupiahFormatter
 import com.kelvinht.moneylife.core.util.DateUtils
 import com.kelvinht.moneylife.databinding.ActivityMainBinding
-import com.kelvinht.moneylife.domain.model.CategoryBudget
 import com.kelvinht.moneylife.domain.model.DailyBudget
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.presentation.addedit.AddExpenseActivity
@@ -33,6 +32,7 @@ import java.util.Locale
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var expenseAdapter: ExpenseAdapter
+    private lateinit var categorySummaryAdapter: CategorySummaryAdapter
 
     private val viewModel: HomeViewModel by viewModels {
         HomeViewModelFactory((application as MoneyLifeApplication).container)
@@ -91,6 +91,11 @@ class MainActivity : AppCompatActivity() {
         expenseAdapter = ExpenseAdapter { item -> confirmDelete(item) }
         binding.listExpenses.layoutManager = LinearLayoutManager(this)
         binding.listExpenses.adapter = expenseAdapter
+
+        categorySummaryAdapter = CategorySummaryAdapter()
+        binding.listPopularCategories.layoutManager = LinearLayoutManager(this)
+        binding.listPopularCategories.adapter = categorySummaryAdapter
+        binding.listPopularCategories.isNestedScrollingEnabled = false
     }
 
     private fun setupActions() {
@@ -176,9 +181,14 @@ class MainActivity : AppCompatActivity() {
                     BudgetStatus.OVER -> R.string.budget_condition_over
                 },
             )
-        binding.textMakanAmount.text = categoryUsage(state, ExpenseCategory.MAKAN)
-        binding.textTransportAmount.text = categoryUsage(state, ExpenseCategory.TRANSPORT)
-        binding.textJajanAmount.text = categoryUsage(state, ExpenseCategory.JAJAN)
+        categorySummaryAdapter.submitList(
+            ExpenseCategory.entries.map { category ->
+                CategorySummaryUiModel(
+                    category = category,
+                    spent = state.spentByCategory[category] ?: 0L,
+                )
+            },
+        )
 
         val accentColorRes =
             when (state.budgetStatus) {
@@ -234,18 +244,6 @@ class MainActivity : AppCompatActivity() {
                 this,
                 if (selected) R.color.colorPrimaryDark else R.color.textSecondary,
             ),
-        )
-    }
-
-    private fun categoryUsage(
-        state: HomeUiState,
-        category: ExpenseCategory,
-    ): String {
-        val spent = state.spentByCategory[category] ?: 0L
-        return getString(
-            R.string.category_usage_format,
-            RupiahFormatter.format(spent),
-            RupiahFormatter.formatCompact(CategoryBudget.limitFor(category)),
         )
     }
 

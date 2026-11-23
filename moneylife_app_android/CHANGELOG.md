@@ -13,7 +13,8 @@ Semua perubahan penting pada MoneyLife Android dicatat di sini. Format mengikuti
 ### Added
 
 - Aplikasi pencatatan pengeluaran harian untuk kategori Makan, Transport, dan
-  Jajan.
+  Jajan, serta kategori Kebutuhan lain, Kebutuhan orang tua, dan Top Up Coins
+  TikTok.
 - Pilihan batas harian **Rp 50.000** atau **Rp 100.000**.
 - Penyimpanan snapshot batas harian per tanggal; tanggal lampau terkunci pada
   batas yang berlaku saat hari itu berjalan.
@@ -28,6 +29,8 @@ Semua perubahan penting pada MoneyLife Android dicatat di sini. Format mengikuti
 
 ### Changed
 
+- Ringkasan kategori populer ditampilkan sebagai daftar ringkas dengan jarak
+  antar-item 2dp.
 - Perhitungan tabungan dan rollover memakai batas harian tanggal masing-masing,
   termasuk untuk hari yang terlewat.
 - README disinkronkan dengan fitur batas harian dan struktur project terbaru.
