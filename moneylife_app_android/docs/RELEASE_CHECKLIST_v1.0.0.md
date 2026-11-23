@@ -67,11 +67,12 @@ lokal; Play App Signing tetap wajib diaktifkan saat upload ke Play Console.
 | --- | --- | --- |
 | R5 Play Console | ⏳ | Pemilik akun menempel privacy URL dan submit Data Safety. |
 | R5 deploy halaman | ⏳ | Halaman sumber sudah diperbarui, tetapi deploy dari `staging` diblokir environment protection GitHub Pages. Izinkan `staging` atau deploy setelah merge ke `master`. |
-| R7 smoke test | ⏳ | Butuh perangkat fisik dengan build release signed. |
+| R7 smoke test | ✅ | Lulus pada TECNO KJ5n / Android 13 (API 33), 23 Nov 2026. Seluruh skenario release signed dan 5/5 instrumentation test hijau; lihat `docs/R7_PHYSICAL_SMOKE_TEST.md`. |
+| API 36 release smoke | ⏳ | Instrumentation debug API 36 sudah hijau; APK release masih perlu smoke test singkat pada emulator API 36 untuk Definition of Done final. |
 | R8 Play Console | ⏳ | Isi App content, content rating, target audience, ads, app access, store listing, testers, dan rollout. |
 | R9 ekspor/restore | ⏳ | Putuskan minimal disclosure atau implementasi ekspor/impor. |
 | R10 aksesibilitas | ⏳ | Uji TalkBack, font scale 1.0×/2.0×, contrast, dan touch target. |
-| R11 tag final | ⏳ | Tag `v1.0.0` hanya setelah R7/R8/R10 selesai. |
+| R11 tag final | ⏳ | Tag `v1.0.0` hanya setelah smoke APK release API 36, R8/R10, dan keputusan R9 selesai. |
 | Keputusan staging | ⏳ | Tetap aplikasi terpisah (`.staging`) atau hapus suffix jika harus memakai app Play yang sama. |
 
 ## Checklist Play Console (belum dieksekusi)
@@ -90,7 +91,7 @@ lokal; Play App Signing tetap wajib diaktifkan saat upload ke Play Console.
 
 ## Prosedur tag final
 
-1. Selesaikan R7, R8, dan R10; putuskan R9 dan keputusan staging.
+1. Selesaikan smoke APK release API 36, R8, dan R10; putuskan R9 dan keputusan staging. R7 sudah lulus pada perangkat fisik.
 2. Freeze commit release dan pastikan working tree bersih.
 3. Jalankan ulang seluruh gate dari checkout bersih.
 4. Build AAB final, verifikasi `jarsigner`, hitung SHA-256 final, dan perbarui
