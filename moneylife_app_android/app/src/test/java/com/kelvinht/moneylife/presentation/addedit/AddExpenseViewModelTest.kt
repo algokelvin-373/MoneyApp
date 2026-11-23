@@ -103,6 +103,27 @@ class AddExpenseViewModelTest {
         }
 
     @Test
+    fun save_supportsEveryNewExpenseCategory() =
+        runTest(mainDispatcher) {
+            val newCategories =
+                listOf(
+                    ExpenseCategory.KEBUTUHAN_LAIN,
+                    ExpenseCategory.KEBUTUHAN_ORANG_TUA,
+                    ExpenseCategory.TOP_UP_COINS_TIKTOK,
+                )
+
+            newCategories.forEachIndexed { index, category ->
+                val viewModel = createViewModel()
+                viewModel.selectCategory(category)
+                viewModel.onAmountChanged((10_000L + index).toString())
+                viewModel.save()
+                advanceUntilIdle()
+            }
+
+            assertEquals(newCategories.toSet(), expenseRepository.current().map { it.category }.toSet())
+        }
+
+    @Test
     fun save_thatFails_showsAnErrorAndKeepsSavingFalse() =
         runTest(mainDispatcher) {
             expenseRepository.failOnWrite = true

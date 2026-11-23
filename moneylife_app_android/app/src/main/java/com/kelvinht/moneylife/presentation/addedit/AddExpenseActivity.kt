@@ -48,6 +48,15 @@ class AddExpenseActivity : AppCompatActivity() {
         binding.categoryMakan.setOnClickListener { viewModel.selectCategory(ExpenseCategory.MAKAN) }
         binding.categoryTransport.setOnClickListener { viewModel.selectCategory(ExpenseCategory.TRANSPORT) }
         binding.categoryJajan.setOnClickListener { viewModel.selectCategory(ExpenseCategory.JAJAN) }
+        binding.categoryKebutuhanLain.setOnClickListener {
+            viewModel.selectCategory(ExpenseCategory.KEBUTUHAN_LAIN)
+        }
+        binding.categoryKebutuhanOrangTua.setOnClickListener {
+            viewModel.selectCategory(ExpenseCategory.KEBUTUHAN_ORANG_TUA)
+        }
+        binding.categoryTopUpCoinsTiktok.setOnClickListener {
+            viewModel.selectCategory(ExpenseCategory.TOP_UP_COINS_TIKTOK)
+        }
     }
 
     private fun setupInputs() {
@@ -107,6 +116,9 @@ class AddExpenseActivity : AppCompatActivity() {
                 binding.categoryMakan to ExpenseCategory.MAKAN,
                 binding.categoryTransport to ExpenseCategory.TRANSPORT,
                 binding.categoryJajan to ExpenseCategory.JAJAN,
+                binding.categoryKebutuhanLain to ExpenseCategory.KEBUTUHAN_LAIN,
+                binding.categoryKebutuhanOrangTua to ExpenseCategory.KEBUTUHAN_ORANG_TUA,
+                binding.categoryTopUpCoinsTiktok to ExpenseCategory.TOP_UP_COINS_TIKTOK,
             )
         cards.forEach { (card, category) ->
             styleCategory(card, category == selected)
@@ -117,6 +129,12 @@ class AddExpenseActivity : AppCompatActivity() {
             if (selected == ExpenseCategory.TRANSPORT) View.VISIBLE else View.GONE
         binding.checkJajan.visibility =
             if (selected == ExpenseCategory.JAJAN) View.VISIBLE else View.GONE
+        binding.checkKebutuhanLain.visibility =
+            if (selected == ExpenseCategory.KEBUTUHAN_LAIN) View.VISIBLE else View.GONE
+        binding.checkKebutuhanOrangTua.visibility =
+            if (selected == ExpenseCategory.KEBUTUHAN_ORANG_TUA) View.VISIBLE else View.GONE
+        binding.checkTopUpCoinsTiktok.visibility =
+            if (selected == ExpenseCategory.TOP_UP_COINS_TIKTOK) View.VISIBLE else View.GONE
     }
 
     private fun styleCategory(

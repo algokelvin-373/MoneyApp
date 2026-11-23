@@ -25,6 +25,9 @@
     <color name="category_makan">#16A34A</color>
     <color name="category_transport">#2563EB</color>
     <color name="category_jajan">#F59E0B</color>
+    <color name="category_other">#7C3AED</color>
+    <color name="category_parents">#DB2777</color>
+    <color name="category_tiktok">#0891B2</color>
 
     <color name="ic_launcher_background">#0F766E</color>
 </resources>
