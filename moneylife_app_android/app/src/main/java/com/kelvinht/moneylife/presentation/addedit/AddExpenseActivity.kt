@@ -1,6 +1,5 @@
 package com.kelvinht.moneylife.presentation.addedit
 
-import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -14,7 +13,6 @@ import com.google.android.material.card.MaterialCardView
 import com.kelvinht.moneylife.MoneyLifeApplication
 import com.kelvinht.moneylife.R
 import com.kelvinht.moneylife.core.format.RupiahFormatter
-import com.kelvinht.moneylife.core.util.DateUtils
 import com.kelvinht.moneylife.databinding.ActivityAddExpenseBinding
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import kotlinx.coroutines.launch
@@ -65,17 +63,6 @@ class AddExpenseActivity : AppCompatActivity() {
         binding.quick100.setOnClickListener { viewModel.addQuickAmount(100_000) }
         binding.buttonReset.setOnClickListener { viewModel.reset() }
         binding.buttonBack.setOnClickListener { finish() }
-        binding.buttonChangeDate.setOnClickListener { showDatePicker() }
-        binding.textTransactionTime.setOnClickListener { showDatePicker() }
-    }
-
-    private fun showDatePicker() {
-        val selected = DateUtils.parseDate(viewModel.uiState.value.dateKey)
-        DatePickerDialog(this, { _, year, month, day ->
-            viewModel.selectDate(DateUtils.dateKey(java.time.LocalDate.of(year, month + 1, day)))
-        }, selected.year, selected.monthValue - 1, selected.dayOfMonth).apply {
-            datePicker.maxDate = System.currentTimeMillis()
-        }.show()
     }
 
     private fun setupSaveButton() {
@@ -102,7 +89,6 @@ class AddExpenseActivity : AppCompatActivity() {
             binding.inputNote.setSelection(state.note.length)
         }
         renderCategory(state.category)
-        binding.textTransactionTime.text = DateUtils.displayDate(state.dateKey)
         binding.textError.text = state.error?.let(::getString).orEmpty()
         binding.textError.visibility = if (state.error == null) View.GONE else View.VISIBLE
 

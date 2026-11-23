@@ -12,6 +12,7 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.action.ViewActions.scrollTo
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -58,6 +59,8 @@ class AddExpenseFlowTest {
 
             onView(withId(R.id.inputAmount)).check(matches(isDisplayed()))
             onView(withId(R.id.buttonSave)).check(matches(isDisplayed()))
+            onView(withText("TANGGAL TRANSAKSI")).check(doesNotExist())
+            onView(withText("Ubah")).check(doesNotExist())
         }
     }
 
@@ -95,12 +98,6 @@ class AddExpenseFlowTest {
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
         ActivityScenario.launch<AddExpenseActivity>(intent).use {
-            // The date from EXTRA_DATE_KEY is the one the form works with.
-            await("tanggal dari EXTRA_DATE_KEY ditampilkan") {
-                onView(withId(R.id.textTransactionTime))
-                    .check(matches(withText(DateUtils.displayDate(yesterday))))
-            }
-
             onView(withId(R.id.inputAmount)).perform(replaceText("15000"), closeSoftKeyboard())
             onView(withId(R.id.buttonSave)).perform(click())
         }
