@@ -82,8 +82,6 @@
     <string name="quick_add_20k">+20rb</string>
     <string name="quick_add_50k">+50rb</string>
     <string name="quick_add_100k">+100rb</string>
-    <string name="transaction_date_label">TANGGAL TRANSAKSI</string>
-    <string name="change_date">Ubah</string>
     <string name="note_label">CATATAN (OPSIONAL)</string>
     <string name="note_hint">Catatan (opsional)</string>
     <string name="save">Simpan Pengeluaran ✓</string>

@@ -34,6 +34,12 @@ Semua perubahan penting pada MoneyLife Android dicatat di sini. Format mengikuti
 - Dokumen privasi dan Data Safety tidak lagi terikat pada satu nomor versi
   aplikasi.
 
+### Removed
+
+- Field **Tanggal Transaksi** pada halaman Catat Pengeluaran. Tanggal transaksi
+  kini mengikuti hari yang dipilih di Home saat tombol Catat Pengeluaran
+  ditekan dan tidak dapat diubah lagi dari form.
+
 ### Fixed
 
 - Daftar pengeluaran dapat discroll saat isinya melebihi tinggi layar.
