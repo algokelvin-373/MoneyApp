@@ -77,7 +77,12 @@ class HomeViewModel(
                     snapshotDailyLimit = { dateKey -> snapshotDailyLimit(dateKey) },
                 )
                 snapshotDailyLimit(today)
-                if (dateKey.value == lastTodayKey) dateKey.value = today
+                // Keep the selected day in sync with the device clock. If the
+                // clock was corrected backwards (or forwards) the user must not
+                // stay on a day that is no longer reachable today.
+                if (dateKey.value == lastTodayKey || DateUtils.isFuture(dateKey.value)) {
+                    dateKey.value = today
+                }
                 lastTodayKey = today
             }
         }

@@ -208,6 +208,28 @@ class AddExpenseViewModelTest {
             assertEquals("Kopi", recreated.uiState.value.note)
         }
 
+    @Test
+    fun restoredFutureDate_fallsBackToToday() =
+        runTest(mainDispatcher) {
+            // A saved form from before the device clock was corrected must not
+            // reopen on a day that is in the future.
+            val handle = SavedStateHandle(mapOf("date" to dateKeyOfDays(1)))
+
+            val viewModel = createViewModel(handle)
+
+            assertEquals(DateUtils.todayKey(), viewModel.uiState.value.dateKey)
+        }
+
+    @Test
+    fun restoredMalformedDate_fallsBackToToday() =
+        runTest(mainDispatcher) {
+            val handle = SavedStateHandle(mapOf("date" to "bukan-tanggal"))
+
+            val viewModel = createViewModel(handle)
+
+            assertEquals(DateUtils.todayKey(), viewModel.uiState.value.dateKey)
+        }
+
     private fun createViewModel(handle: SavedStateHandle = SavedStateHandle()): AddExpenseViewModel =
         AddExpenseViewModel(
             addExpense =

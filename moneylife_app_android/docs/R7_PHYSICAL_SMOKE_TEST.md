@@ -40,6 +40,7 @@ Report lokal:
 
 ## Catatan
 
-- Perubahan waktu hanya dipakai untuk memicu rollover nyata karena waktu otomatis perangkat sudah nonaktif. Zona waktu tetap `Asia/Jakarta`, lalu jam dikembalikan ke 1 Des 2026 sesuai baseline perangkat.
+- Perubahan waktu hanya dipakai untuk memicu rollover nyata karena waktu otomatis perangkat sudah nonaktif. Zona waktu tetap `Asia/Jakarta`.
+- **Wajib setelah pengujian:** aktifkan kembali *Tanggal & waktu otomatis* (`adb shell settings put global auto_time 1`). Pada audit R7 perangkat ditinggalkan pada 1 Des 2026 dengan `auto_time=0`, sehingga clean install berikutnya wajar menampilkan **Senin, 1 Des 2026** — itu tanggal sistem perangkat, bukan bug aplikasi (aplikasi memakai `LocalDate.now()` lewat `DateUtils.todayKey()`).
 - Instalasi ADB sebelumnya memerlukan verifikasi aplikasi via USB/Play Protect diizinkan oleh pemilik perangkat.
 - Tidak ditemukan crash, kehilangan data yang tidak diharapkan, atau bug aplikasi selama R7. Tidak ada perubahan source code aplikasi.

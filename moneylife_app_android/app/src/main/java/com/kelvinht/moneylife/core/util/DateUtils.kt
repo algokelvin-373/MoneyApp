@@ -25,13 +25,31 @@ object DateUtils {
 
     fun todayKey(): String = LocalDate.now().format(dateKeyFormatter)
 
-    /** True when [dateKey] is today or any earlier day. */
-    fun isTodayOrPast(dateKey: String): Boolean = !parseDate(dateKey).isAfter(LocalDate.now())
+    /** True when [dateKey] is today or any earlier day. Malformed keys are rejected. */
+    fun isTodayOrPast(dateKey: String): Boolean {
+        val date = parseDateOrNull(dateKey) ?: return false
+        return !date.isAfter(LocalDate.now())
+    }
+
+    /** True only for days after today. Malformed keys are treated as not future. */
+    fun isFuture(dateKey: String): Boolean {
+        val date = parseDateOrNull(dateKey) ?: return false
+        return date.isAfter(LocalDate.now())
+    }
 
     /** True only for days before today; today itself is not final yet. */
-    fun isPast(dateKey: String): Boolean = parseDate(dateKey).isBefore(LocalDate.now())
+    fun isPast(dateKey: String): Boolean {
+        val date = parseDateOrNull(dateKey) ?: return false
+        return date.isBefore(LocalDate.now())
+    }
 
     fun parseDate(dateKey: String): LocalDate = LocalDate.parse(dateKey, dateKeyFormatter)
+
+    /**
+     * Lenient variant of [parseDate] for values that come from persisted state
+     * or intents, where a stale or malformed key must not crash the app.
+     */
+    fun parseDateOrNull(dateKey: String): LocalDate? = runCatching { parseDate(dateKey) }.getOrNull()
 
     fun dateKey(date: LocalDate): String = date.format(dateKeyFormatter)
 

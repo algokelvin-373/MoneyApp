@@ -85,16 +85,21 @@ class AddExpenseViewModel(
         }
     }
 
-    private fun restoreState(): AddExpenseUiState =
-        AddExpenseUiState(
+    private fun restoreState(): AddExpenseUiState {
+        // A saved form can outlive a device clock correction (the clock was
+        // ahead and is now behind the saved date). Never restore a date that is
+        // no longer valid, otherwise the form opens on a future day.
+        val restoredDate = savedStateHandle.get<String>(KEY_DATE).orEmpty()
+        return AddExpenseUiState(
             category =
                 savedStateHandle.get<String>(KEY_CATEGORY)
                     ?.let { name -> ExpenseCategory.entries.firstOrNull { it.name == name } }
                     ?: ExpenseCategory.MAKAN,
             amountInput = savedStateHandle[KEY_AMOUNT_INPUT] ?: "",
             note = savedStateHandle[KEY_NOTE] ?: "",
-            dateKey = savedStateHandle[KEY_DATE] ?: DateUtils.todayKey(),
+            dateKey = restoredDate.takeIf(DateUtils::isTodayOrPast) ?: DateUtils.todayKey(),
         )
+    }
 
     private fun updateState(transform: (AddExpenseUiState) -> AddExpenseUiState) {
         val updated = transform(_uiState.value)

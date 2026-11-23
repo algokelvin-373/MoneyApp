@@ -176,6 +176,21 @@ class HomeViewModelTest {
         }
 
     @Test
+    fun refresh_withFutureLastActiveDate_reanchorsInsteadOfFreezing() =
+        runTest(mainDispatcher) {
+            // Simulates a database written while the device clock was ahead.
+            savingsRepository.lastActiveDate = dateKeyOfDays(1)
+            val viewModel = createViewModel()
+            observe(viewModel)
+
+            viewModel.refresh()
+            advanceUntilIdle()
+
+            assertEquals(DateUtils.todayKey(), viewModel.uiState.value.dateKey)
+            assertEquals(DateUtils.todayKey(), savingsRepository.lastActiveDate)
+        }
+
+    @Test
     fun refresh_keepsTheDaySelectedByTheUser() =
         runTest(mainDispatcher) {
             val yesterday = dateKeyOfDays(-1)

@@ -1,7 +1,10 @@
 package com.kelvinht.moneylife.presentation.home
 
 import android.app.DatePickerDialog
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -35,6 +38,21 @@ class MainActivity : AppCompatActivity() {
         HomeViewModelFactory((application as MoneyLifeApplication).container)
     }
 
+    /**
+     * Keeps the home screen in sync when the user fixes the device clock while
+     * the app is open. Without this the date picked at startup would stay
+     * visible until the app is backgrounded and resumed.
+     */
+    private val clockChangeReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(
+                context: Context?,
+                intent: Intent?,
+            ) {
+                viewModel.refresh()
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -48,6 +66,25 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         viewModel.refresh()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        ContextCompat.registerReceiver(
+            this,
+            clockChangeReceiver,
+            IntentFilter().apply {
+                addAction(Intent.ACTION_DATE_CHANGED)
+                addAction(Intent.ACTION_TIME_CHANGED)
+                addAction(Intent.ACTION_TIMEZONE_CHANGED)
+            },
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unregisterReceiver(clockChangeReceiver)
     }
 
     private fun setupList() {

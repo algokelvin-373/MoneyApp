@@ -39,6 +39,12 @@ Semua perubahan penting pada MoneyLife Android dicatat di sini. Format mengikuti
 - Daftar pengeluaran dapat discroll saat isinya melebihi tinggi layar.
 - Jarak tombol **Catat Pengeluaran** dari daftar pengeluaran diperbaiki.
 - Resource view yang tidak terpakai dihapus.
+- Tanggal tersimpan yang jatuh di masa depan (misalnya setelah jam perangkat
+  yang sempat dimajukan dikoreksi mundur) tidak lagi membuat form atau
+  navigasi tanggal terbuka pada hari yang salah; pilihan tanggal dan rollover
+  tabungan otomatis kembali ke hari ini.
+- Perubahan tanggal, jam, atau zona waktu perangkat langsung menyegarkan
+  tanggal di layar Home tanpa perlu menutup aplikasi.
 
 ### Release gates
 
