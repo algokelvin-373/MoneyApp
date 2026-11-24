@@ -225,7 +225,7 @@ class CsvBackupManager(
             if (savings.isNotEmpty()) savingsDao.saveDailySavings(savings.values.toList())
             if (states.isNotEmpty()) savingsDao.saveStates(states.values.toList())
         }
-        expenses.size
+        return expenses.size
     }
 
     private fun writeBackup(csv: String) {
