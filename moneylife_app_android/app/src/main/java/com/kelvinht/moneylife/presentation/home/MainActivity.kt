@@ -6,7 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -125,6 +127,13 @@ class MainActivity : AppCompatActivity() {
         binding.buttonLimit100.setOnClickListener {
             viewModel.selectDailyLimit(DailyBudget.DAILY_LIMIT_100K)
         }
+        binding.buttonLimit150.setOnClickListener {
+            viewModel.selectDailyLimit(DailyBudget.DAILY_LIMIT_150K)
+        }
+        binding.buttonLimit200.setOnClickListener {
+            viewModel.selectDailyLimit(DailyBudget.DAILY_LIMIT_200K)
+        }
+        binding.buttonLimitCustom.setOnClickListener { showCustomLimitDialog() }
         binding.buttonPrivacy.setOnClickListener {
             startActivity(Intent(this, PrivacyPolicyActivity::class.java))
         }
@@ -155,6 +164,7 @@ class MainActivity : AppCompatActivity() {
         binding.textHistoryDate.contentDescription =
             getString(R.string.choose_date) + ": " + dateLabel
         val isToday = state.dateKey == DateUtils.todayKey()
+        val canChangeLimit = isToday && state.spent <= state.limit
         binding.textSpendingHeader.text =
             if (isToday) {
                 getString(R.string.spending_header_today)
@@ -171,10 +181,10 @@ class MainActivity : AppCompatActivity() {
             getString(R.string.limit_from_format, RupiahFormatter.format(state.limit))
         binding.textLimitShort.text =
             getString(
-                if (isToday) R.string.limit_short_format else R.string.limit_short_locked_format,
+                if (canChangeLimit) R.string.limit_short_format else R.string.limit_short_locked_format,
                 RupiahFormatter.formatCompact(state.limit),
             )
-        renderLimitOptions(state.limit, enabled = isToday)
+        renderLimitOptions(state.limit, enabled = canChangeLimit)
         binding.textRemaining.text =
             getString(R.string.remaining_format, RupiahFormatter.format(state.remaining))
         binding.progressDaily.setProgressCompat(state.usagePercent, true)
@@ -221,6 +231,39 @@ class MainActivity : AppCompatActivity() {
         expenseAdapter.submitList(state.expenses)
     }
 
+    private fun showCustomLimitDialog() {
+        val input =
+            EditText(this).apply {
+                inputType = InputType.TYPE_CLASS_NUMBER
+                hint = getString(R.string.custom_limit_hint)
+                setSingleLine(true)
+                viewModel.uiState.value.limit
+                    .takeIf { it !in DailyBudget.DAILY_LIMIT_OPTIONS }
+                    ?.let { setText(it.toString()) }
+            }
+        val dialog =
+            AlertDialog.Builder(this)
+                .setTitle(R.string.custom_limit_title)
+                .setMessage(R.string.custom_limit_message)
+                .setView(input)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.save_limit, null)
+                .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val limit = input.text?.toString()?.trim()?.toLongOrNull()
+                if (limit == null || limit <= 0L) {
+                    input.error = getString(R.string.custom_limit_invalid)
+                } else {
+                    viewModel.selectDailyLimit(limit)
+                    dialog.dismiss()
+                }
+            }
+        }
+        dialog.show()
+    }
+
     private fun renderLimitOptions(
         limit: Long,
         enabled: Boolean,
@@ -233,6 +276,21 @@ class MainActivity : AppCompatActivity() {
         updateLimitOption(
             binding.buttonLimit100,
             selected = limit == DailyBudget.DAILY_LIMIT_100K,
+            enabled = enabled,
+        )
+        updateLimitOption(
+            binding.buttonLimit150,
+            selected = limit == DailyBudget.DAILY_LIMIT_150K,
+            enabled = enabled,
+        )
+        updateLimitOption(
+            binding.buttonLimit200,
+            selected = limit == DailyBudget.DAILY_LIMIT_200K,
+            enabled = enabled,
+        )
+        updateLimitOption(
+            binding.buttonLimitCustom,
+            selected = limit !in DailyBudget.DAILY_LIMIT_OPTIONS,
             enabled = enabled,
         )
     }
