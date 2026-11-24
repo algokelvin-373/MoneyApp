@@ -9,7 +9,11 @@ data class AddExpenseUiState(
     val amountInput: String = "",
     val note: String = "",
     val dateKey: String = DateUtils.todayKey(),
+    val expenseId: Long? = null,
+    val isLoadingExpense: Boolean = false,
     @StringRes val error: Int? = null,
     val isSaving: Boolean = false,
     val isSaved: Boolean = false,
-)
+) {
+    val isEditing: Boolean get() = expenseId != null
+}

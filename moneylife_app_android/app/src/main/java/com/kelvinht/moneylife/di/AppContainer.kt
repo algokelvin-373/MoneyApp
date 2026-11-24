@@ -15,11 +15,13 @@ import com.kelvinht.moneylife.domain.usecase.AddExpenseUseCase
 import com.kelvinht.moneylife.domain.usecase.CalculateDailyBudgetUseCase
 import com.kelvinht.moneylife.domain.usecase.DeleteExpenseUseCase
 import com.kelvinht.moneylife.domain.usecase.GetDailyExpensesUseCase
+import com.kelvinht.moneylife.domain.usecase.GetExpenseByIdUseCase
 import com.kelvinht.moneylife.domain.usecase.GetDailyLimitUseCase
 import com.kelvinht.moneylife.domain.usecase.ObserveDailyLimitUseCase
 import com.kelvinht.moneylife.domain.usecase.ObserveSavingsBalanceUseCase
 import com.kelvinht.moneylife.domain.usecase.RolloverDailySavingsUseCase
 import com.kelvinht.moneylife.domain.usecase.SetDailyLimitUseCase
+import com.kelvinht.moneylife.domain.usecase.UpdateExpenseUseCase
 import com.kelvinht.moneylife.domain.usecase.SnapshotDailyLimitUseCase
 
 /**
@@ -51,6 +53,14 @@ class AppContainer(context: Context) {
         AddExpenseUseCase(expenseRepository, savingsRepository, transactionRunner, dailyLimitProvider)
     val deleteExpense: DeleteExpenseUseCase =
         DeleteExpenseUseCase(
+            expenseRepository,
+            savingsRepository,
+            transactionRunner,
+            dailyLimitProvider,
+        )
+    val getExpenseById = GetExpenseByIdUseCase(expenseRepository)
+    val updateExpense =
+        UpdateExpenseUseCase(
             expenseRepository,
             savingsRepository,
             transactionRunner,

@@ -13,6 +13,7 @@ import com.kelvinht.moneylife.core.util.DateUtils
 import com.kelvinht.moneylife.databinding.ItemExpenseBinding
 
 class ExpenseAdapter(
+    private val onEditClick: (ExpenseUiModel) -> Unit,
     private val onDeleteClick: (ExpenseUiModel) -> Unit,
 ) : ListAdapter<ExpenseUiModel, ExpenseAdapter.ExpenseViewHolder>(DIFF_CALLBACK) {
     override fun onCreateViewHolder(
@@ -25,7 +26,7 @@ class ExpenseAdapter(
                 parent,
                 false,
             )
-        return ExpenseViewHolder(binding, onDeleteClick)
+        return ExpenseViewHolder(binding, onEditClick, onDeleteClick)
     }
 
     override fun onBindViewHolder(
@@ -37,6 +38,7 @@ class ExpenseAdapter(
 
     class ExpenseViewHolder(
         private val binding: ItemExpenseBinding,
+        private val onEditClick: (ExpenseUiModel) -> Unit,
         private val onDeleteClick: (ExpenseUiModel) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ExpenseUiModel) {
@@ -56,6 +58,7 @@ class ExpenseAdapter(
                 binding.textNote.text = item.note
             }
 
+            binding.buttonEdit.setOnClickListener { onEditClick(item) }
             binding.buttonDelete.setOnClickListener { onDeleteClick(item) }
         }
     }

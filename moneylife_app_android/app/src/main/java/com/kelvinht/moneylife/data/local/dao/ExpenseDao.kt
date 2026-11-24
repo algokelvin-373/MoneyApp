@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.kelvinht.moneylife.data.local.entity.ExpenseEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -20,6 +21,9 @@ interface ExpenseDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: ExpenseEntity): Long
+
+    @Update
+    suspend fun update(entity: ExpenseEntity): Int
 
     @Query("DELETE FROM expenses WHERE id = :id")
     suspend fun deleteById(id: Long)

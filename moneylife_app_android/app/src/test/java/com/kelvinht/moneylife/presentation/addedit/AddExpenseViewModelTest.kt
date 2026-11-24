@@ -3,8 +3,11 @@ package com.kelvinht.moneylife.presentation.addedit
 import androidx.lifecycle.SavedStateHandle
 import com.kelvinht.moneylife.core.util.DateUtils
 import com.kelvinht.moneylife.domain.FakeTransactionRunner
+import com.kelvinht.moneylife.domain.repository.DailyLimitProvider
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.domain.usecase.AddExpenseUseCase
+import com.kelvinht.moneylife.domain.usecase.GetExpenseByIdUseCase
+import com.kelvinht.moneylife.domain.usecase.UpdateExpenseUseCase
 import com.kelvinht.moneylife.testing.FakeExpenseRepository
 import com.kelvinht.moneylife.testing.FakeSavingsRepository
 import kotlinx.coroutines.Dispatchers
@@ -259,6 +262,14 @@ class AddExpenseViewModelTest {
                     savingsRepository = savingsRepository,
                     transactionRunner = transactionRunner,
                     dailyLimit = DAILY_LIMIT,
+                ),
+            getExpenseById = GetExpenseByIdUseCase(expenseRepository),
+            updateExpense =
+                UpdateExpenseUseCase(
+                    expenseRepository,
+                    savingsRepository,
+                    transactionRunner,
+                    DailyLimitProvider { DAILY_LIMIT },
                 ),
             savedStateHandle = handle,
         )

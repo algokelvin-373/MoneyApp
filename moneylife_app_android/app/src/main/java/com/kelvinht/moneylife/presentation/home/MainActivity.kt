@@ -88,7 +88,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupList() {
-        expenseAdapter = ExpenseAdapter { item -> confirmDelete(item) }
+        expenseAdapter =
+            ExpenseAdapter(
+                onEditClick = { item ->
+                    startActivity(
+                        Intent(this, AddExpenseActivity::class.java)
+                            .putExtra(AddExpenseActivity.EXTRA_EXPENSE_ID, item.id),
+                    )
+                },
+                onDeleteClick = { item -> confirmDelete(item) },
+            )
         binding.listExpenses.layoutManager = LinearLayoutManager(this)
         binding.listExpenses.adapter = expenseAdapter
 

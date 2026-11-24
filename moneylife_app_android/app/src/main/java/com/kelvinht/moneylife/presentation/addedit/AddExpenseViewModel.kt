@@ -7,6 +7,8 @@ import com.kelvinht.moneylife.R
 import com.kelvinht.moneylife.core.util.DateUtils
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.domain.usecase.AddExpenseUseCase
+import com.kelvinht.moneylife.domain.usecase.GetExpenseByIdUseCase
+import com.kelvinht.moneylife.domain.usecase.UpdateExpenseUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,10 +16,56 @@ import kotlinx.coroutines.launch
 
 class AddExpenseViewModel(
     private val addExpense: AddExpenseUseCase,
+    private val getExpenseById: GetExpenseByIdUseCase,
+    private val updateExpense: UpdateExpenseUseCase,
     private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(restoreState())
     val uiState: StateFlow<AddExpenseUiState> = _uiState.asStateFlow()
+
+    fun startEditing(id: Long) {
+        val state = _uiState.value
+        if (id <= 0L || (state.expenseId == id && !state.isLoadingExpense)) return
+
+        updateState { it.copy(expenseId = id, isLoadingExpense = true, error = null) }
+        viewModelScope.launch {
+            val expense =
+                runCatching { getExpenseById(id) }
+                    .getOrElse {
+                        updateState { state ->
+                            state.copy(
+                                isLoadingExpense = false,
+                                error = R.string.error_load_expense_failed,
+                            )
+                        }
+                        return@launch
+                    }
+            if (expense == null) {
+                updateState {
+                    it.copy(
+                        isLoadingExpense = false,
+                        error = R.string.error_expense_not_found,
+                    )
+                }
+                return@launch
+            }
+
+            updateState { state ->
+                if (state.expenseId != id) {
+                    state
+                } else {
+                    state.copy(
+                        category = expense.category,
+                        amountInput = expense.amount.toString(),
+                        note = expense.note,
+                        dateKey = expense.dateKey,
+                        isLoadingExpense = false,
+                        error = null,
+                    )
+                }
+            }
+        }
+    }
 
     fun selectCategory(category: ExpenseCategory) {
         updateState { it.copy(category = category, error = null) }
@@ -57,28 +105,45 @@ class AddExpenseViewModel(
     }
 
     fun save() {
-        val amount = _uiState.value.amountInput.toLongOrNull()
+        val snapshot = _uiState.value
+        if (snapshot.isLoadingExpense) return
+
+        val amount = snapshot.amountInput.toLongOrNull()
         if (amount == null || amount <= 0L) {
             updateState { it.copy(error = R.string.error_amount_required) }
             return
         }
 
-        val snapshot = _uiState.value
         updateState { it.copy(isSaving = true, error = null) }
 
         viewModelScope.launch {
-            addExpense(
-                category = snapshot.category,
-                amount = amount,
-                note = snapshot.note,
-                dateKey = snapshot.dateKey,
-            ).onSuccess {
+            val result =
+                snapshot.expenseId?.let { id ->
+                    updateExpense(
+                        id = id,
+                        category = snapshot.category,
+                        amount = amount,
+                        note = snapshot.note,
+                    )
+                } ?: addExpense(
+                    category = snapshot.category,
+                    amount = amount,
+                    note = snapshot.note,
+                    dateKey = snapshot.dateKey,
+                ).map { Unit }
+
+            result.onSuccess {
                 updateState { it.copy(isSaving = false, isSaved = true) }
-            }.onFailure {
+            }.onFailure { failure ->
                 updateState {
                     it.copy(
                         isSaving = false,
-                        error = R.string.error_save_failed,
+                        error =
+                            if (failure is NoSuchElementException) {
+                                R.string.error_expense_not_found
+                            } else {
+                                R.string.error_save_failed
+                            },
                     )
                 }
             }
@@ -98,6 +163,8 @@ class AddExpenseViewModel(
             amountInput = savedStateHandle[KEY_AMOUNT_INPUT] ?: "",
             note = savedStateHandle[KEY_NOTE] ?: "",
             dateKey = restoredDate.takeIf(DateUtils::isTodayOrPast) ?: DateUtils.todayKey(),
+            expenseId = savedStateHandle[KEY_EXPENSE_ID],
+            isLoadingExpense = savedStateHandle[KEY_LOADING_EXPENSE] ?: false,
         )
     }
 
@@ -108,6 +175,8 @@ class AddExpenseViewModel(
         savedStateHandle[KEY_AMOUNT_INPUT] = updated.amountInput
         savedStateHandle[KEY_NOTE] = updated.note
         savedStateHandle[KEY_DATE] = updated.dateKey
+        savedStateHandle[KEY_EXPENSE_ID] = updated.expenseId
+        savedStateHandle[KEY_LOADING_EXPENSE] = updated.isLoadingExpense
     }
 
     private companion object {
@@ -117,5 +186,7 @@ class AddExpenseViewModel(
         const val KEY_AMOUNT_INPUT = "amount_input"
         const val KEY_NOTE = "note"
         const val KEY_DATE = "date"
+        const val KEY_EXPENSE_ID = "expense_id"
+        const val KEY_LOADING_EXPENSE = "loading_expense"
     }
 }

@@ -20,5 +20,7 @@ class ExpenseRepositoryImpl(
 
     override suspend fun addExpense(expense: Expense): Long = dao.insert(expense.toEntity())
 
+    override suspend fun updateExpense(expense: Expense): Boolean = dao.update(expense.toEntity()) > 0
+
     override suspend fun deleteExpenseById(id: Long) = dao.deleteById(id)
 }

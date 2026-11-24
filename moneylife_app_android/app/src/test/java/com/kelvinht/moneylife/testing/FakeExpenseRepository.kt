@@ -48,6 +48,13 @@ class FakeExpenseRepository : ExpenseRepository {
         return add(expense)
     }
 
+    override suspend fun updateExpense(expense: Expense): Boolean {
+        if (failOnWrite) throw IllegalStateException("Pembaruan expense gagal")
+        if (expenses.value.none { it.id == expense.id }) return false
+        expenses.value = expenses.value.map { if (it.id == expense.id) expense else it }
+        return true
+    }
+
     override suspend fun deleteExpenseById(id: Long) {
         if (failOnWrite) throw IllegalStateException("Penghapusan expense gagal")
         expenses.value = expenses.value.filterNot { it.id == id }

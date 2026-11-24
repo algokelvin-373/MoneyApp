@@ -37,6 +37,10 @@
     <string name="empty_state_message">Pencatatan yang rajin bikin keuanganmu tetap teratur &amp; hemat!</string>
     <string name="empty_state_hint">Tap tombol di bawah untuk mencatat pengeluaran</string>
     <string name="add_expense">Catat Pengeluaran</string>
+    <string name="edit_expense_title">Edit Pengeluaran</string>
+    <string name="edit_expense_save">Simpan Perubahan</string>
+    <string name="loading_expense">Memuat pengeluaran…</string>
+    <string name="edit_expense_description">Ubah rincian pengeluaran</string>
     <string name="add_expense_button">+  Catat Pengeluaran</string>
     <string name="navigate_back">Kembali</string>
     <string name="reset_form">Atur ulang</string>
@@ -98,4 +102,6 @@
     <!-- Add expense errors -->
     <string name="error_amount_required">Masukkan nominal lebih dari 0</string>
     <string name="error_save_failed">Gagal menyimpan pengeluaran</string>
+    <string name="error_expense_not_found">Pengeluaran tidak ditemukan. Kembali dan pilih transaksi lagi.</string>
+    <string name="error_load_expense_failed">Gagal memuat rincian pengeluaran</string>
 </resources>
