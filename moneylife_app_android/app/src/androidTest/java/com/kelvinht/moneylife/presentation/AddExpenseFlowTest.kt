@@ -51,6 +51,10 @@ class AddExpenseFlowTest {
 
     @Before
     fun clearDatabase() {
+        context.getSharedPreferences("csv_backup_preferences", Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean("restore_prompt_dismissed", true)
+            .commit()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             val permissionGrantOutput =
                 InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand(
