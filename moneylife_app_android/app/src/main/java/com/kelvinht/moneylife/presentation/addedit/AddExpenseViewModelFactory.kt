@@ -13,7 +13,12 @@ class AddExpenseViewModelFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AddExpenseViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return AddExpenseViewModel(container.addExpense, SavedStateHandle()) as T
+            return AddExpenseViewModel(
+                container.addExpense,
+                container.getExpenseById,
+                container.updateExpense,
+                SavedStateHandle(),
+            ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
     }
@@ -24,7 +29,12 @@ class AddExpenseViewModelFactory(
     ): T {
         if (modelClass.isAssignableFrom(AddExpenseViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return AddExpenseViewModel(container.addExpense, extras.createSavedStateHandle()) as T
+            return AddExpenseViewModel(
+                container.addExpense,
+                container.getExpenseById,
+                container.updateExpense,
+                extras.createSavedStateHandle(),
+            ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
     }

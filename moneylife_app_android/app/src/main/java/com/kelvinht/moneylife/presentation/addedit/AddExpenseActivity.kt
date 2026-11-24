@@ -30,7 +30,10 @@ class AddExpenseActivity : AppCompatActivity() {
         binding = ActivityAddExpenseBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (savedInstanceState == null) {
+        val expenseId = intent.getLongExtra(EXTRA_EXPENSE_ID, NO_EXPENSE_ID)
+        if (expenseId != NO_EXPENSE_ID) {
+            viewModel.startEditing(expenseId)
+        } else if (savedInstanceState == null) {
             intent.getStringExtra(EXTRA_DATE_KEY)?.let(viewModel::selectDate)
         }
 
@@ -114,12 +117,28 @@ class AddExpenseActivity : AppCompatActivity() {
             binding.inputNote.setText(state.note)
             binding.inputNote.setSelection(state.note.length)
         }
-        renderCategory(state.category)
+        binding.textTitle.setText(if (state.isEditing) R.string.edit_expense_title else R.string.add_expense)
+        binding.inputAmount.isEnabled = !state.isLoadingExpense
+        binding.inputNote.isEnabled = !state.isLoadingExpense
+        binding.quick10.isEnabled = !state.isLoadingExpense
+        binding.quick20.isEnabled = !state.isLoadingExpense
+        binding.quick50.isEnabled = !state.isLoadingExpense
+        binding.quick100.isEnabled = !state.isLoadingExpense
+        renderCategory(state.category, enabled = !state.isLoadingExpense)
         binding.textError.text = state.error?.let(::getString).orEmpty()
         binding.textError.visibility = if (state.error == null) View.GONE else View.VISIBLE
 
-        binding.buttonSave.isEnabled = !state.isSaving
-        binding.buttonSave.text = getString(if (state.isSaving) R.string.saving else R.string.save)
+        binding.buttonReset.visibility = if (state.isEditing) View.INVISIBLE else View.VISIBLE
+        binding.buttonSave.isEnabled = !state.isSaving && !state.isLoadingExpense
+        binding.buttonSave.text =
+            getString(
+                when {
+                    state.isLoadingExpense -> R.string.loading_expense
+                    state.isSaving -> R.string.saving
+                    state.isEditing -> R.string.edit_expense_save
+                    else -> R.string.save
+                },
+            )
 
         if (state.isSaved) {
             setResult(RESULT_OK)
@@ -127,10 +146,12 @@ class AddExpenseActivity : AppCompatActivity() {
         }
     }
 
-    private fun renderCategory(selected: ExpenseCategory) {
+    private fun renderCategory(selected: ExpenseCategory, enabled: Boolean) {
         categoryOptions.forEach { option ->
             val isSelected = option.category == selected
             styleCategory(option.card, isSelected)
+            option.card.isEnabled = enabled
+            option.card.alpha = if (enabled) 1f else 0.6f
             option.checkmark.visibility = if (isSelected) View.VISIBLE else View.GONE
         }
     }
@@ -156,5 +177,7 @@ class AddExpenseActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_DATE_KEY = "com.kelvinht.moneylife.DATE_KEY"
+        const val EXTRA_EXPENSE_ID = "com.kelvinht.moneylife.EXPENSE_ID"
+        private const val NO_EXPENSE_ID = 0L
     }
 }
