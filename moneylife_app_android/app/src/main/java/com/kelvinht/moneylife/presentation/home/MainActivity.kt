@@ -196,11 +196,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun showRestorePromptIfNeeded() {
         lifecycleScope.launch {
-            val hasLocalData = withContext(Dispatchers.IO) {
-                (application as MoneyLifeApplication).container.csvBackupManager.hasLocalData()
-            }
-            val dismissed = getSharedPreferences(BACKUP_PREFERENCES, MODE_PRIVATE)
-                .getBoolean(RESTORE_PROMPT_DISMISSED, false)
+            val hasLocalData =
+                withContext(Dispatchers.IO) {
+                    (application as MoneyLifeApplication).container.csvBackupManager.hasLocalData()
+                }
+            val dismissed =
+                getSharedPreferences(BACKUP_PREFERENCES, MODE_PRIVATE)
+                    .getBoolean(RESTORE_PROMPT_DISMISSED, false)
             if (!hasLocalData && !dismissed && !isFinishing) {
                 AlertDialog.Builder(this@MainActivity)
                     .setTitle(R.string.csv_backup_restore_title)
