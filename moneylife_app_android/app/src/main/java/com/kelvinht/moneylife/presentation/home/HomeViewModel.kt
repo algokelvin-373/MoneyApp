@@ -38,6 +38,7 @@ class HomeViewModel(
     private val observeDailyLimit: ObserveDailyLimitUseCase,
     private val setDailyLimit: SetDailyLimitUseCase,
     private val snapshotDailyLimit: SnapshotDailyLimitUseCase,
+    private val exportCsvBackup: suspend (String) -> Unit = {},
 ) : ViewModel() {
     private val dateKey = MutableStateFlow(DateUtils.todayKey())
     private var lastTodayKey = dateKey.value
@@ -77,6 +78,7 @@ class HomeViewModel(
                     snapshotDailyLimit = { dateKey -> snapshotDailyLimit(dateKey) },
                 )
                 snapshotDailyLimit(today)
+                runCatching { exportCsvBackup(today) }
                 // Keep the selected day in sync with the device clock. If the
                 // clock was corrected backwards (or forwards) the user must not
                 // stay on a day that is no longer reachable today.

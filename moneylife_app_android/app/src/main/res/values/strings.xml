@@ -2,6 +2,16 @@
 <resources>
     <string name="app_name">MoneyLife</string>
 
+    <!-- CSV backup and restore -->
+    <string name="csv_backup_restore_title">Pulihkan data MoneyLife?</string>
+    <string name="csv_backup_restore_message">Pilih file MoneyLife_Backup.csv dari folder Downloads untuk mengembalikan transaksi dan tabungan sebelumnya.</string>
+    <string name="csv_backup_restore_action">Pilih file CSV</string>
+    <string name="csv_backup_later">Nanti</string>
+    <string name="csv_backup_processing">Sedang Memproses</string>
+    <string name="csv_backup_restore_success">Pemulihan selesai. %1$d data pengeluaran diproses.</string>
+    <string name="csv_backup_restore_error">File backup tidak dapat diproses: %1$s</string>
+    <string name="csv_backup_storage_permission_required">Izinkan akses penyimpanan agar file backup CSV dapat disimpan.</string>
+
     <!-- Home screen -->
     <string name="brand_mark" translatable="false">$</string>
     <string name="app_tagline">Pengatur Budget Pintar</string>

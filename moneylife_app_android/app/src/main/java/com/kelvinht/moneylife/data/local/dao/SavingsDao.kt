@@ -19,6 +19,9 @@ interface SavingsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveDailySavings(entities: List<DailySavingEntity>)
 
+    @Query("SELECT * FROM daily_savings ORDER BY dateKey")
+    suspend fun getAllDailySavings(): List<DailySavingEntity>
+
     @Query("SELECT value FROM app_state WHERE stateKey = :key LIMIT 1")
     suspend fun getState(key: String): String?
 
@@ -27,6 +30,12 @@ interface SavingsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveState(entity: AppStateEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveStates(entities: List<AppStateEntity>)
+
+    @Query("SELECT * FROM app_state ORDER BY stateKey")
+    suspend fun getAllStates(): List<AppStateEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun saveStateIfAbsent(entity: AppStateEntity)

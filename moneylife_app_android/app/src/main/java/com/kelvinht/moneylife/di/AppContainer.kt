@@ -1,6 +1,7 @@
 package com.kelvinht.moneylife.di
 
 import android.content.Context
+import com.kelvinht.moneylife.data.backup.CsvBackupManager
 import com.kelvinht.moneylife.data.local.MoneyLifeDatabase
 import com.kelvinht.moneylife.data.repository.DailyLimitRepositoryImpl
 import com.kelvinht.moneylife.data.repository.ExpenseRepositoryImpl
@@ -30,6 +31,14 @@ import com.kelvinht.moneylife.domain.usecase.UpdateExpenseUseCase
  */
 class AppContainer(context: Context) {
     private val database: MoneyLifeDatabase = MoneyLifeDatabase.getInstance(context)
+
+    val csvBackupManager =
+        CsvBackupManager(
+            context = context.applicationContext,
+            database = database,
+            expenseDao = database.expenseDao(),
+            savingsDao = database.savingsDao(),
+        )
 
     private val expenseRepository: ExpenseRepository = ExpenseRepositoryImpl(database.expenseDao())
     private val savingsRepository: SavingsRepository = SavingsRepositoryImpl(database.savingsDao())

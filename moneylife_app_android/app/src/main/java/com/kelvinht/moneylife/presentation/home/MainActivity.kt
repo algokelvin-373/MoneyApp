@@ -1,15 +1,24 @@
 package com.kelvinht.moneylife.presentation.home
 
+import android.Manifest
 import android.app.DatePickerDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.InputType
+import android.view.Gravity
 import android.view.View
 import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -27,7 +36,9 @@ import com.kelvinht.moneylife.domain.model.DailyBudget
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.presentation.addedit.AddExpenseActivity
 import com.kelvinht.moneylife.presentation.privacy.PrivacyPolicyActivity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.util.Locale
 
@@ -39,6 +50,21 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: HomeViewModel by viewModels {
         HomeViewModelFactory((application as MoneyLifeApplication).container)
     }
+
+    private val backupFilePicker =
+        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            if (uri != null) restoreBackup(uri)
+        }
+
+    private val legacyStoragePermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) {
+                viewModel.refresh()
+            } else {
+                Toast.makeText(this, R.string.csv_backup_storage_permission_required, Toast.LENGTH_LONG).show()
+            }
+            showRestorePromptIfNeeded()
+        }
 
     /**
      * Keeps the home screen in sync when the user fixes the device clock while
@@ -63,6 +89,7 @@ class MainActivity : AppCompatActivity() {
         setupList()
         setupActions()
         observeState()
+        prepareCsvBackup()
     }
 
     override fun onResume() {
@@ -152,6 +179,95 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect(::render)
+            }
+        }
+    }
+
+    private fun prepareCsvBackup() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            legacyStoragePermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        } else {
+            showRestorePromptIfNeeded()
+        }
+    }
+
+    private fun showRestorePromptIfNeeded() {
+        lifecycleScope.launch {
+            val hasLocalData = withContext(Dispatchers.IO) {
+                (application as MoneyLifeApplication).container.csvBackupManager.hasLocalData()
+            }
+            val dismissed = getSharedPreferences(BACKUP_PREFERENCES, MODE_PRIVATE)
+                .getBoolean(RESTORE_PROMPT_DISMISSED, false)
+            if (!hasLocalData && !dismissed && !isFinishing) {
+                AlertDialog.Builder(this@MainActivity)
+                    .setTitle(R.string.csv_backup_restore_title)
+                    .setMessage(R.string.csv_backup_restore_message)
+                    .setPositiveButton(R.string.csv_backup_restore_action) { _, _ ->
+                        backupFilePicker.launch(arrayOf("*/*"))
+                    }
+                    .setNegativeButton(R.string.csv_backup_later) { _, _ ->
+                        getSharedPreferences(BACKUP_PREFERENCES, MODE_PRIVATE)
+                            .edit()
+                            .putBoolean(RESTORE_PROMPT_DISMISSED, true)
+                            .apply()
+                    }
+                    .show()
+            }
+        }
+    }
+
+    private fun restoreBackup(uri: Uri) {
+        val content =
+            LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER_VERTICAL
+                setPadding(48, 32, 48, 32)
+                addView(
+                    ProgressBar(this@MainActivity),
+                    LinearLayout.LayoutParams(48, 48),
+                )
+                addView(
+                    TextView(this@MainActivity).apply {
+                        text = getString(R.string.csv_backup_processing)
+                        setPadding(32, 0, 0, 0)
+                    },
+                    LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f),
+                )
+            }
+        val processingDialog =
+            AlertDialog.Builder(this)
+                .setView(content)
+                .setCancelable(false)
+                .create()
+        processingDialog.show()
+
+        lifecycleScope.launch {
+            runCatching {
+                withContext(Dispatchers.IO) {
+                    (application as MoneyLifeApplication).container.csvBackupManager.restore(uri)
+                }
+            }.onSuccess { importedCount ->
+                processingDialog.dismiss()
+                getSharedPreferences(BACKUP_PREFERENCES, MODE_PRIVATE)
+                    .edit()
+                    .putBoolean(RESTORE_PROMPT_DISMISSED, true)
+                    .apply()
+                viewModel.refresh()
+                Toast.makeText(
+                    this@MainActivity,
+                    getString(R.string.csv_backup_restore_success, importedCount),
+                    Toast.LENGTH_LONG,
+                ).show()
+            }.onFailure { error ->
+                processingDialog.dismiss()
+                Toast.makeText(
+                    this@MainActivity,
+                    getString(R.string.csv_backup_restore_error, error.message.orEmpty()),
+                    Toast.LENGTH_LONG,
+                ).show()
             }
         }
     }
@@ -325,5 +441,7 @@ class MainActivity : AppCompatActivity() {
 
     private companion object {
         const val DISABLED_LIMIT_ALPHA = 0.45f
+        const val BACKUP_PREFERENCES = "csv_backup_preferences"
+        const val RESTORE_PROMPT_DISMISSED = "restore_prompt_dismissed"
     }
 }
