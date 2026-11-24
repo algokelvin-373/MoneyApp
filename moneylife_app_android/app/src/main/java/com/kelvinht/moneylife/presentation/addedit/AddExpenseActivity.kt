@@ -169,7 +169,9 @@ class AddExpenseActivity : AppCompatActivity() {
         selected: Boolean,
     ) {
         card.strokeWidth =
-            resources.getDimensionPixelSize(if (selected) R.dimen.selected_stroke else R.dimen.default_stroke)
+            resources.getDimensionPixelSize(
+                if (selected) R.dimen.selected_stroke else R.dimen.default_stroke,
+            )
         card.strokeColor =
             ContextCompat.getColor(
                 this,
