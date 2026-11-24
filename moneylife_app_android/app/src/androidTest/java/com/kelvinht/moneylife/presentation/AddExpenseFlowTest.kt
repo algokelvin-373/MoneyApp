@@ -1,12 +1,15 @@
 package com.kelvinht.moneylife.presentation
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.NestedScrollView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
@@ -47,6 +50,12 @@ class AddExpenseFlowTest {
 
     @Before
     fun clearDatabase() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            InstrumentationRegistry.getInstrumentation().uiAutomation.grantRuntimePermission(
+                context.packageName,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            )
+        }
         val sqlite = database.openHelper.writableDatabase
         sqlite.execSQL("DELETE FROM expenses")
         sqlite.execSQL("DELETE FROM daily_savings")
