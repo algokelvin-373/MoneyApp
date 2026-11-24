@@ -108,7 +108,7 @@ class HomeViewModel(
     fun selectDailyLimit(limit: Long) {
         val key = dateKey.value
         val state = uiState.value
-        if (key != DateUtils.todayKey() || state.dateKey != key || state.spent > state.limit) return
+        if (key != DateUtils.todayKey() || state.dateKey != key) return
         viewModelScope.launch { setDailyLimit(key, limit) }
     }
 

@@ -164,7 +164,7 @@ class MainActivity : AppCompatActivity() {
         binding.textHistoryDate.contentDescription =
             getString(R.string.choose_date) + ": " + dateLabel
         val isToday = state.dateKey == DateUtils.todayKey()
-        val canChangeLimit = isToday && state.spent <= state.limit
+        val canChangeLimit = isToday
         binding.textSpendingHeader.text =
             if (isToday) {
                 getString(R.string.spending_header_today)
