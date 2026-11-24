@@ -139,6 +139,14 @@ private class MemoryExpenseRepository(
 
     override suspend fun getExpenseById(id: Long): Expense? = expenses.find { it.id == id }
 
+    override suspend fun updateExpense(expense: Expense): Boolean {
+        writesInsideTransaction.add(transactionRunner.inTransaction)
+        val index = expenses.indexOfFirst { it.id == expense.id }
+        if (index == -1) return false
+        expenses[index] = expense
+        return true
+    }
+
     override suspend fun addExpense(expense: Expense): Long {
         writesInsideTransaction.add(transactionRunner.inTransaction)
         val id = nextId++
