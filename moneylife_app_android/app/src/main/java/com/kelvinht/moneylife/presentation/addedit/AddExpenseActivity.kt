@@ -148,7 +148,10 @@ class AddExpenseActivity : AppCompatActivity() {
         }
     }
 
-    private fun renderCategory(selected: ExpenseCategory, enabled: Boolean) {
+    private fun renderCategory(
+        selected: ExpenseCategory,
+        enabled: Boolean,
+    ) {
         categoryOptions.forEach { option ->
             val isSelected = option.category == selected
             styleCategory(option.card, isSelected)
