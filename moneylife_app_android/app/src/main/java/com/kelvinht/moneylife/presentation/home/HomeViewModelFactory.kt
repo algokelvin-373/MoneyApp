@@ -20,6 +20,7 @@ class HomeViewModelFactory(
                 observeDailyLimit = container.observeDailyLimit,
                 setDailyLimit = container.setDailyLimit,
                 snapshotDailyLimit = container.snapshotDailyLimit,
+                exportCsvBackup = { dateKey -> container.csvBackupManager.exportSnapshot(dateKey) },
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
