@@ -1,7 +1,10 @@
 package com.kelvinht.moneylife.presentation
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.os.Build
+import android.os.ParcelFileDescriptor
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.NestedScrollView
@@ -21,6 +24,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.kelvinht.moneylife.R
 import com.kelvinht.moneylife.core.util.DateUtils
 import com.kelvinht.moneylife.data.local.MoneyLifeDatabase
@@ -47,6 +51,19 @@ class AddExpenseFlowTest {
 
     @Before
     fun clearDatabase() {
+        context.getSharedPreferences("csv_backup_preferences", Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean("restore_prompt_dismissed", true)
+            .commit()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            val permissionGrantOutput =
+                InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand(
+                    "pm grant ${context.packageName} ${Manifest.permission.WRITE_EXTERNAL_STORAGE}",
+                )
+            ParcelFileDescriptor.AutoCloseInputStream(permissionGrantOutput).use { stream ->
+                stream.readBytes()
+            }
+        }
         val sqlite = database.openHelper.writableDatabase
         sqlite.execSQL("DELETE FROM expenses")
         sqlite.execSQL("DELETE FROM daily_savings")

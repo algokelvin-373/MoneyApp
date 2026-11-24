@@ -200,10 +200,14 @@ class MainActivity : AppCompatActivity() {
                 withContext(Dispatchers.IO) {
                     (application as MoneyLifeApplication).container.csvBackupManager.hasLocalData()
                 }
+            val hasBackupFile =
+                withContext(Dispatchers.IO) {
+                    (application as MoneyLifeApplication).container.csvBackupManager.hasBackupFile()
+                }
             val dismissed =
                 getSharedPreferences(BACKUP_PREFERENCES, MODE_PRIVATE)
                     .getBoolean(RESTORE_PROMPT_DISMISSED, false)
-            if (!hasLocalData && !dismissed && !isFinishing) {
+            if (hasBackupFile && !hasLocalData && !dismissed && !isFinishing) {
                 AlertDialog.Builder(this@MainActivity)
                     .setTitle(R.string.csv_backup_restore_title)
                     .setMessage(R.string.csv_backup_restore_message)
