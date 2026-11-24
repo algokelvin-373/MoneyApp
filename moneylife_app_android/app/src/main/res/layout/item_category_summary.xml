@@ -19,12 +19,12 @@
 
         <TextView
             android:id="@+id/textCategoryIcon"
-            android:layout_width="38dp"
-            android:layout_height="38dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:background="@drawable/bg_icon_mint"
             android:gravity="center"
             android:importantForAccessibility="no"
-            android:textSize="18sp"
+            android:textSize="16sp"
             tools:text="🍚" />
 
         <TextView
@@ -46,6 +46,6 @@
             android:textColor="@color/navMuted"
             android:textSize="12sp"
             android:textStyle="bold"
-            tools:text="Rp 0/50k" />
+            tools:text="Terpakai Rp 0" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

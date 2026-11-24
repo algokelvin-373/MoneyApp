@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kelvinht.moneylife.R
 import com.kelvinht.moneylife.core.format.RupiahFormatter
 import com.kelvinht.moneylife.databinding.ItemCategorySummaryBinding
-import com.kelvinht.moneylife.domain.model.CategoryBudget
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.presentation.common.toStyle
 
@@ -44,25 +43,15 @@ class CategorySummaryAdapter :
         fun bind(item: CategorySummaryUiModel) {
             val context = binding.root.context
             val style = item.category.toStyle()
-            val limit = CategoryBudget.limitFor(item.category)
-
             binding.textCategoryIcon.text = style.emoji
             binding.textCategoryIcon.backgroundTintList =
                 ColorStateList.valueOf(ContextCompat.getColor(context, style.colorRes))
             binding.textCategoryName.setText(style.labelRes)
             binding.textCategoryAmount.text =
-                if (limit == null) {
-                    context.getString(
-                        R.string.category_spent_format,
-                        RupiahFormatter.format(item.spent),
-                    )
-                } else {
-                    context.getString(
-                        R.string.category_usage_format,
-                        RupiahFormatter.format(item.spent),
-                        RupiahFormatter.formatCompact(limit),
-                    )
-                }
+                context.getString(
+                    R.string.category_spent_format,
+                    RupiahFormatter.format(item.spent),
+                )
         }
     }
 
