@@ -178,55 +178,104 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/textLimit"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:textColor="@color/textSecondary"
                             android:textSize="14sp"
                             tools:text="@string/limit_from_format" />
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
                             android:layout_height="40dp"
-                            android:background="@drawable/bg_pill_outline"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:padding="3dp">
+                            android:layout_marginTop="8dp"
+                            android:fillViewport="false"
+                            android:overScrollMode="never"
+                            android:scrollbars="none">
 
-                            <TextView
-                                android:id="@+id/buttonLimit50"
-                                android:layout_width="56dp"
+                            <LinearLayout
+                                android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:background="@android:color/transparent"
-                                android:clickable="true"
-                                android:contentDescription="@string/daily_limit_50k_description"
-                                android:focusable="true"
-                                android:gravity="center"
-                                android:text="@string/daily_limit_option_50k"
-                                android:textColor="@color/textSecondary"
-                                android:textSize="11sp"
-                                android:textStyle="bold" />
+                                android:background="@drawable/bg_pill_outline"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:padding="3dp">
 
-                            <TextView
-                                android:id="@+id/buttonLimit100"
-                                android:layout_width="56dp"
-                                android:layout_height="match_parent"
-                                android:background="@drawable/bg_limit_option"
-                                android:clickable="true"
-                                android:contentDescription="@string/daily_limit_100k_description"
-                                android:focusable="true"
-                                android:gravity="center"
-                                android:text="@string/daily_limit_option_100k"
-                                android:textColor="@color/colorPrimaryDark"
-                                android:textSize="11sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
+                                <TextView
+                                    android:id="@+id/buttonLimit50"
+                                    android:layout_width="50dp"
+                                    android:layout_height="match_parent"
+                                    android:background="@android:color/transparent"
+                                    android:clickable="true"
+                                    android:contentDescription="@string/daily_limit_50k_description"
+                                    android:focusable="true"
+                                    android:gravity="center"
+                                    android:text="@string/daily_limit_option_50k"
+                                    android:textColor="@color/textSecondary"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/buttonLimit100"
+                                    android:layout_width="50dp"
+                                    android:layout_height="match_parent"
+                                    android:background="@android:color/transparent"
+                                    android:clickable="true"
+                                    android:contentDescription="@string/daily_limit_100k_description"
+                                    android:focusable="true"
+                                    android:gravity="center"
+                                    android:text="@string/daily_limit_option_100k"
+                                    android:textColor="@color/textSecondary"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/buttonLimit150"
+                                    android:layout_width="50dp"
+                                    android:layout_height="match_parent"
+                                    android:background="@android:color/transparent"
+                                    android:clickable="true"
+                                    android:contentDescription="@string/daily_limit_150k_description"
+                                    android:focusable="true"
+                                    android:gravity="center"
+                                    android:text="@string/daily_limit_option_150k"
+                                    android:textColor="@color/textSecondary"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/buttonLimit200"
+                                    android:layout_width="50dp"
+                                    android:layout_height="match_parent"
+                                    android:background="@android:color/transparent"
+                                    android:clickable="true"
+                                    android:contentDescription="@string/daily_limit_200k_description"
+                                    android:focusable="true"
+                                    android:gravity="center"
+                                    android:text="@string/daily_limit_option_200k"
+                                    android:textColor="@color/textSecondary"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/buttonLimitCustom"
+                                    android:layout_width="62dp"
+                                    android:layout_height="match_parent"
+                                    android:background="@android:color/transparent"
+                                    android:clickable="true"
+                                    android:contentDescription="@string/daily_limit_custom_description"
+                                    android:focusable="true"
+                                    android:gravity="center"
+                                    android:text="@string/daily_limit_option_custom"
+                                    android:textColor="@color/textSecondary"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </HorizontalScrollView>
                     </LinearLayout>
 
                     <com.google.android.material.progressindicator.LinearProgressIndicator
