@@ -321,7 +321,7 @@ class CsvBackupManager(
     private companion object {
         const val FILE_NAME = "MoneyLife_Backup.csv"
         const val FOLDER_NAME = "MoneyLife"
-        const val RELATIVE_PATH = "${Environment.DIRECTORY_DOWNLOADS}/$FOLDER_NAME/"
+        val RELATIVE_PATH = "${Environment.DIRECTORY_DOWNLOADS}/$FOLDER_NAME/"
         const val DEFAULT_LIMIT_KEY = "daily_limit"
         const val DAILY_LIMIT_PREFIX = "daily_limit_"
         const val LAST_ACTIVE_DATE_KEY = "last_active_date"
