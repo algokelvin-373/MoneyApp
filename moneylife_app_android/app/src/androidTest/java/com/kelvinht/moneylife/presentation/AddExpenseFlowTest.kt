@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.ParcelFileDescriptor
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.NestedScrollView
@@ -51,10 +52,13 @@ class AddExpenseFlowTest {
     @Before
     fun clearDatabase() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            InstrumentationRegistry.getInstrumentation().uiAutomation.grantRuntimePermission(
-                context.packageName,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            )
+            val permissionGrantOutput =
+                InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand(
+                    "pm grant ${context.packageName} ${Manifest.permission.WRITE_EXTERNAL_STORAGE}",
+                )
+            ParcelFileDescriptor.AutoCloseInputStream(permissionGrantOutput).use { stream ->
+                stream.readBytes()
+            }
         }
         val sqlite = database.openHelper.writableDatabase
         sqlite.execSQL("DELETE FROM expenses")
