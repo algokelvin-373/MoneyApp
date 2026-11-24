@@ -15,7 +15,7 @@ import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
@@ -119,10 +119,10 @@ class AddExpenseFlowTest {
                     activity.findViewById<ViewGroup>(android.R.id.content)
                         .findNestedScrollView()
                 if (scroll != null && scroll.height > 0) {
-                    scroll.fullScroll(View.FOCUS_DOWN)
+                    scroll.post { scroll.fullScroll(View.FOCUS_DOWN) }
                 }
             }
-            onView(withId(R.id.fabAdd)).check(matches(isDisplayed()))
+            onView(withId(R.id.fabAdd)).check(matches(isCompletelyDisplayed()))
         }
         onView(withId(R.id.fabAdd)).perform(click())
     }
