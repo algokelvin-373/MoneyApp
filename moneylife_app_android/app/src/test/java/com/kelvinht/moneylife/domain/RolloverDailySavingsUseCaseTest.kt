@@ -208,6 +208,8 @@ private class FakeExpenseRepository(
 
     override suspend fun getExpenseById(id: Long): Expense? = null
 
+    override suspend fun updateExpense(expense: Expense): Boolean = false
+
     override suspend fun addExpense(expense: Expense): Long = 0L
 
     override suspend fun deleteExpenseById(id: Long) = Unit
