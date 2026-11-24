@@ -28,123 +28,135 @@ class CsvBackupManager(
     private val expenseDao: ExpenseDao,
     private val savingsDao: SavingsDao,
 ) {
-    suspend fun hasLocalData(): Boolean = withContext(Dispatchers.IO) {
-        val expenses = expenseDao.getAll()
-        val savings = savingsDao.getAllDailySavings()
-        val states = savingsDao.getAllStates()
-        expenses.isNotEmpty() || savings.isNotEmpty() || states.any { state ->
-            state.stateKey == DEFAULT_LIMIT_KEY &&
-                state.value.toLongOrNull()?.let { it != DailyBudget.DEFAULT_DAILY_LIMIT } == true
-        }
-    }
-
-    suspend fun exportSnapshot(todayKey: String) = withContext(Dispatchers.IO) {
-        val expenses = expenseDao.getAll()
-        val savings = savingsDao.getAllDailySavings()
-        val states = savingsDao.getAllStates()
-        val defaultLimit =
-            states.firstOrNull { it.stateKey == DEFAULT_LIMIT_KEY }
-                ?.value
-                ?.toLongOrNull()
-                ?: DailyBudget.DEFAULT_DAILY_LIMIT
-
-        // Do not replace a previous backup with an empty snapshot on first launch
-        // after reinstall, before the user has selected the backup to restore.
-        val hasUserData =
-            expenses.isNotEmpty() || savings.isNotEmpty() || defaultLimit != DailyBudget.DEFAULT_DAILY_LIMIT
-        if (!hasUserData) return@withContext
-
-        val savingsByDate = savings.associateBy { it.dateKey }
-        val stateByKey = states.associateBy { it.stateKey }
-        val dates = sortedSetOf(todayKey)
-        expenses.forEach { dates += it.dateKey }
-        savings.forEach { dates += it.dateKey }
-        states.mapNotNullTo(dates) { state ->
-            state.stateKey.takeIf { it.startsWith(DAILY_LIMIT_PREFIX) }
-                ?.removePrefix(DAILY_LIMIT_PREFIX)
+    suspend fun hasLocalData(): Boolean =
+        withContext(Dispatchers.IO) {
+            val expenses = expenseDao.getAll()
+            val savings = savingsDao.getAllDailySavings()
+            val states = savingsDao.getAllStates()
+            expenses.isNotEmpty() ||
+                savings.isNotEmpty() ||
+                states.any { state ->
+                    state.stateKey == DEFAULT_LIMIT_KEY &&
+                        state.value.toLongOrNull()?.let { it != DailyBudget.DEFAULT_DAILY_LIMIT } == true
+                }
         }
 
-        val rows = buildList {
-            add(CSV_HEADER)
-            expenses.sortedWith(compareBy<ExpenseEntity> { it.dateKey }.thenBy { it.createdAt }.thenBy { it.id })
-                .forEach { expense ->
-                    add(
-                        listOf(
-                            "EXPENSE",
-                            expense.dateKey,
-                            expense.id.toString(),
-                            expense.category,
-                            expense.amount.toString(),
-                            expense.note,
-                            expense.createdAt.toString(),
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                        ),
+    suspend fun exportSnapshot(todayKey: String) =
+        withContext(Dispatchers.IO) {
+            val expenses = expenseDao.getAll()
+            val savings = savingsDao.getAllDailySavings()
+            val states = savingsDao.getAllStates()
+            val defaultLimit =
+                states.firstOrNull { it.stateKey == DEFAULT_LIMIT_KEY }
+                    ?.value
+                    ?.toLongOrNull()
+                    ?: DailyBudget.DEFAULT_DAILY_LIMIT
+
+            // Do not replace a previous backup with an empty snapshot on first launch
+            // after reinstall, before the user has selected the backup to restore.
+            val hasUserData =
+                expenses.isNotEmpty() || savings.isNotEmpty() || defaultLimit != DailyBudget.DEFAULT_DAILY_LIMIT
+            if (!hasUserData) return@withContext
+
+            val savingsByDate = savings.associateBy { it.dateKey }
+            val stateByKey = states.associateBy { it.stateKey }
+            val dates = sortedSetOf(todayKey)
+            expenses.forEach { dates += it.dateKey }
+            savings.forEach { dates += it.dateKey }
+            states.mapNotNullTo(dates) { state ->
+                state.stateKey.takeIf { it.startsWith(DAILY_LIMIT_PREFIX) }
+                    ?.removePrefix(DAILY_LIMIT_PREFIX)
+            }
+
+            val rows =
+                buildList {
+                    add(CSV_HEADER)
+                    expenses.sortedWith(
+                        compareBy<ExpenseEntity> { it.dateKey }
+                            .thenBy { it.createdAt }
+                            .thenBy { it.id },
                     )
+                        .forEach { expense ->
+                            add(
+                                listOf(
+                                    "EXPENSE",
+                                    expense.dateKey,
+                                    expense.id.toString(),
+                                    expense.category,
+                                    expense.amount.toString(),
+                                    expense.note,
+                                    expense.createdAt.toString(),
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                ),
+                            )
+                        }
+
+                    dates.forEach { dateKey ->
+                        val dailyLimit =
+                            stateByKey["$DAILY_LIMIT_PREFIX$dateKey"]
+                                ?.value
+                                ?.toLongOrNull()
+                                ?: defaultLimit
+                        val dailySpent =
+                            expenses.asSequence()
+                                .filter { it.dateKey == dateKey }
+                                .sumOf { it.amount }
+                        add(
+                            listOf(
+                                "DAILY",
+                                dateKey,
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                dailyLimit.toString(),
+                                dailySpent.toString(),
+                                (dailyLimit - dailySpent).coerceAtLeast(0L).toString(),
+                                savingsByDate[dateKey]?.amount?.toString().orEmpty(),
+                                "",
+                                "",
+                            ),
+                        )
+                    }
+
+                    states.forEach { state ->
+                        add(
+                            listOf(
+                                "STATE",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                state.stateKey,
+                                state.value,
+                            ),
+                        )
+                    }
                 }
 
-            dates.forEach { dateKey ->
-                val dailyLimit =
-                    stateByKey["$DAILY_LIMIT_PREFIX$dateKey"]
-                        ?.value
-                        ?.toLongOrNull()
-                        ?: defaultLimit
-                val dailySpent = expenses.asSequence()
-                    .filter { it.dateKey == dateKey }
-                    .sumOf { it.amount }
-                add(
-                    listOf(
-                        "DAILY",
-                        dateKey,
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        dailyLimit.toString(),
-                        dailySpent.toString(),
-                        (dailyLimit - dailySpent).coerceAtLeast(0L).toString(),
-                        savingsByDate[dateKey]?.amount?.toString().orEmpty(),
-                        "",
-                        "",
-                    ),
-                )
-            }
-
-            states.forEach { state ->
-                add(
-                    listOf(
-                        "STATE",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        state.stateKey,
-                        state.value,
-                    ),
-                )
-            }
+            val csv = rows.joinToString(separator = "\r\n") { row -> row.joinToString(",") { it.escapeCsv() } } + "\r\n"
+            writeBackup(csv)
         }
 
-        val csv = rows.joinToString(separator = "\r\n") { row -> row.joinToString(",") { it.escapeCsv() } } + "\r\n"
-        writeBackup(csv)
-    }
-
-    suspend fun restore(uri: Uri): Int = withContext(Dispatchers.IO) {
-        val input = context.contentResolver.openInputStream(uri)
-            ?: throw IllegalArgumentException("CSV backup tidak dapat dibuka")
-        input.use { stream -> restoreFrom(stream) }
-    }
+    suspend fun restore(uri: Uri): Int =
+        withContext(Dispatchers.IO) {
+            val input =
+                context.contentResolver.openInputStream(uri)
+                    ?: throw IllegalArgumentException("CSV backup tidak dapat dibuka")
+            input.use { stream -> restoreFrom(stream) }
+        }
 
     private suspend fun restoreFrom(input: InputStream): Int {
         val records = input.bufferedReader(Charsets.UTF_8).use { reader -> parseCsv(reader.readText()) }
@@ -163,25 +175,41 @@ class CsvBackupManager(
                 "EXPENSE" -> {
                     val dateKey = record[1]
                     LocalDate.parse(dateKey)
-                    expenses += ExpenseEntity(
-                        id = record[2].toLongOrNull()?.takeIf { it > 0L }
-                            ?: throw IllegalArgumentException("ID pengeluaran tidak valid pada baris ${index + 2}"),
-                        category = record[3].takeIf(String::isNotBlank)
-                            ?: throw IllegalArgumentException("Kategori kosong pada baris ${index + 2}"),
-                        amount = record[4].toLongOrNull()?.takeIf { it > 0L }
-                            ?: throw IllegalArgumentException("Jumlah pengeluaran tidak valid pada baris ${index + 2}"),
-                        note = record[5],
-                        dateKey = dateKey,
-                        createdAt = record[6].toLongOrNull()
-                            ?: throw IllegalArgumentException("Waktu pengeluaran tidak valid pada baris ${index + 2}"),
-                    )
+                    expenses +=
+                        ExpenseEntity(
+                            id =
+                                record[2].toLongOrNull()?.takeIf { it > 0L }
+                                    ?: throw IllegalArgumentException(
+                                        "ID pengeluaran tidak valid pada baris ${index + 2}",
+                                    ),
+                            category =
+                                record[3].takeIf(String::isNotBlank)
+                                    ?: throw IllegalArgumentException(
+                                        "Kategori kosong pada baris ${index + 2}",
+                                    ),
+                            amount =
+                                record[4].toLongOrNull()?.takeIf { it > 0L }
+                                    ?: throw IllegalArgumentException(
+                                        "Jumlah pengeluaran tidak valid pada baris ${index + 2}",
+                                    ),
+                            note = record[5],
+                            dateKey = dateKey,
+                            createdAt =
+                                record[6].toLongOrNull()
+                                    ?: throw IllegalArgumentException(
+                                        "Waktu pengeluaran tidak valid pada baris ${index + 2}",
+                                    ),
+                        )
                 }
 
                 "DAILY" -> {
                     val dateKey = record[1]
                     LocalDate.parse(dateKey)
-                    val limit = record[7].toLongOrNull()?.takeIf { it > 0L }
-                        ?: throw IllegalArgumentException("Limit harian tidak valid pada baris ${index + 2}")
+                    val limit =
+                        record[7].toLongOrNull()?.takeIf { it > 0L }
+                            ?: throw IllegalArgumentException(
+                                "Limit harian tidak valid pada baris ${index + 2}",
+                            )
                     val key = "$DAILY_LIMIT_PREFIX$dateKey"
                     states[key] = AppStateEntity(key, limit.toString())
                     record[10].toLongOrNull()?.let { amount ->
@@ -191,8 +219,9 @@ class CsvBackupManager(
                 }
 
                 "STATE" -> {
-                    val key = record[11].takeIf(String::isNotBlank)
-                        ?: throw IllegalArgumentException("State kosong pada baris ${index + 2}")
+                    val key =
+                        record[11].takeIf(String::isNotBlank)
+                            ?: throw IllegalArgumentException("State kosong pada baris ${index + 2}")
                     when {
                         key == DEFAULT_LIMIT_KEY ->
                             require(record[12].toLongOrNull()?.let { it > 0L } == true) {
@@ -240,35 +269,39 @@ class CsvBackupManager(
         val resolver = context.contentResolver
         val collection = MediaStore.Downloads.EXTERNAL_CONTENT_URI
         val selection = "${MediaStore.MediaColumns.DISPLAY_NAME} = ? AND ${MediaStore.MediaColumns.RELATIVE_PATH} = ?"
-        val existing = resolver.query(
-            collection,
-            arrayOf(MediaStore.MediaColumns._ID),
-            selection,
-            arrayOf(FILE_NAME, RELATIVE_PATH),
-            null,
-        )?.use { cursor ->
-            if (cursor.moveToFirst()) ContentUris.withAppendedId(collection, cursor.getLong(0)) else null
-        }
-        val uri = existing ?: resolver.insert(
-            collection,
-            ContentValues().apply {
-                put(MediaStore.MediaColumns.DISPLAY_NAME, FILE_NAME)
-                put(MediaStore.MediaColumns.MIME_TYPE, "text/csv")
-                put(MediaStore.MediaColumns.RELATIVE_PATH, RELATIVE_PATH)
-            },
-        ) ?: throw IllegalStateException("Tidak dapat membuat file backup CSV")
+        val existing =
+            resolver.query(
+                collection,
+                arrayOf(MediaStore.MediaColumns._ID),
+                selection,
+                arrayOf(FILE_NAME, RELATIVE_PATH),
+                null,
+            )?.use { cursor ->
+                if (cursor.moveToFirst()) ContentUris.withAppendedId(collection, cursor.getLong(0)) else null
+            }
+        val uri =
+            existing ?: resolver.insert(
+                collection,
+                ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, FILE_NAME)
+                    put(MediaStore.MediaColumns.MIME_TYPE, "text/csv")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, RELATIVE_PATH)
+                },
+            ) ?: throw IllegalStateException("Tidak dapat membuat file backup CSV")
 
-        val output = resolver.openOutputStream(uri, "wt")
-            ?: throw IllegalStateException("Tidak dapat menulis file backup CSV")
+        val output =
+            resolver.openOutputStream(uri, "wt")
+                ?: throw IllegalStateException("Tidak dapat menulis file backup CSV")
         output.use { it.write(csv.toByteArray(Charsets.UTF_8)) }
     }
 
     @Suppress("DEPRECATION")
     private fun writeLegacyBackup(csv: String) {
-        val directory = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-            FOLDER_NAME,
-        )
+        val directory =
+            File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                FOLDER_NAME,
+            )
         if (!directory.exists() && !directory.mkdirs()) {
             throw IllegalStateException("Tidak dapat membuat folder backup MoneyLife")
         }
@@ -325,20 +358,21 @@ class CsvBackupManager(
         const val DEFAULT_LIMIT_KEY = "daily_limit"
         const val DAILY_LIMIT_PREFIX = "daily_limit_"
         const val LAST_ACTIVE_DATE_KEY = "last_active_date"
-        val CSV_HEADER = listOf(
-            "record_type",
-            "date_key",
-            "expense_id",
-            "category",
-            "amount",
-            "note",
-            "created_at",
-            "daily_limit",
-            "total_spent",
-            "remaining",
-            "savings",
-            "state_key",
-            "state_value",
-        )
+        val CSV_HEADER =
+            listOf(
+                "record_type",
+                "date_key",
+                "expense_id",
+                "category",
+                "amount",
+                "note",
+                "created_at",
+                "daily_limit",
+                "total_spent",
+                "remaining",
+                "savings",
+                "state_key",
+                "state_value",
+            )
     }
 }
