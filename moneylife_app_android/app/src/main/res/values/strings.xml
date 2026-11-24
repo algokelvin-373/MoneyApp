@@ -5,9 +5,7 @@
     <!-- Home screen -->
     <string name="brand_mark" translatable="false">$</string>
     <string name="app_tagline">Pengatur Budget Pintar</string>
-    <string name="pro_badge" translatable="false">PRO</string>
     <string name="info_mark" translatable="false">!</string>
-    <string name="avatar_initials" translatable="false">AK</string>
     <string name="limit_from_format">dari %1$s</string>
     <string name="limit_short_format">Limit: %1$s</string>
     <string name="limit_short_locked_format">Limit: %1$s · terkunci</string>
@@ -27,7 +25,6 @@
     <string name="savings_balance_label">Saldo Tabungan</string>
     <string name="budget_condition_label">Kondisi Budget</string>
     <string name="popular_categories_title">KATEGORI POPULER</string>
-    <string name="category_usage_format">%1$s/%2$s</string>
     <string name="choose_date">Pilih tanggal</string>
     <string name="back_to_today">Hari Ini</string>
     <string name="previous_day">Hari sebelumnya</string>
