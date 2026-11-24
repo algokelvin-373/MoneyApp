@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import androidx.annotation.RequiresApi
 import androidx.room.withTransaction
 import com.kelvinht.moneylife.data.local.MoneyLifeDatabase
 import com.kelvinht.moneylife.data.local.dao.ExpenseDao
@@ -265,6 +266,7 @@ class CsvBackupManager(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     private fun writeMediaStoreBackup(csv: String) {
         val resolver = context.contentResolver
         val collection = MediaStore.Downloads.EXTERNAL_CONTENT_URI
