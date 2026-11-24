@@ -42,6 +42,29 @@ class CsvBackupManager(
                 }
         }
 
+    suspend fun hasBackupFile(): Boolean =
+        withContext(Dispatchers.IO) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val resolver = context.contentResolver
+                val selection =
+                    "${MediaStore.MediaColumns.DISPLAY_NAME} = ? AND ${MediaStore.MediaColumns.RELATIVE_PATH} = ?"
+                resolver.query(
+                    MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+                    arrayOf(MediaStore.MediaColumns._ID),
+                    selection,
+                    arrayOf(FILE_NAME, RELATIVE_PATH),
+                    null,
+                )?.use { cursor -> cursor.moveToFirst() } ?: false
+            } else {
+                val directory =
+                    File(
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                        FOLDER_NAME,
+                    )
+                File(directory, FILE_NAME).isFile
+            }
+        }
+
     suspend fun exportSnapshot(todayKey: String) =
         withContext(Dispatchers.IO) {
             val expenses = expenseDao.getAll()
