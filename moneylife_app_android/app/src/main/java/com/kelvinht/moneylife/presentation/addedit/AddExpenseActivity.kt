@@ -117,7 +117,9 @@ class AddExpenseActivity : AppCompatActivity() {
             binding.inputNote.setText(state.note)
             binding.inputNote.setSelection(state.note.length)
         }
-        binding.textTitle.setText(if (state.isEditing) R.string.edit_expense_title else R.string.add_expense)
+        binding.textTitle.setText(
+            if (state.isEditing) R.string.edit_expense_title else R.string.add_expense,
+        )
         binding.inputAmount.isEnabled = !state.isLoadingExpense
         binding.inputNote.isEnabled = !state.isLoadingExpense
         binding.quick10.isEnabled = !state.isLoadingExpense

@@ -21,8 +21,8 @@ import com.kelvinht.moneylife.domain.usecase.ObserveDailyLimitUseCase
 import com.kelvinht.moneylife.domain.usecase.ObserveSavingsBalanceUseCase
 import com.kelvinht.moneylife.domain.usecase.RolloverDailySavingsUseCase
 import com.kelvinht.moneylife.domain.usecase.SetDailyLimitUseCase
-import com.kelvinht.moneylife.domain.usecase.UpdateExpenseUseCase
 import com.kelvinht.moneylife.domain.usecase.SnapshotDailyLimitUseCase
+import com.kelvinht.moneylife.domain.usecase.UpdateExpenseUseCase
 
 /**
  * Simple manual dependency container. Keeps construction of the data layer and
