@@ -12,6 +12,8 @@ interface ExpenseRepository {
 
     suspend fun getExpensesByDate(dateKey: String): List<Expense>
 
+    suspend fun getExpensesByMonth(monthKey: String): List<Expense>
+
     suspend fun getExpenseById(id: Long): Expense?
 
     suspend fun addExpense(expense: Expense): Long

@@ -20,6 +20,11 @@
             android:parentActivityName=".presentation.home.MainActivity" />
 
         <activity
+            android:name=".presentation.summary.MonthlySummaryActivity"
+            android:exported="false"
+            android:parentActivityName=".presentation.home.MainActivity" />
+
+        <activity
             android:name=".presentation.addedit.AddExpenseActivity"
             android:exported="false"
             android:parentActivityName=".presentation.home.MainActivity" />
