@@ -72,6 +72,8 @@ jobs:
         run: ./gradlew :app:bundleRelease
       - name: Build staging bundle
         run: ./gradlew :app:bundleStaging
+      - name: Build staging APK
+        run: ./gradlew :app:assembleStaging
       - name: Verify signed release bundle
         if: env.MONEYLIFE_SIGNING_PROPERTIES != ''
         run: jarsigner -verify app/build/outputs/bundle/release/app-release.aab
@@ -92,6 +94,13 @@ jobs:
           path: |
             moneylife_app_android/app/build/outputs/bundle/release/*.aab
             moneylife_app_android/release-aab.sha256
+          if-no-files-found: error
+
+      - name: Upload staging APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneylife-staging-apk
+          path: moneylife_app_android/app/build/outputs/apk/staging/*.apk
           if-no-files-found: error
 
       - name: Upload lint and unit test reports
