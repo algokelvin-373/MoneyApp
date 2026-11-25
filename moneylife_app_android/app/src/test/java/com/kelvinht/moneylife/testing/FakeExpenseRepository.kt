@@ -41,8 +41,7 @@ class FakeExpenseRepository : ExpenseRepository {
 
     override suspend fun getExpensesByDate(dateKey: String): List<Expense> = expenses.value.filter { it.dateKey == dateKey }
 
-    override suspend fun getExpensesByMonth(monthKey: String): List<Expense> =
-        expenses.value.filter { it.dateKey.startsWith(monthKey) }
+    override suspend fun getExpensesByMonth(monthKey: String): List<Expense> = expenses.value.filter { it.dateKey.startsWith(monthKey) }
 
     override suspend fun getExpenseById(id: Long): Expense? = expenses.value.find { it.id == id }
 

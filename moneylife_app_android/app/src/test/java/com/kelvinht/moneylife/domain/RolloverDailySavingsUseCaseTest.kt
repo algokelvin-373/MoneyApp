@@ -227,8 +227,7 @@ private class FakeSavingsRepository(
 
     override fun observeBalance(monthKey: String): Flow<Long> = balance
 
-    override suspend fun getMonthlySavings(monthKey: String): Long =
-        saved.filterKeys { it.startsWith(monthKey) }.values.sum()
+    override suspend fun getMonthlySavings(monthKey: String): Long = saved.filterKeys { it.startsWith(monthKey) }.values.sum()
 
     override suspend fun saveDailySaving(
         dateKey: String,
