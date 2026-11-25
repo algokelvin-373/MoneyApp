@@ -24,6 +24,9 @@ class FakeSavingsRepository : SavingsRepository {
             savings.filterKeys { it.startsWith(monthKey) }.values.sum()
         }
 
+    override suspend fun getMonthlySavings(monthKey: String): Long =
+        dailySavings.value.filterKeys { it.startsWith(monthKey) }.values.sum()
+
     override suspend fun saveDailySaving(
         dateKey: String,
         amount: Long,

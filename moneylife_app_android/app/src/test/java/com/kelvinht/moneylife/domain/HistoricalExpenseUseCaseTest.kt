@@ -137,6 +137,9 @@ private class MemoryExpenseRepository(
 
     override suspend fun getExpensesByDate(dateKey: String): List<Expense> = expenses.filter { it.dateKey == dateKey }
 
+    override suspend fun getExpensesByMonth(monthKey: String): List<Expense> =
+        expenses.filter { it.dateKey.startsWith(monthKey) }
+
     override suspend fun getExpenseById(id: Long): Expense? = expenses.find { it.id == id }
 
     override suspend fun updateExpense(expense: Expense): Boolean {
@@ -168,6 +171,9 @@ private class MemorySavingsRepository(
     val writesInsideTransaction = mutableListOf<Boolean>()
 
     override fun observeBalance(monthKey: String): Flow<Long> = MutableStateFlow(saved.values.sum())
+
+    override suspend fun getMonthlySavings(monthKey: String): Long =
+        saved.filterKeys { it.startsWith(monthKey) }.values.sum()
 
     override suspend fun saveDailySaving(
         dateKey: String,
