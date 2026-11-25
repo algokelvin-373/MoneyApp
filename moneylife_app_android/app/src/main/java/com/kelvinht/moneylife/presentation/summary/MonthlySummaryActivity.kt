@@ -57,20 +57,21 @@ class MonthlySummaryActivity : AppCompatActivity() {
         binding.buttonNextMonth.alpha = if (binding.buttonNextMonth.isEnabled) 1f else 0.4f
 
         summaryJob?.cancel()
-        summaryJob = lifecycleScope.launch {
-            val summary =
-                withContext(Dispatchers.IO) {
-                    (application as MoneyLifeApplication).container.getMonthlyExpenseSummary(monthKey)
-                }
-            binding.textTotalExpenses.text = RupiahFormatter.format(summary.totalExpenses)
-            binding.textTotalSavings.text = RupiahFormatter.format(summary.totalSavings)
-            categoryAdapter.submitList(
-                ExpenseCategory.values().map { category ->
-                    CategorySummaryUiModel(category, summary.categoryTotals[category] ?: 0L)
-                },
-            )
-            binding.textEmpty.visibility =
-                if (summary.totalExpenses == 0L && summary.totalSavings == 0L) View.VISIBLE else View.GONE
-        }
+        summaryJob =
+            lifecycleScope.launch {
+                val summary =
+                    withContext(Dispatchers.IO) {
+                        (application as MoneyLifeApplication).container.getMonthlyExpenseSummary(monthKey)
+                    }
+                binding.textTotalExpenses.text = RupiahFormatter.format(summary.totalExpenses)
+                binding.textTotalSavings.text = RupiahFormatter.format(summary.totalSavings)
+                categoryAdapter.submitList(
+                    ExpenseCategory.values().map { category ->
+                        CategorySummaryUiModel(category, summary.categoryTotals[category] ?: 0L)
+                    },
+                )
+                binding.textEmpty.visibility =
+                    if (summary.totalExpenses == 0L && summary.totalSavings == 0L) View.VISIBLE else View.GONE
+            }
     }
 }
