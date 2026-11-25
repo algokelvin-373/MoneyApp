@@ -11,9 +11,10 @@ class GetMonthlyExpenseSummaryUseCase(
 ) {
     suspend operator fun invoke(monthKey: String): MonthlyExpenseSummary {
         val expenses = expenseRepository.getExpensesByMonth(monthKey)
-        val categoryTotals = ExpenseCategory.entries.associateWith { category ->
-            expenses.filter { it.category == category }.sumOf { it.amount }
-        }
+        val categoryTotals =
+            ExpenseCategory.entries.associateWith { category ->
+                expenses.filter { it.category == category }.sumOf { it.amount }
+            }
 
         return MonthlyExpenseSummary(
             totalExpenses = expenses.sumOf { it.amount },

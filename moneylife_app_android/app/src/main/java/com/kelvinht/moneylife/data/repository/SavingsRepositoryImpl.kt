@@ -11,8 +11,7 @@ class SavingsRepositoryImpl(
 ) : SavingsRepository {
     override fun observeBalance(monthKey: String): Flow<Long> = dao.observeBalance(monthKey)
 
-    override suspend fun getMonthlySavings(monthKey: String): Long =
-        dao.getMonthlySavings(monthKey)
+    override suspend fun getMonthlySavings(monthKey: String): Long = dao.getMonthlySavings(monthKey)
 
     override suspend fun saveDailySaving(
         dateKey: String,

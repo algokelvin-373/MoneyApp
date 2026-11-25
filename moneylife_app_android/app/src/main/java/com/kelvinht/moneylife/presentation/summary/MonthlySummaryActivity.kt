@@ -58,9 +58,10 @@ class MonthlySummaryActivity : AppCompatActivity() {
 
         summaryJob?.cancel()
         summaryJob = lifecycleScope.launch {
-            val summary = withContext(Dispatchers.IO) {
-                (application as MoneyLifeApplication).container.getMonthlyExpenseSummary(monthKey)
-            }
+            val summary =
+                withContext(Dispatchers.IO) {
+                    (application as MoneyLifeApplication).container.getMonthlyExpenseSummary(monthKey)
+                }
             binding.textTotalExpenses.text = RupiahFormatter.format(summary.totalExpenses)
             binding.textTotalSavings.text = RupiahFormatter.format(summary.totalSavings)
             categoryAdapter.submitList(
