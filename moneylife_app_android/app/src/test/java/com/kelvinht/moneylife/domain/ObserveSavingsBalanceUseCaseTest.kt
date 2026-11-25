@@ -58,6 +58,8 @@ private class MonthSavingsRepository(
 ) : SavingsRepository {
     override fun observeBalance(monthKey: String): Flow<Long> = MutableStateFlow(saved.filterKeys { it.startsWith(monthKey) }.values.sum())
 
+    override suspend fun getMonthlySavings(monthKey: String): Long = saved.filterKeys { it.startsWith(monthKey) }.values.sum()
+
     override suspend fun saveDailySaving(
         dateKey: String,
         amount: Long,

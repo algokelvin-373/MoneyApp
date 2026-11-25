@@ -36,6 +36,7 @@ import com.kelvinht.moneylife.domain.model.DailyBudget
 import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.presentation.addedit.AddExpenseActivity
 import com.kelvinht.moneylife.presentation.privacy.PrivacyPolicyActivity
+import com.kelvinht.moneylife.presentation.summary.MonthlySummaryActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -163,6 +164,9 @@ class MainActivity : AppCompatActivity() {
         binding.buttonLimitCustom.setOnClickListener { showCustomLimitDialog() }
         binding.buttonPrivacy.setOnClickListener {
             startActivity(Intent(this, PrivacyPolicyActivity::class.java))
+        }
+        binding.buttonMonthlySummary.setOnClickListener {
+            startActivity(Intent(this, MonthlySummaryActivity::class.java))
         }
     }
 

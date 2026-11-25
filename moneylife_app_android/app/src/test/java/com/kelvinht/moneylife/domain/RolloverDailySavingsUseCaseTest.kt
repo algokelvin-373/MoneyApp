@@ -206,6 +206,9 @@ private class FakeExpenseRepository(
 
     override suspend fun getExpensesByDate(dateKey: String): List<Expense> = expensesByDate[dateKey].orEmpty()
 
+    override suspend fun getExpensesByMonth(monthKey: String): List<Expense> =
+        expensesByDate.filterKeys { it.startsWith(monthKey) }.values.flatten()
+
     override suspend fun getExpenseById(id: Long): Expense? = null
 
     override suspend fun updateExpense(expense: Expense): Boolean = false
@@ -223,6 +226,8 @@ private class FakeSavingsRepository(
     private val balance = MutableStateFlow(0L)
 
     override fun observeBalance(monthKey: String): Flow<Long> = balance
+
+    override suspend fun getMonthlySavings(monthKey: String): Long = saved.filterKeys { it.startsWith(monthKey) }.values.sum()
 
     override suspend fun saveDailySaving(
         dateKey: String,

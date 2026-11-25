@@ -13,6 +13,9 @@ interface SavingsDao {
     @Query("SELECT COALESCE(SUM(amount), 0) FROM daily_savings WHERE substr(dateKey, 1, 7) = :monthKey")
     fun observeBalance(monthKey: String): Flow<Long>
 
+    @Query("SELECT COALESCE(SUM(amount), 0) FROM daily_savings WHERE substr(dateKey, 1, 7) = :monthKey")
+    suspend fun getMonthlySavings(monthKey: String): Long
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveDailySaving(entity: DailySavingEntity)
 

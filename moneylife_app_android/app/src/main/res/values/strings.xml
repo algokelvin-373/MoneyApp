@@ -46,6 +46,14 @@
     <string name="savings_balance_label">Saldo Tabungan</string>
     <string name="budget_condition_label">Kondisi Budget</string>
     <string name="popular_categories_title">KATEGORI POPULER</string>
+    <string name="monthly_summary_title">Ringkasan Bulanan</string>
+    <string name="monthly_summary_action">Bulanan  ›</string>
+    <string name="monthly_total_expenses_label">Total Pengeluaran</string>
+    <string name="monthly_total_savings_label">Total Tabungan</string>
+    <string name="monthly_categories_title">Total per Kategori</string>
+    <string name="monthly_no_data">Belum ada data pengeluaran atau tabungan pada bulan ini.</string>
+    <string name="previous_month">Bulan sebelumnya</string>
+    <string name="next_month">Bulan berikutnya</string>
     <string name="choose_date">Pilih tanggal</string>
     <string name="back_to_today">Hari Ini</string>
     <string name="previous_day">Hari sebelumnya</string>

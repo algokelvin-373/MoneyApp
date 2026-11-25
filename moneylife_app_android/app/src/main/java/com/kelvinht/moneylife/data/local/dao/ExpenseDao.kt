@@ -16,6 +16,9 @@ interface ExpenseDao {
     @Query("SELECT * FROM expenses WHERE dateKey = :dateKey ORDER BY createdAt DESC")
     suspend fun getByDate(dateKey: String): List<ExpenseEntity>
 
+    @Query("SELECT * FROM expenses WHERE substr(dateKey, 1, 7) = :monthKey ORDER BY dateKey DESC, createdAt DESC")
+    suspend fun getByMonth(monthKey: String): List<ExpenseEntity>
+
     @Query("SELECT * FROM expenses WHERE id = :id LIMIT 1")
     suspend fun getById(id: Long): ExpenseEntity?
 

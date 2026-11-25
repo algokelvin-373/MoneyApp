@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.Flow
 interface SavingsRepository {
     fun observeBalance(monthKey: String): Flow<Long>
 
+    suspend fun getMonthlySavings(monthKey: String): Long
+
     suspend fun saveDailySaving(
         dateKey: String,
         amount: Long,
