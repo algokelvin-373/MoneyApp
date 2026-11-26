@@ -12,9 +12,10 @@ class MonthlySummaryCsvExporterTest {
         val summary =
             MonthlyExpenseSummary(
                 totalExpenses = 15_000L,
-                categoryTotals = ExpenseCategory.entries.associateWith { category ->
-                    if (category == ExpenseCategory.MAKAN) 15_000L else 0L
-                },
+                categoryTotals =
+                    ExpenseCategory.entries.associateWith { category ->
+                        if (category == ExpenseCategory.MAKAN) 15_000L else 0L
+                    },
                 dailyTotals = mapOf("2026-11-01" to 15_000L),
                 totalSavings = 7_000L,
             )

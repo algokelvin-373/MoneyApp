@@ -36,11 +36,12 @@ class GetMonthlyExpenseSummaryUseCaseTest {
         amount: Long,
         dateKey: String,
         createdAt: Long,
-    ) =
-        Expense(
+    ): Expense {
+        return Expense(
             category = category,
             amount = amount,
             dateKey = dateKey,
             createdAt = createdAt,
         )
+    }
 }
