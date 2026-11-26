@@ -52,6 +52,14 @@
     <string name="monthly_total_savings_label">Total Tabungan</string>
     <string name="monthly_categories_title">Total per Kategori</string>
     <string name="monthly_no_data">Belum ada data pengeluaran atau tabungan pada bulan ini.</string>
+    <string name="monthly_chart_title">Pengeluaran Harian</string>
+    <string name="monthly_chart_empty">Belum ada pengeluaran harian</string>
+    <string name="monthly_chart_accessibility">Grafik pengeluaran harian bulan %1$s</string>
+    <string name="monthly_export_action">Ekspor Laporan CSV</string>
+    <string name="monthly_export_success">Laporan bulanan berhasil disimpan.</string>
+    <string name="monthly_export_error">Laporan bulanan gagal disimpan.</string>
+    <string name="monthly_current_month_action">Lihat bulan berjalan</string>
+    <string name="monthly_report_file_name">MoneyLife_Laporan_%1$s.csv</string>
     <string name="previous_month">Bulan sebelumnya</string>
     <string name="next_month">Bulan berikutnya</string>
     <string name="choose_date">Pilih tanggal</string>

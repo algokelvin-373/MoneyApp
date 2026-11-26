@@ -11,14 +11,19 @@ class GetMonthlyExpenseSummaryUseCase(
 ) {
     suspend operator fun invoke(monthKey: String): MonthlyExpenseSummary {
         val expenses = expenseRepository.getExpensesByMonth(monthKey)
-        val categoryTotals =
-            ExpenseCategory.entries.associateWith { category ->
-                expenses.filter { it.category == category }.sumOf { it.amount }
-            }
+        val categoryTotals = ExpenseCategory.entries.associateWith { 0L }.toMutableMap()
+        expenses.forEach { expense ->
+            categoryTotals[expense.category] = categoryTotals.getValue(expense.category) + expense.amount
+        }
+        val dailyTotals =
+            expenses.groupingBy { it.dateKey }
+                .fold(0L) { total, expense -> total + expense.amount }
+                .toSortedMap()
 
         return MonthlyExpenseSummary(
             totalExpenses = expenses.sumOf { it.amount },
             categoryTotals = categoryTotals,
+            dailyTotals = dailyTotals,
             totalSavings = savingsRepository.getMonthlySavings(monthKey),
         )
     }
