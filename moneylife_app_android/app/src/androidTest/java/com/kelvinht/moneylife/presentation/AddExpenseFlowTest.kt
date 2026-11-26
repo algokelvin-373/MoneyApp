@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ScrollView
 import androidx.core.widget.NestedScrollView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
@@ -33,6 +34,8 @@ import com.kelvinht.moneylife.presentation.addedit.AddExpenseActivity
 import com.kelvinht.moneylife.presentation.home.MainActivity
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -75,10 +78,26 @@ class AddExpenseFlowTest {
         ActivityScenario.launch(MainActivity::class.java).use { scenario ->
             openAddExpenseForm(scenario)
 
+            onView(withId(R.id.inputAmount)).perform(closeSoftKeyboard())
             onView(withId(R.id.inputAmount)).check(matches(isDisplayed()))
             onView(withId(R.id.buttonSave)).check(matches(isDisplayed()))
             onView(withText("TANGGAL TRANSAKSI")).check(doesNotExist())
             onView(withText("Ubah")).check(doesNotExist())
+        }
+    }
+
+    @Test
+    fun addExpenseFormFitsWithoutScrollAndUsesCheckIcon() {
+        ActivityScenario.launch(AddExpenseActivity::class.java).use { scenario ->
+            onView(withId(R.id.inputAmount)).perform(closeSoftKeyboard())
+            scenario.onActivity { activity ->
+                val formScroll = activity.findViewById<ScrollView>(R.id.scrollContent)
+                assertNotNull(formScroll)
+                assertFalse("Form tidak perlu scroll ke atas", formScroll.canScrollVertically(-1))
+                assertFalse("Form tidak perlu scroll ke bawah", formScroll.canScrollVertically(1))
+                val saveDescription = activity.findViewById<View>(R.id.buttonSave).contentDescription
+                assertEquals(activity.getString(R.string.save), saveDescription)
+            }
         }
     }
 
