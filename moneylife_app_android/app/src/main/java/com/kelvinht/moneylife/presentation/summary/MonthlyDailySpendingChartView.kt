@@ -16,22 +16,26 @@ class MonthlyDailySpendingChartView
         context: Context,
         attrs: AttributeSet? = null,
     ) : View(context, attrs) {
-        private val gridPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = ContextCompat.getColor(context, R.color.cardBorder)
-            strokeWidth = resources.displayMetrics.density
-        }
-        private val barPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = ContextCompat.getColor(context, R.color.colorPrimary)
-        }
-        private val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = ContextCompat.getColor(context, R.color.textSecondary)
-            textSize = 10f * resources.displayMetrics.scaledDensity
-        }
-        private val emptyPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = ContextCompat.getColor(context, R.color.textSecondary)
-            textSize = 13f * resources.displayMetrics.scaledDensity
-            textAlign = Paint.Align.CENTER
-        }
+        private val gridPaint =
+            Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = ContextCompat.getColor(context, R.color.cardBorder)
+                strokeWidth = resources.displayMetrics.density
+            }
+        private val barPaint =
+            Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = ContextCompat.getColor(context, R.color.colorPrimary)
+            }
+        private val labelPaint =
+            Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = ContextCompat.getColor(context, R.color.textSecondary)
+                textSize = 10f * resources.displayMetrics.scaledDensity
+            }
+        private val emptyPaint =
+            Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = ContextCompat.getColor(context, R.color.textSecondary)
+                textSize = 13f * resources.displayMetrics.scaledDensity
+                textAlign = Paint.Align.CENTER
+            }
 
         private var selectedMonth: YearMonth = YearMonth.now()
         private var dailyTotals: Map<String, Long> = emptyMap()
@@ -59,10 +63,11 @@ class MonthlyDailySpendingChartView
             val plotWidth = right - left
             if (plotWidth <= 0f || plotHeight <= 0f) return
 
-            val values = (1..daysInMonth).map { day ->
-                val dateKey = "$selectedMonth-${day.toString().padStart(2, '0')}"
-                dailyTotals[dateKey] ?: 0L
-            }
+            val values =
+                (1..daysInMonth).map { day ->
+                    val dateKey = "$selectedMonth-${day.toString().padStart(2, '0')}"
+                    dailyTotals[dateKey] ?: 0L
+                }
             val maxValue = values.maxOrNull() ?: 0L
             if (maxValue <= 0L) {
                 canvas.drawText(
