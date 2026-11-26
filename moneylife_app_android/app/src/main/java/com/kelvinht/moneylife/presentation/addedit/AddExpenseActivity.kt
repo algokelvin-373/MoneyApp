@@ -132,7 +132,8 @@ class AddExpenseActivity : AppCompatActivity() {
 
         binding.buttonReset.visibility = if (state.isEditing) View.INVISIBLE else View.VISIBLE
         binding.buttonSave.isEnabled = !state.isSaving && !state.isLoadingExpense
-        binding.buttonSave.text =
+        binding.buttonSave.alpha = if (binding.buttonSave.isEnabled) 1f else 0.5f
+        binding.buttonSave.contentDescription =
             getString(
                 when {
                     state.isLoadingExpense -> R.string.loading_expense
