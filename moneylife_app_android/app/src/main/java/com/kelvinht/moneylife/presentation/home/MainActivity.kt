@@ -67,6 +67,9 @@ class MainActivity : AppCompatActivity() {
             showRestorePromptIfNeeded()
         }
 
+    private val notificationPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
+
     /**
      * Keeps the home screen in sync when the user fixes the device clock while
      * the app is open. Without this the date picked at startup would stay
@@ -91,6 +94,7 @@ class MainActivity : AppCompatActivity() {
         setupActions()
         observeState()
         prepareCsvBackup()
+        requestNotificationPermissionIfNeeded()
     }
 
     override fun onResume() {
@@ -135,6 +139,21 @@ class MainActivity : AppCompatActivity() {
         binding.listPopularCategories.layoutManager = LinearLayoutManager(this)
         binding.listPopularCategories.adapter = categorySummaryAdapter
         binding.listPopularCategories.isNestedScrollingEnabled = false
+    }
+
+    private fun requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+
+        val preferences = getSharedPreferences("notification_preferences", MODE_PRIVATE)
+        if (!preferences.getBoolean("permission_requested", false)) {
+            preferences.edit().putBoolean("permission_requested", true).apply()
+            notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
     }
 
     private fun setupActions() {

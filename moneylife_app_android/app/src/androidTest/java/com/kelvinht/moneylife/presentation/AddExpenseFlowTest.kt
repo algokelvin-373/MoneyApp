@@ -54,6 +54,15 @@ class AddExpenseFlowTest {
 
     @Before
     fun clearDatabase() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val notificationPermissionGrantOutput =
+                InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand(
+                    "pm grant ${context.packageName} ${Manifest.permission.POST_NOTIFICATIONS}",
+                )
+            ParcelFileDescriptor.AutoCloseInputStream(notificationPermissionGrantOutput).use { stream ->
+                stream.readBytes()
+            }
+        }
         context.getSharedPreferences("csv_backup_preferences", Context.MODE_PRIVATE)
             .edit()
             .putBoolean("restore_prompt_dismissed", true)
