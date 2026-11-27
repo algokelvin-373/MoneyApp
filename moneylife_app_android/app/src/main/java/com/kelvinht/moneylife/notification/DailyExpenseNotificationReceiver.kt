@@ -26,8 +26,9 @@ class DailyExpenseNotificationReceiver : BroadcastReceiver() {
         context: Context,
         intent: Intent,
     ) {
-        val dateKey = intent.getStringExtra(DailyExpenseNotificationScheduler.EXTRA_DATE_KEY)
-            ?: DailyExpenseNotificationScheduler.dateKeyForYesterday()
+        val dateKey =
+            intent.getStringExtra(DailyExpenseNotificationScheduler.EXTRA_DATE_KEY)
+                ?: DailyExpenseNotificationScheduler.dateKeyForYesterday()
         val pendingResult = goAsync()
         val app = context.applicationContext as MoneyLifeApplication
 
