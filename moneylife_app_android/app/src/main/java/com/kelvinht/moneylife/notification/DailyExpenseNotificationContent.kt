@@ -8,7 +8,10 @@ data class DailyExpenseNotificationContent(
     val message: String,
 ) {
     companion object {
-        fun create(dateKey: String, total: Long): DailyExpenseNotificationContent =
+        fun create(
+            dateKey: String,
+            total: Long,
+        ): DailyExpenseNotificationContent =
             DailyExpenseNotificationContent(
                 title = "Ringkasan Pengeluaran",
                 message = "${DateUtils.shortDisplayDate(dateKey)} · ${RupiahFormatter.format(total)}",

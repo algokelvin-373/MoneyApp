@@ -22,7 +22,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class DailyExpenseNotificationReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context, intent: Intent) {
+    override fun onReceive(
+        context: Context,
+        intent: Intent,
+    ) {
         val dateKey = intent.getStringExtra(DailyExpenseNotificationScheduler.EXTRA_DATE_KEY)
             ?: DailyExpenseNotificationScheduler.dateKeyForYesterday()
         val pendingResult = goAsync()
@@ -52,7 +55,10 @@ class DailyExpenseNotificationReceiver : BroadcastReceiver() {
 }
 
 class DailyExpenseAlarmRescheduleReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context, intent: Intent) {
+    override fun onReceive(
+        context: Context,
+        intent: Intent,
+    ) {
         DailyExpenseNotificationScheduler.scheduleNext(context)
     }
 }
@@ -61,7 +67,11 @@ private object DailyExpenseNotifier {
     private const val CHANNEL_ID = "daily_expense_summary"
     private const val CHANNEL_NAME = "Ringkasan pengeluaran harian"
 
-    fun show(context: Context, dateKey: String, total: Long) {
+    fun show(
+        context: Context,
+        dateKey: String,
+        total: Long,
+    ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
             PackageManager.PERMISSION_GRANTED
@@ -72,7 +82,11 @@ private object DailyExpenseNotifier {
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             manager.createNotificationChannel(
-                NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT),
+                NotificationChannel(
+                    CHANNEL_ID,
+                    CHANNEL_NAME,
+                    NotificationManager.IMPORTANCE_DEFAULT,
+                ),
             )
         }
 

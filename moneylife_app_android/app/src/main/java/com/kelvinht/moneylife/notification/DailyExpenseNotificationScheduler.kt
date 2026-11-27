@@ -34,7 +34,10 @@ object DailyExpenseNotificationScheduler {
 
     fun dateKeyForYesterday(): String = DateUtils.dateKey(LocalDate.now().minusDays(1))
 
-    private fun notificationPendingIntent(context: Context, dateKey: String): PendingIntent {
+    private fun notificationPendingIntent(
+        context: Context,
+        dateKey: String,
+    ): PendingIntent {
         val intent =
             Intent(context, DailyExpenseNotificationReceiver::class.java)
                 .putExtra(EXTRA_DATE_KEY, dateKey)
