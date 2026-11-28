@@ -30,6 +30,7 @@ import com.kelvinht.moneylife.R
 import com.kelvinht.moneylife.core.util.DateUtils
 import com.kelvinht.moneylife.data.local.MoneyLifeDatabase
 import com.kelvinht.moneylife.data.local.entity.ExpenseEntity
+import com.kelvinht.moneylife.domain.model.ExpenseCategory
 import com.kelvinht.moneylife.presentation.addedit.AddExpenseActivity
 import com.kelvinht.moneylife.presentation.home.MainActivity
 import kotlinx.coroutines.runBlocking
@@ -93,6 +94,20 @@ class AddExpenseFlowTest {
             onView(withText("TANGGAL TRANSAKSI")).check(doesNotExist())
             onView(withText("Ubah")).check(doesNotExist())
         }
+    }
+
+    @Test
+    fun selectingUangAmal_savesExpenseWithNewCategory() {
+        val today = DateUtils.todayKey()
+
+        ActivityScenario.launch(AddExpenseActivity::class.java).use {
+            onView(withId(R.id.categoryUangAmal)).perform(click())
+            onView(withId(R.id.inputAmount)).perform(replaceText("5000"), closeSoftKeyboard())
+            onView(withId(R.id.buttonSave)).perform(click())
+        }
+
+        val stored = awaitStoredExpenses(today)
+        assertEquals(ExpenseCategory.UANG_AMAL.name, stored.single().category)
     }
 
     @Test

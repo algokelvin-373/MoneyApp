@@ -111,6 +111,7 @@
     <string name="category_kebutuhan_lain">Kebutuhan lain</string>
     <string name="category_kebutuhan_orang_tua">Kebutuhan orang tua</string>
     <string name="category_top_up_coins_tiktok">Top Up Coins TikTok</string>
+    <string name="category_uang_amal">Uang Amal</string>
     <string name="category_spent_format">Terpakai %1$s</string>
     <string name="category_initial_makan" translatable="false">M</string>
     <string name="category_initial_transport" translatable="false">T</string>
@@ -118,6 +119,7 @@
     <string name="category_initial_other" translatable="false">L</string>
     <string name="category_initial_parents" translatable="false">OT</string>
     <string name="category_initial_tiktok" translatable="false">TT</string>
+    <string name="category_initial_amal" translatable="false">A</string>
     <string name="amount_label">NOMINAL PENGELUARAN</string>
     <string name="amount_hint">Nominal</string>
     <string name="currency_prefix">Rp</string>

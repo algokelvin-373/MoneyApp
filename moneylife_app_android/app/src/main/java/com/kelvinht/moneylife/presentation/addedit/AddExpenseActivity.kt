@@ -59,6 +59,11 @@ class AddExpenseActivity : AppCompatActivity() {
                 ),
                 CategoryOption(ExpenseCategory.JAJAN, binding.categoryJajan, binding.checkJajan),
                 CategoryOption(
+                    ExpenseCategory.UANG_AMAL,
+                    binding.categoryUangAmal,
+                    binding.checkUangAmal,
+                ),
+                CategoryOption(
                     ExpenseCategory.KEBUTUHAN_LAIN,
                     binding.categoryKebutuhanLain,
                     binding.checkKebutuhanLain,

@@ -14,6 +14,7 @@ object CategoryBudget {
             ExpenseCategory.KEBUTUHAN_LAIN,
             ExpenseCategory.KEBUTUHAN_ORANG_TUA,
             ExpenseCategory.TOP_UP_COINS_TIKTOK,
+            ExpenseCategory.UANG_AMAL,
             -> null
         }
 }

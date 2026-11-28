@@ -113,6 +113,7 @@ class AddExpenseViewModelTest {
                     ExpenseCategory.KEBUTUHAN_LAIN,
                     ExpenseCategory.KEBUTUHAN_ORANG_TUA,
                     ExpenseCategory.TOP_UP_COINS_TIKTOK,
+                    ExpenseCategory.UANG_AMAL,
                 )
 
             newCategories.forEachIndexed { index, category ->
