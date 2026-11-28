@@ -27,5 +27,6 @@ class MonthlySummaryCsvExporterTest {
         assertTrue(csv.contains("\"PENGELUARAN_HARIAN\",\"2026-11-01\",\"15000\""))
         assertTrue(csv.contains("\"PENGELUARAN_KATEGORI\",\"Makan\",\"15000\""))
         assertTrue(csv.contains("\"PENGELUARAN_KATEGORI\",\"Transport\",\"0\""))
+        assertTrue(csv.contains("\"PENGELUARAN_KATEGORI\",\"Uang Amal\",\"0\""))
     }
 }

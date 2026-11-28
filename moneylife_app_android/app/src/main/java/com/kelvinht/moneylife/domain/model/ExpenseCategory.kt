@@ -8,4 +8,5 @@ enum class ExpenseCategory {
     KEBUTUHAN_LAIN,
     KEBUTUHAN_ORANG_TUA,
     TOP_UP_COINS_TIKTOK,
+    UANG_AMAL,
 }

@@ -35,6 +35,7 @@ object MonthlySummaryCsvExporter {
             ExpenseCategory.KEBUTUHAN_LAIN -> "Kebutuhan lain"
             ExpenseCategory.KEBUTUHAN_ORANG_TUA -> "Kebutuhan orang tua"
             ExpenseCategory.TOP_UP_COINS_TIKTOK -> "Top Up Coins TikTok"
+            ExpenseCategory.UANG_AMAL -> "Uang Amal"
         }
 
     private fun String.escapeCsv(): String = "\"${replace("\"", "\"\"")}\""

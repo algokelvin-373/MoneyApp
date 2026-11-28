@@ -15,5 +15,6 @@ class CategoryBudgetTest {
         assertNull(CategoryBudget.limitFor(ExpenseCategory.KEBUTUHAN_LAIN))
         assertNull(CategoryBudget.limitFor(ExpenseCategory.KEBUTUHAN_ORANG_TUA))
         assertNull(CategoryBudget.limitFor(ExpenseCategory.TOP_UP_COINS_TIKTOK))
+        assertNull(CategoryBudget.limitFor(ExpenseCategory.UANG_AMAL))
     }
 }
